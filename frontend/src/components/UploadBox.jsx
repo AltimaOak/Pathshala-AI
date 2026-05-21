@@ -1,0 +1,1 @@
+// UploadBox component
