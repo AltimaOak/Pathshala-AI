@@ -1,1 +1,3 @@
-// QuizCard component
+export default function QuizCard() {
+  return <div>QuizCard</div>;
+}
