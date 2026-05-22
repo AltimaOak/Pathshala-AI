@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { Sparkles, Bell, Search } from 'lucide-react';
+import { Bell, Search } from 'lucide-react';
+import ThemeSelector from './ThemeSelector';
+
 
 export default function Navbar() {
   const location = useLocation();
@@ -51,9 +53,7 @@ export default function Navbar() {
         <h1 className="text-xl font-semibold tracking-tight text-brand-charcoal font-display">
           {getPageTitle()}
         </h1>
-        <span className="hidden rounded-full bg-brand-beige/40 px-2.5 py-0.5 text-xs font-medium text-brand-charcoal/70 sm:inline-block">
-          SaaS Beta
-        </span>
+
       </div>
 
       <div className="flex items-center gap-4">
@@ -71,11 +71,10 @@ export default function Navbar() {
           </kbd>
         </div>
 
-        {/* Beta Sandbox Badge */}
-        <div className="flex items-center gap-1.5 rounded-lg bg-brand-brown/10 border border-brand-brown/25 px-3 py-1.5 text-xs font-bold text-brand-brown select-none">
-          <Sparkles className="h-3.5 w-3.5 animate-pulse" />
-          Beta Sandbox Mode
-        </div>
+
+
+        {/* Theme Selector */}
+        <ThemeSelector />
 
         {/* Notifications Icon */}
         <button className="relative rounded-lg p-2 text-brand-charcoal/60 hover:bg-brand-beige/40 transition-colors">

@@ -6,3 +6,5 @@ export { default as UploadBox } from './UploadBox';
 export { default as QuizCard } from './QuizCard';
 export { default as Loader } from './Loader';
 export { default as LandingNavbar } from './LandingNavbar';
+export { default as ThemeSelector } from './ThemeSelector';
+

@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { GraduationCap, Menu, X, ArrowRight } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import ThemeSelector from './ThemeSelector';
+
 
 export default function LandingNavbar() {
+  const { theme, setTheme, themes } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
 
   // Monitor scroll height to add borders/shadows dynamically
   useEffect(() => {
@@ -66,6 +71,9 @@ export default function LandingNavbar() {
 
           {/* Action CTAs */}
           <div className="hidden items-center gap-4 md:flex">
+            {/* Theme Selector */}
+            <ThemeSelector />
+
             <Link 
               to="/login" 
               className="text-sm font-semibold text-brand-charcoal/80 transition-colors hover:text-brand-brown"
@@ -114,7 +122,38 @@ export default function LandingNavbar() {
               FAQ
             </button>
             
-            <div className="h-px bg-brand-beige/50 my-2"></div>
+            <div className="h-px bg-brand-beige/50 my-1"></div>
+
+            {/* Mobile Theme Selector */}
+            <div className="flex flex-col gap-2 py-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-brand-charcoal-light/50">
+                Theme Accent
+              </span>
+              <div className="flex items-center gap-2">
+                {themes.map((themeOption) => {
+                  const isActive = theme === themeOption.id;
+                  return (
+                    <button
+                      key={themeOption.id}
+                      onClick={() => setTheme(themeOption.id)}
+                      className={`flex h-10 flex-1 items-center justify-center gap-2 rounded-xl border text-xs font-semibold transition-all duration-200 cursor-pointer ${
+                        isActive
+                          ? 'border-brand-brown bg-brand-beige/40 text-brand-brown'
+                          : 'border-brand-beige bg-white text-brand-charcoal hover:bg-brand-beige/10'
+                      }`}
+                    >
+                      <span
+                        className="h-3 w-3 rounded-full border border-black/5"
+                        style={{ backgroundColor: themeOption.colors[0] }}
+                      />
+                      <span>{themeOption.name.split(' ')[0]}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="h-px bg-brand-beige/50 my-1"></div>
             
             <div className="flex flex-col gap-3">
               <Link 

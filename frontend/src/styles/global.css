@@ -1,15 +1,33 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand-brown: #C8A27C;
-  --color-brand-cream: #FAF7F2;
-  --color-brand-beige: #E8DCCF;
-  --color-brand-charcoal: #2B2B2B;
-  --color-brand-charcoal-light: #4A4A4A;
+  --color-brand-brown: var(--brand-brown);
+  --color-brand-cream: var(--brand-cream);
+  --color-brand-beige: var(--brand-beige);
+  --color-brand-charcoal: var(--brand-charcoal);
+  --color-brand-charcoal-light: var(--brand-charcoal-light);
   
   --font-display: 'Outfit', 'Inter', sans-serif;
   --font-sans: 'Inter', sans-serif;
 }
+
+:root {
+  /* Classic Warm (Default Theme) */
+  --brand-brown: #C8A27C;
+  --brand-cream: #FAF7F2;
+  --brand-beige: #E8DCCF;
+  --brand-charcoal: #2B2B2B;
+  --brand-charcoal-light: #4A4A4A;
+}
+
+[data-theme='forest-sage'] {
+  --brand-brown: #557A61;
+  --brand-cream: #F3F6F4;
+  --brand-beige: #D5DFD8;
+  --brand-charcoal: #202F26;
+  --brand-charcoal-light: #44564C;
+}
+
 
 @layer base {
   body {

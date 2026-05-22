@@ -1,6 +1,7 @@
 // src/App.jsx
 
 import { BrowserRouter as Router, Routes, Route, Outlet } from "react-router-dom"
+import { ThemeProvider } from "./context/ThemeContext"
 
 import Navbar from "./components/Navbar"
 import Sidebar from "./components/Sidebar"
@@ -17,7 +18,7 @@ import Signup from "./pages/Signup"
 // Shared Workspace layout for internal application pages
 function WorkspaceLayout() {
   return (
-    <div className="flex min-h-screen bg-[#FAF7F2]">
+    <div className="flex min-h-screen bg-brand-cream">
       {/* Sidebar navigation */}
       <Sidebar />
 
@@ -37,23 +38,25 @@ function WorkspaceLayout() {
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Public Pages */}
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+    <ThemeProvider>
+      <Router>
+        <Routes>
+          {/* Public Pages */}
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
-        {/* Private Workspace Shell */}
-        <Route element={<WorkspaceLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/quiz" element={<Quiz />} />
-          <Route path="/upload" element={<Upload />} />
-          <Route path="/settings" element={<Settings />} />
-        </Route>
-      </Routes>
-    </Router>
+          {/* Private Workspace Shell */}
+          <Route element={<WorkspaceLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/chat" element={<Chat />} />
+            <Route path="/quiz" element={<Quiz />} />
+            <Route path="/upload" element={<Upload />} />
+            <Route path="/settings" element={<Settings />} />
+          </Route>
+        </Routes>
+      </Router>
+    </ThemeProvider>
   )
 }
 
