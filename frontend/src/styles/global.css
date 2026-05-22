@@ -1,5 +1,75 @@
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background: #f7f7f7;
+@import "tailwindcss";
+
+@theme {
+  --color-brand-brown: #C8A27C;
+  --color-brand-cream: #FAF7F2;
+  --color-brand-beige: #E8DCCF;
+  --color-brand-charcoal: #2B2B2B;
+  --color-brand-charcoal-light: #4A4A4A;
+  
+  --font-display: 'Outfit', 'Inter', sans-serif;
+  --font-sans: 'Inter', sans-serif;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-brand-cream);
+    color: var(--color-brand-charcoal);
+    font-family: var(--font-sans);
+    margin: 0;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+}
+
+/* Custom scrollbar matching premium aesthetic */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-brand-cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-brand-beige);
+  border-radius: 9999px;
+  border: 2px solid var(--color-brand-cream);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-brown);
+}
+
+/* Custom animation extensions */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Class for smooth glassmorphism effects */
+.glassmorphism {
+  background: rgba(250, 247, 242, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(200, 162, 124, 0.15);
+}
+
+.glassmorphism-dark {
+  background: rgba(43, 43, 43, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(200, 162, 124, 0.1);
 }
