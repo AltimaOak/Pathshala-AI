@@ -51,11 +51,11 @@ export default function Chat() {
       
       let responseText = '';
       if (activeStyle === 'socratic') {
-        responseText = `To investigate "${userMessage.text}" Socratic-style, let us break this down. What is the core assumption we make here, and how can we evaluate its validity using first principles?`;
+        responseText = `That is a great question! Let us break down "${userMessage.text}" step-by-step. What is the first thing that comes to your mind when you think about this?`;
       } else if (activeStyle === 'direct') {
-        responseText = `Here is a structured explanation for "${userMessage.text}":\n\n• Core Concept: Addressing the conceptual framework directly based on textbook foundations.\n• Key Steps: Breaking down this concept into high-fidelity bullet points for fast comprehension.\n• Summary: Applying standard formulas and direct deductive answers provides the most straightforward review path.`;
+        responseText = `Here is a clear, structured summary regarding "${userMessage.text}":\n\n• Core Concept: Explains the fundamental idea clearly.\n• Key Info: Structured logically for instant learning.\n• Actionable Practice: Try using this in a real example.`;
       } else {
-        responseText = `Rigorous assessment mode active for: "${userMessage.text}". Let's verify your terminology and active recall under exam conditions:\n\n1. Define the exact fundamental mechanics operating here.\n2. State the two primary terminologies or laws you would use to defend this argument in a test environment.`;
+        responseText = `[Practice Exam Mode]\nHow would you define "${userMessage.text}"? Try to explain it in your own words, and I will check your answer!`;
       }
 
       const aiResponse = {
@@ -140,29 +140,29 @@ export default function Chat() {
                   <GraduationCap className="h-8 w-8 text-brand-cream" />
                 </div>
                 <h3 className="font-display text-xl font-bold text-brand-charcoal">
-                  Pathshala AI Tutor
+                  Pathshala AI Study Buddy
                 </h3>
                 <p className="text-xs text-brand-charcoal/65 mt-2 leading-relaxed max-w-sm">
-                  Start an authentic learning dialog. Ask a conceptual question, or upload a textbook PDF in the Study Materials folder to chat directly from its context.
+                  Start learning step-by-step. Ask any question, or upload a textbook PDF in the Study Materials page to ask questions about your files.
                 </p>
 
                 {/* Conceptual Socratic suggestions */}
                 <div className="grid grid-cols-2 gap-3.5 mt-8 w-full">
                   <button 
-                    onClick={() => handleSuggestionClick("Explain Socratic active recall method.")}
+                    onClick={() => handleSuggestionClick("How does Pathshala AI help me study?")}
                     className="flex flex-col items-start rounded-xl border border-brand-beige hover:border-brand-brown bg-brand-cream/25 hover:bg-brand-cream/65 p-3.5 text-left transition-all hover:scale-[1.01]"
                   >
                     <Sparkles className="h-4 w-4 text-brand-brown mb-1.5" />
-                    <span className="text-[11px] font-bold text-brand-charcoal">Active Recall</span>
-                    <span className="text-[9px] text-brand-charcoal/50 mt-0.5 leading-normal">Explain how testing memory works.</span>
+                    <span className="text-[11px] font-bold text-brand-charcoal">Learn & Remember</span>
+                    <span className="text-[9px] text-brand-charcoal/50 mt-0.5 leading-normal">Explain how to study and remember concepts easily.</span>
                   </button>
                   <button 
-                    onClick={() => handleSuggestionClick("Deconstruct Socratic first principles reasoning.")}
+                    onClick={() => handleSuggestionClick("How to think step-by-step?")}
                     className="flex flex-col items-start rounded-xl border border-brand-beige hover:border-brand-brown bg-brand-cream/25 hover:bg-brand-cream/65 p-3.5 text-left transition-all hover:scale-[1.01]"
                   >
                     <Volume2 className="h-4 w-4 text-brand-brown mb-1.5" />
-                    <span className="text-[11px] font-bold text-brand-charcoal">First Principles</span>
-                    <span className="text-[9px] text-brand-charcoal/50 mt-0.5 leading-normal">Explain deductive conceptual reasoning.</span>
+                    <span className="text-[11px] font-bold text-brand-charcoal">Step-by-Step Guide</span>
+                    <span className="text-[9px] text-brand-charcoal/50 mt-0.5 leading-normal">Explain how to solve tough problems.</span>
                   </button>
                 </div>
               </motion.div>

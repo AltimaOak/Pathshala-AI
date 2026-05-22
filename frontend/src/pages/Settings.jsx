@@ -75,7 +75,7 @@ export default function Settings() {
       setDbSpace('0.00');
       localStorage.setItem('dbSpace', '0.00');
       setIsPurging(false);
-      triggerToast("Sandboxed vector database successfully purged!");
+      triggerToast("All saved study files have been successfully deleted!");
     }, 1200);
   };
 
@@ -236,16 +236,16 @@ export default function Settings() {
                 <div className="border-b border-brand-beige/40 pb-3">
                   <h3 className="font-display text-base font-bold text-brand-charcoal flex items-center gap-2">
                     <Sliders className="h-5 w-5 text-brand-brown" />
-                    AI Pedagogical Personality
+                    AI Teaching Style
                   </h3>
                   <p className="text-xs text-brand-charcoal/60 mt-0.5">
-                    Customize explanation lengths, Socratic weights, and educational strictness.
+                    Customize how your AI Guide explains concepts and helps you study.
                   </p>
                 </div>
                 
                 <div className="space-y-5 text-left">
                   <p className="text-xs text-brand-charcoal/75 leading-relaxed">
-                    Select a teaching methodology. Pathshala AI will structure chats and quiz feedback according to this paradigm:
+                    Select a teaching style. Pathshala AI will structure chat responses and quizzes based on this choice:
                   </p>
                   
                   <div className="grid gap-3.5 sm:grid-cols-3">
@@ -257,9 +257,9 @@ export default function Settings() {
                           : 'border-brand-beige bg-white hover:bg-brand-cream/10'
                       }`}
                     >
-                      <span className="text-xs font-bold text-brand-charcoal">Socratic Method</span>
+                      <span className="text-xs font-bold text-brand-charcoal">Step-by-Step Guide</span>
                       <span className="text-[9px] text-brand-charcoal/50 mt-1.5 leading-normal">
-                        Refuses direct answers. Asks conceptual guiding questions.
+                        Instead of just giving you the answer, it asks questions to help you figure it out yourself.
                       </span>
                     </button>
 
@@ -271,9 +271,9 @@ export default function Settings() {
                           : 'border-brand-beige bg-white hover:bg-brand-cream/10'
                       }`}
                     >
-                      <span className="text-xs font-bold text-brand-charcoal">Structured Direct</span>
+                      <span className="text-xs font-bold text-brand-charcoal">Direct & Clear</span>
                       <span className="text-[9px] text-brand-charcoal/50 mt-1.5 leading-normal">
-                        Provides prompt explanations, formulas, and visual bullet charts.
+                        Gives you clear, direct explanations, summaries, and bullet points immediately.
                       </span>
                     </button>
 
@@ -285,9 +285,9 @@ export default function Settings() {
                           : 'border-brand-beige bg-white hover:bg-brand-cream/10'
                       }`}
                     >
-                      <span className="text-xs font-bold text-brand-charcoal">Rigorous Examiner</span>
+                      <span className="text-xs font-bold text-brand-charcoal">Practice Exam Mode</span>
                       <span className="text-[9px] text-brand-charcoal/50 mt-1.5 leading-normal">
-                        Heavy focus on assessment, terminology checks, and retrieval test drills.
+                        Challenges you like a practice test, asking for definitions and grading your answers.
                       </span>
                     </button>
                   </div>
@@ -308,22 +308,22 @@ export default function Settings() {
                 <div className="border-b border-brand-beige/40 pb-3">
                   <h3 className="font-display text-base font-bold text-brand-charcoal flex items-center gap-2">
                     <Database className="h-5 w-5 text-brand-brown" />
-                    SaaS Quota Inventory
+                    Study Space Storage
                   </h3>
                   <p className="text-xs text-brand-charcoal/60 mt-0.5">
-                    Monitor sandboxed document vector sizing limits and local study resources.
+                    Manage your uploaded documents and private space limit.
                   </p>
                 </div>
                 
                 <div className="space-y-4">
                   <div className="flex justify-between items-center text-xs">
-                    <span className="font-semibold text-brand-charcoal/70">Vector DB Space Used</span>
+                    <span className="font-semibold text-brand-charcoal/70">Study Space Used</span>
                     <span className="font-bold text-brand-charcoal">{dbSpace} MB / 50.00 MB</span>
                   </div>
                   <div className="h-2 w-full rounded-full bg-brand-cream border border-brand-beige overflow-hidden">
                     <div 
-                      className="h-full bg-brand-brown transition-all duration-500"
-                      style={{ width: `${(parseFloat(dbSpace) / 50) * 100}%` }}
+                       className="h-full bg-brand-brown transition-all duration-500"
+                       style={{ width: `${(parseFloat(dbSpace) / 50) * 100}%` }}
                     ></div>
                   </div>
 
@@ -337,12 +337,12 @@ export default function Settings() {
                         {isPurging ? (
                           <>
                             <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-                            Purging Cache...
+                            Deleting Files...
                           </>
                         ) : (
                           <>
                             <Database className="h-3.5 w-3.5" />
-                            Purge Sandboxed Cache
+                            Delete Saved Study Files
                           </>
                         )}
                       </button>
@@ -352,10 +352,10 @@ export default function Settings() {
                   <div className="rounded-xl bg-brand-cream/40 border border-brand-beige/50 p-4 mt-6">
                     <h4 className="text-xs font-bold text-brand-charcoal mb-1 flex items-center gap-1.5">
                       <Sparkles className="h-3.5 w-3.5 text-brand-brown" />
-                      Free Study Workspace
+                      Your Free Account
                     </h4>
                     <p className="text-[10px] text-brand-charcoal/65 leading-relaxed">
-                      You are utilizing a free sandboxed node. You get full access to Socratic Chat and Quiz Generations with up to 50MB of parsed files. Enjoy learning!
+                      You are using a free study account. You get full access to the AI Study Buddy and Practice Quizzes with up to 50MB of uploaded files. Enjoy learning!
                     </p>
                   </div>
                 </div>
@@ -375,16 +375,16 @@ export default function Settings() {
                 <div className="border-b border-brand-beige/40 pb-3">
                   <h3 className="font-display text-base font-bold text-brand-charcoal flex items-center gap-2">
                     <Shield className="h-5 w-5 text-brand-brown" />
-                    Security & Developer API Keys
+                    Connect to Other Apps (API)
                   </h3>
                   <p className="text-xs text-brand-charcoal/60 mt-0.5">
-                    Generate personal keys to hook your Socratic tutor memory to external apps.
+                    Create keys to connect your Pathshala AI study assistant to other apps.
                   </p>
                 </div>
                 
                 <div className="space-y-5">
                   <p className="text-xs text-brand-charcoal/75 leading-relaxed">
-                    Need Socratic integration inside Notion or Obsidian? Generate an API secret key to sync your vector memory nodes.
+                    Want to connect Pathshala AI with Notion, Obsidian, or other note-taking apps? Generate a secure key to link your study space.
                   </p>
 
                   <div className="space-y-3">

@@ -26,15 +26,15 @@ export default function Dashboard() {
     },
     {
       step: '02',
-      title: 'Engage in Socratic Chat',
-      desc: 'Ask your AI tutor questions to form connections.',
+      title: 'Chat with AI Study Buddy',
+      desc: 'Ask questions and get step-by-step guidance.',
       path: '/chat',
       icon: MessageSquare
     },
     {
       step: '03',
-      title: 'Generate Active Quizzes',
-      desc: 'Test your retention with conceptual MCQs.',
+      title: 'Make Custom Quizzes',
+      desc: 'Test your knowledge with practice questions.',
       path: '/quiz',
       icon: BookOpen
     }
@@ -52,13 +52,13 @@ export default function Dashboard() {
         <div className="space-y-2.5 max-w-xl">
           <div className="inline-flex items-center gap-1.5 rounded-full bg-brand-brown/10 border border-brand-brown/20 px-3 py-1 text-xs font-semibold text-brand-brown">
             <Sparkles className="h-3.5 w-3.5" />
-            Adaptive Workspace Initialize
+            Your Personal Study Space
           </div>
           <h2 className="font-display text-2xl font-bold tracking-tight text-brand-charcoal md:text-3xl">
             Welcome to Pathshala AI
           </h2>
           <p className="text-sm text-brand-charcoal/70 leading-relaxed">
-            Get started by initializing your study loop. Follow the onboarding checklist below to analyze notes, converse Socratic-style, and test active recall.
+            Get started by setting up your study space. Follow the checklist below to read your notes, ask questions, and take practice quizzes.
           </p>
         </div>
 
@@ -124,7 +124,7 @@ export default function Dashboard() {
             </svg>
             <p className="text-xs font-bold text-brand-charcoal">No study activity yet</p>
             <p className="text-[10px] text-brand-charcoal/50 mt-1 max-w-[200px] leading-normal">
-              Your active study hours and memory retrieval logs will display here once initialized.
+              Your study hours and quiz history will show up here once you start learning.
             </p>
           </div>
         </motion.div>
@@ -148,7 +148,7 @@ export default function Dashboard() {
             </svg>
             <p className="text-xs font-bold text-brand-charcoal">No uploaded PDFs</p>
             <p className="text-[10px] text-brand-charcoal/50 mt-1 max-w-[200px] leading-normal">
-              Need vector references? Upload textbooks inside study materials.
+              Want to ask questions about your books? Upload your study materials to get started.
             </p>
             <button 
               onClick={() => navigate('/upload')}
@@ -178,7 +178,7 @@ export default function Dashboard() {
             </svg>
             <p className="text-xs font-bold text-brand-charcoal">No quizzes generated</p>
             <p className="text-[10px] text-brand-charcoal/50 mt-1 max-w-[200px] leading-normal">
-              Test your recall! Create structured custom quizzes on any topic.
+              Create practice quizzes to test yourself on any topic.
             </p>
             <button 
               onClick={() => navigate('/quiz')}

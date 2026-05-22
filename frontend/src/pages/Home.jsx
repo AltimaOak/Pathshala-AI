@@ -85,23 +85,23 @@ export default function Home() {
   const features = [
     {
       icon: FileText,
-      title: "Contextual PDF Digest (RAG)",
-      desc: "Pathshala AI parses complex textbook chapters, vectorizes concepts, and answers directly from your study materials."
+      title: "Study Directly from Your PDFs",
+      desc: "Pathshala AI reads your textbook chapters, understands key ideas, and answers questions using your study materials."
     },
     {
       icon: MessageSquare,
-      title: "Socratic AI Tutoring",
-      desc: "Unlike standard chatbots that copy answers, our tutor prompts you with questions, guiding you to deduce answers yourself."
+      title: "Friendly AI Study Guide",
+      desc: "Instead of just giving you the answers, your study guide asks helpful questions to guide you to the right answer yourself."
     },
     {
       icon: BookOpen,
-      title: "Active Recall Quizzes",
-      desc: "Instantly compile custom assessments, MCQs, and flashcard checks based on your specific notes to trigger active learning."
+      title: "Quick Quiz Maker",
+      desc: "Instantly create custom quizzes, multiple-choice questions, and quick reviews based on your notes to test what you learned."
     },
     {
       icon: ShieldCheck,
-      title: "Sandboxed Privacy",
-      desc: "Your textbooks, answers, and study statistics are fully sandboxed, encrypted, and isolated to your personal student node."
+      title: "100% Private & Secure",
+      desc: "Your books, answers, and study notes are completely private, protected, and locked to your personal account."
     }
   ];
 
@@ -110,36 +110,36 @@ export default function Home() {
     {
       step: "01",
       icon: FileText,
-      title: "Index Your Materials",
-      desc: "Drop textbook chapters, PDF study guides, or lecture notes. Our pipeline chunks and indexes the content securely into your sandboxed Vector DB."
+      title: "Upload Your Study Files",
+      desc: "Drag and drop your textbook chapters, study guides, or lecture notes. Our app securely saves your files in your private study space."
     },
     {
       step: "02",
       icon: MessageSquare,
-      title: "Interactive Socratic Chat",
-      desc: "Converse with your AI Study Buddy. Instead of giving flat, copy-paste answers, it guides your deductive thinking with conceptual prompts."
+      title: "Chat with Your AI Guide",
+      desc: "Ask your AI Study Buddy questions. Instead of just showing the final answers, it helps you think and guides you step-by-step."
     },
     {
       step: "03",
       icon: BookOpen,
-      title: "Active Recall Compiler",
-      desc: "Trigger active retention by compiling custom mock quizzes and conceptual MCQs directly from your files with real pedagogical feedback."
+      title: "Test Yourself with Quizzes",
+      desc: "Turn your files into custom practice quizzes and multiple-choice questions with helpful explanations to help you remember everything."
     }
   ];
 
   // Socratic FAQs
   const faqs = [
     {
-      question: "Is Pathshala AI different from generic chatbots?",
-      answer: "Yes. Traditional chatbots generate immediate direct copy-paste answers, encouraging passive scrolling. Pathshala AI utilizes the Socratic method—guiding you with inquiries, conceptual checkpoints, and custom active recall prompts to help you learn deeply, not just complete tasks."
+      question: "Is Pathshala AI different from standard AI tools?",
+      answer: "Yes. Standard AI chatbots just copy and paste the answers for you, which doesn't help you learn. Pathshala AI acts like a real teacher—asking you helpful questions and guiding you step-by-step so you actually understand the concepts."
     },
     {
-      question: "Can it understand complex scanned textbooks?",
-      answer: "Absolutely. Our pipeline parses files, analyzing tables, headers, and text formatting. It chunks this data to cache it into your private Vector DB, allowing your AI tutor to retrieve and explain concepts accurately."
+      question: "Can it read scanned textbooks and custom PDFs?",
+      answer: "Absolutely. Our app reads through tables, headings, and formatting in your files. It securely saves this information in your private study space so your AI study guide can explain concepts perfectly using your own materials."
     },
     {
       question: "Is my study data secure and private?",
-      answer: "Yes, privacy is our first principle. All files uploaded to Pathshala AI are sandboxed and fully isolated. They are never utilized to train public LLMs or accessed by any third party."
+      answer: "Yes, privacy is our primary focus. All files you upload are kept completely private and isolated to your account. Your files are never shared with anyone else and are never used to train public AI models."
     }
   ];
 
@@ -179,7 +179,7 @@ export default function Home() {
             transition={{ delay: 0.2 }}
             className="text-base text-brand-charcoal/70 max-w-2xl mx-auto leading-relaxed sm:text-lg"
           >
-            An elegant Socratic tutor that refrains from just copying answers. Upload textbook PDFs, query concepts step-by-step, and test retention with instant quizzes.
+            A friendly AI study partner that helps you learn instead of just copying answers. Upload your textbook PDFs, ask questions step-by-step, and practice with custom quizzes.
           </motion.p>
 
           <motion.div 
@@ -217,11 +217,11 @@ export default function Home() {
                 <div className="h-2.5 w-2.5 rounded-full bg-yellow-400"></div>
                 <div className="h-2.5 w-2.5 rounded-full bg-green-400"></div>
                 <span className="text-[10px] font-bold text-brand-charcoal/50 uppercase ml-2 tracking-wider">
-                  Live Socratic Dialogue Preview
+                  Live Chat Preview
                 </span>
               </div>
               <span className="text-[9px] font-semibold bg-brand-brown/15 text-brand-brown px-2 py-0.5 rounded-full">
-                Pedagogy: Active
+                AI Guide: Step-by-Step
               </span>
             </div>
 
@@ -281,7 +281,7 @@ export default function Home() {
               className="absolute -top-6 -right-12 hidden md:flex items-center gap-1.5 rounded-full bg-white border border-brand-beige/80 px-3.5 py-1.5 shadow-md shadow-brand-brown/5 text-[10px] font-bold text-brand-charcoal select-none"
             >
               <ShieldCheck className="h-3.5 w-3.5 text-brand-brown animate-pulse" />
-              🔒 Sandbox Isolated
+              🔒 100% Private & Secure
             </motion.div>
 
             <motion.div
@@ -290,7 +290,7 @@ export default function Home() {
               className="absolute -bottom-6 -left-12 hidden md:flex items-center gap-1.5 rounded-full bg-white border border-brand-beige/80 px-3.5 py-1.5 shadow-md shadow-brand-brown/5 text-[10px] font-bold text-brand-charcoal select-none"
             >
               <Sparkles className="h-3.5 w-3.5 text-brand-brown animate-pulse" />
-              🧠 Socratic Pedagogy
+              🧠 Active Learning Guide
             </motion.div>
           </motion.div>
         </div>
@@ -301,10 +301,10 @@ export default function Home() {
         <div className="mx-auto max-w-6xl">
           <div className="text-center max-w-xl mx-auto mb-16 space-y-2">
             <h2 className="font-display text-2xl font-bold tracking-tight text-brand-charcoal sm:text-3xl">
-              Engineered for Deep Retention
+              Designed to Help You Learn Deeply
             </h2>
             <p className="text-sm text-brand-charcoal/70">
-              Our educational pipeline leverages Socratic dialogues and active recall to build long-term conceptual mastery.
+              Our study space uses step-by-step chat guidance and custom practice quizzes to help you remember concepts easily.
             </p>
           </div>
 
@@ -347,13 +347,13 @@ export default function Home() {
               viewport={{ once: true }}
               className="inline-flex items-center gap-1 rounded-full bg-brand-brown/10 border border-brand-brown/20 px-3 py-1 text-[10px] font-bold text-brand-brown uppercase tracking-wider select-none"
             >
-              The Learning Cycle
+              How It Works
             </motion.div>
             <h2 className="font-display text-2xl font-bold tracking-tight text-brand-charcoal sm:text-3xl">
               How Pathshala AI Works
             </h2>
             <p className="text-sm text-brand-charcoal/70">
-              Our closed-loop pedagogical system is designed for active retention, deep comprehension, and complete sandboxed security.
+              Our friendly study space is built to help you learn, practice, and keep your notes 100% secure.
             </p>
           </div>
 
@@ -403,7 +403,7 @@ export default function Home() {
               Frequently Asked Questions
             </h2>
             <p className="text-sm text-brand-charcoal/70 max-w-md mx-auto">
-              Clear clarifications regarding tutoring styles, file privacy, and technology specifications.
+              Have questions about how Pathshala AI works? Here are some simple answers.
             </p>
           </div>
 
@@ -454,7 +454,7 @@ export default function Home() {
               <img src="/logo.png" alt="Pathshala AI Logo" className="h-14 w-auto object-contain" />
             </div>
             <p className="text-xs text-brand-charcoal/65 leading-relaxed max-w-xs">
-              Reframing educational technology through cognitive Socratic inquiry and structured active recall metrics.
+              Helping you study better with interactive questions and custom practice quizzes.
             </p>
           </div>
 

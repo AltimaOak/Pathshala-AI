@@ -51,7 +51,7 @@ export default function Quiz() {
           Quiz Generator
         </h2>
         <p className="text-sm text-brand-charcoal/70 mt-1">
-          Generate custom assessments directly from your uploaded materials or custom learning topics to test your active recall.
+          Create practice quizzes from your uploaded files or any study topic to test your knowledge.
         </p>
       </div>
 
@@ -153,10 +153,10 @@ export default function Quiz() {
                   </span>
                 </span>
                 <h3 className="font-display text-base font-bold text-brand-charcoal mt-4 mb-1">
-                  Synthesizing Socratic Questions
+                  Creating Your Practice Quiz
                 </h3>
                 <p className="text-xs text-brand-charcoal/60 max-w-xs">
-                  Parsing notes, forming conceptual connections, and generating MCQs...
+                  Reading notes, finding key ideas, and making practice questions...
                 </p>
               </motion.div>
             )}
@@ -166,7 +166,7 @@ export default function Quiz() {
                 <EmptyState
                   illustrationType="quiz"
                   title="No quizzes generated yet"
-                  description="Customize the parameters on the left to generate your first active recall assessment. The platform is ready for your input."
+                  description="Choose the topic and question settings on the left to create your first practice quiz."
                   actionLabel="Start Quiz Config"
                   onAction={() => document.getElementById('topic').focus()}
                 />
@@ -187,7 +187,7 @@ export default function Quiz() {
                       {activeQuiz.difficulty} Difficulty
                     </span>
                     <h3 className="font-display text-lg font-bold text-brand-charcoal mt-1">
-                      Assessment: {activeQuiz.topic}
+                      Quiz Topic: {activeQuiz.topic}
                     </h3>
                   </div>
                   <button
@@ -212,7 +212,7 @@ export default function Quiz() {
                         {q.options.map((opt, oIdx) => (
                           <button
                             key={oIdx}
-                            onClick={() => alert(oIdx === q.answerIdx ? "Correct Answer! That represents Socratic active recall." : "Nice try! Review the topic again to expand your conceptual model.")}
+                            onClick={() => alert(oIdx === q.answerIdx ? "Correct! Great job." : "Nice try! Review the topic again to find the correct answer.")}
                             className="w-full text-left rounded-xl border border-brand-beige hover:border-brand-brown hover:bg-brand-cream/40 p-4 text-xs font-medium text-brand-charcoal transition-all hover:translate-x-0.5"
                           >
                             {opt}

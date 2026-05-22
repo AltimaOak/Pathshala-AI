@@ -111,7 +111,7 @@ export default function Upload() {
               <EmptyState
                 illustrationType="pdf"
                 title="No uploaded documents yet"
-                description="Your study materials inventory is currently empty. Drop a textbook PDF above to initialize your Socratic tutor memory."
+                description="Your study materials are currently empty. Drop a textbook PDF above so your AI study guide can answer questions based on your notes."
                 actionLabel="Upload Your First Document"
                 onAction={() => document.getElementById('file-upload-input').click()}
               />
@@ -160,15 +160,15 @@ export default function Upload() {
             <ul className="space-y-3.5 text-xs text-brand-charcoal/70 leading-relaxed text-left">
               <li className="flex gap-2">
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-cream text-[10px] font-bold text-brand-brown">1</span>
-                <span>Our AI ingests the document text, figures, and structural layout.</span>
+                <span>Our AI reads the document text, sections, and structural layouts.</span>
               </li>
               <li className="flex gap-2">
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-cream text-[10px] font-bold text-brand-brown">2</span>
-                <span>Chunks are vectorized and cached in a private, sandboxed vector db.</span>
+                <span>Your files are securely processed and saved in your private study space.</span>
               </li>
               <li className="flex gap-2">
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-cream text-[10px] font-bold text-brand-brown">3</span>
-                <span>The Socratic Chat utilizes these chunks to cross-reference concepts.</span>
+                <span>The AI Study Buddy uses your files to give you accurate step-by-step guidance.</span>
               </li>
             </ul>
           </div>
@@ -176,10 +176,10 @@ export default function Upload() {
           <div className="rounded-2xl border border-brand-beige bg-yellow-50/45 p-6 border-l-4 border-l-brand-brown">
             <h3 className="font-display text-sm font-bold text-brand-charcoal mb-2 flex items-center gap-2">
               <AlertCircle className="h-4.5 w-4.5 text-brand-brown" />
-              SaaS Storage Quota
+              Study Storage Limit
             </h3>
             <p className="text-xs text-brand-charcoal/65 leading-relaxed text-left">
-              On the Free Tier, your workspace is allocated up to <strong>50 MB</strong> of sandboxed vector storage. Upgrade to Pro for unlimited files.
+              On the Free Tier, your account is allocated up to <strong>50 MB</strong> of secure study space. You can upload multiple textbooks, chapters, and notes!
             </p>
           </div>
         </div>
