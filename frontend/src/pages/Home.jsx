@@ -14,30 +14,240 @@ import {
 } from 'lucide-react';
 import { LandingNavbar } from '../components';
 
+// Premium preloader Framer Motion variants
+const overlayVariants = {
+  initial: { opacity: 1, y: 0 },
+  exit: {
+    opacity: 0,
+    y: "-100%",
+    transition: {
+      duration: 0.7,
+      ease: [0.76, 0, 0.24, 1],
+      when: "afterChildren"
+    }
+  }
+};
+
+const textContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+      delayChildren: 0.2,
+    }
+  },
+  exit: {
+    opacity: 0,
+    filter: "blur(12px)",
+    y: -20,
+    transition: {
+      duration: 0.5,
+      ease: [0.76, 0, 0.24, 1]
+    }
+  }
+};
+
+const textWrapperVariants = {
+  hidden: { letterSpacing: "0.25em" },
+  visible: {
+    letterSpacing: "0.06em",
+    transition: {
+      duration: 1.5,
+      ease: [0.16, 1, 0.3, 1]
+    }
+  }
+};
+
+const charVariants = {
+  hidden: { 
+    opacity: 0, 
+    y: 15,
+    scale: 0.9,
+    filter: "blur(4px)",
+  },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    scale: 1,
+    filter: "blur(0px)",
+    transition: {
+      type: "spring",
+      damping: 14,
+      stiffness: 110,
+    }
+  }
+};
+
+const subtextVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: {
+    opacity: 0.5,
+    y: 0,
+    transition: {
+      delay: 1.0,
+      duration: 0.6,
+      ease: "easeOut"
+    }
+  }
+};
+
+const logoContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      duration: 0.3
+    }
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.92,
+    filter: "blur(10px)",
+    transition: {
+      duration: 0.5,
+      ease: [0.76, 0, 0.24, 1]
+    }
+  }
+};
+
+const logoVariants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.75,
+    rotate: -15,
+    filter: "blur(12px)",
+  },
+  visible: {
+    opacity: 1,
+    scale: [0.75, 1.04, 1],
+    rotate: [-15, 4, 0],
+    filter: "blur(0px)",
+    transition: {
+      duration: 1.1,
+      ease: [0.16, 1, 0.3, 1],
+    }
+  }
+};
+
+const logoGlowVariants = {
+  hidden: { opacity: 0, scale: 0.5 },
+  visible: {
+    opacity: 1,
+    scale: [0.5, 1.1, 1],
+    transition: {
+      duration: 1.3,
+      ease: "easeOut"
+    }
+  }
+};
+
+// Synchronized Landing Page reveal variants
+const navbarVariants = {
+  hidden: { opacity: 0, y: -25 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: "easeOut"
+    }
+  }
+};
+
+const badgeIntroVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut"
+    }
+  }
+};
+
+const titleVariants = {
+  hidden: { opacity: 0, y: 22 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      duration: 0.7,
+      ease: [0.16, 1, 0.3, 1]
+    }
+  }
+};
+
+const subtitleVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: "easeOut"
+    }
+  }
+};
+
+const ctaVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut"
+    }
+  }
+};
+
+const widgetVariants = {
+  hidden: { opacity: 0, y: 35, scale: 0.97 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    scale: 1,
+    transition: {
+      type: "spring",
+      stiffness: 80,
+      damping: 16
+    }
+  }
+};
+
 // Public Landing Page
 export default function Home() {
   const [activeFaq, setActiveFaq] = useState(null);
 
-  // Simulated preloader state
+  // Cinematic preloader state transitions
+  const [loaderStep, setLoaderStep] = useState(1);
+  const [revealContent, setRevealContent] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-            setIsLoading(false);
-          }, 350);
-          return 100;
-        }
-        const increment = Math.floor(Math.random() * 20) + 8;
-        return Math.min(prev + increment, 100);
-      });
-    }, 90);
+    // Step 1: Text reveal animation runs from 0s to 1.8s
+    const textTimer = setTimeout(() => {
+      setLoaderStep(2);
+    }, 1800);
 
-    return () => clearInterval(interval);
+    // Step 2: Logo reveal runs from 1.8s to 3.8s
+    // At 3.8s, the curtain reveal transitions into the landing page
+    const revealTimer = setTimeout(() => {
+      setRevealContent(true);
+    }, 3800);
+
+    // At 4.3s, the preloader is fully unmounted
+    const completeTimer = setTimeout(() => {
+      setIsLoading(false);
+    }, 4300);
+
+    return () => {
+      clearTimeout(textTimer);
+      clearTimeout(revealTimer);
+      clearTimeout(completeTimer);
+    };
   }, []);
 
   // Simulated Chat Dialogue states for Hero preview
@@ -169,70 +379,103 @@ export default function Home() {
     <div className="min-h-screen bg-brand-cream text-brand-charcoal overflow-x-hidden selection:bg-brand-brown selection:text-white">
       
       {/* Brand Preloader Overlay */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {isLoading && (
           <motion.div
-            key="preloader"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0, y: -20, transition: { duration: 0.5, ease: [0.76, 0, 0.24, 1] } }}
-            className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-brand-cream"
+            key="preloader-curtain"
+            variants={overlayVariants}
+            initial="initial"
+            exit="exit"
+            className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#0F0E0D]"
           >
-            <div className="relative flex flex-col items-center text-center px-6 max-w-sm w-full">
-              {/* Pulsing book-brain brand logo */}
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: [1, 1.05, 1], opacity: 1 }}
-                transition={{
-                  scale: { repeat: Infinity, duration: 1.8, ease: "easeInOut" },
-                  opacity: { duration: 0.4 }
-                }}
-                className="mb-8"
-              >
-                <img 
-                  src="/logo.png" 
-                  alt="Pathshala AI Logo" 
-                  className="h-20 w-auto object-contain drop-shadow-[0_0_15px_rgba(200,162,124,0.2)]" 
-                />
-              </motion.div>
+            {/* Ambient Background Gold/Warm Radial Mesh */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(200,162,124,0.06)_0%,transparent_65%)] pointer-events-none" />
 
-              {/* Title & Subtitle */}
-              <motion.h2 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.15 }}
-                className="font-display text-lg font-bold text-brand-charcoal"
-              >
-                Pathshala AI
-              </motion.h2>
-              <motion.p 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.6 }}
-                transition={{ delay: 0.25 }}
-                className="text-[10px] uppercase font-bold tracking-widest text-brand-charcoal/50 mt-1"
-              >
-                Setting up your study space...
-              </motion.p>
-
-              {/* Glowing Progress bar */}
-              <div className="w-full mt-8 space-y-2">
-                <div className="h-1.5 w-full rounded-full bg-brand-beige/40 border border-brand-beige/25 overflow-hidden">
+            <AnimatePresence mode="wait">
+              {loaderStep === 1 ? (
+                /* STEP 1: Text reveal with stagger and character spacing */
+                <motion.div
+                  key="loader-text-step"
+                  variants={textContainerVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  className="flex flex-col items-center text-center px-6 max-w-lg w-full relative z-10"
+                >
+                  <motion.h2 
+                    variants={textWrapperVariants}
+                    className="font-display text-3xl md:text-4xl font-extrabold uppercase text-white tracking-widest"
+                  >
+                    {"PATHSHALA AI".split("").map((char, index) => (
+                      <motion.span
+                        key={index}
+                        variants={charVariants}
+                        className="inline-block font-sans"
+                        style={{ 
+                          marginRight: char === " " ? "0.4em" : "0.02em",
+                        }}
+                      >
+                        {char}
+                      </motion.span>
+                    ))}
+                  </motion.h2>
+                  <motion.p
+                    variants={subtextVariants}
+                    className="text-[10px] uppercase font-bold tracking-[0.2em] text-[#C8A27C] mt-4"
+                  >
+                    Your Personal AI Study Partner
+                  </motion.p>
+                </motion.div>
+              ) : (
+                /* STEP 2: Brand Logo reveal with rotation, scale, blur, and dashed halo ring */
+                <motion.div
+                  key="loader-logo-step"
+                  variants={logoContainerVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  className="relative flex flex-col items-center justify-center p-12 text-center"
+                >
+                  {/* Halo Ambient Glowing Backdrop */}
                   <motion.div 
-                    className="h-full bg-brand-brown shadow-[0_0_8px_rgba(200,162,124,0.4)] transition-all duration-100"
-                    style={{ width: `${progress}%` }}
-                  ></motion.div>
-                </div>
-                <div className="flex justify-between items-center text-[10px] font-bold text-brand-charcoal/50 px-0.5">
-                  <span>{progress}%</span>
-                  <span>Beta Sandbox 1.0</span>
-                </div>
-              </div>
-            </div>
+                    variants={logoGlowVariants}
+                    className="absolute h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(200,162,124,0.18)_0%,transparent_70%)] blur-xl pointer-events-none"
+                  />
+
+                  {/* Thin elegant spinning dashed halo */}
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 15, ease: "linear" }}
+                    className="absolute h-36 w-36 rounded-full border border-dashed border-brand-brown/25"
+                  />
+
+                  {/* High fidelity book-brain brand logo */}
+                  <motion.div
+                    variants={logoVariants}
+                    className="relative z-10 flex items-center justify-center"
+                  >
+                    <img 
+                      src="/logo.png" 
+                      alt="Pathshala AI Logo" 
+                      className="h-20 w-auto object-contain drop-shadow-[0_0_20px_rgba(200,162,124,0.25)]" 
+                    />
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Landing Sticky Glass Navbar */}
-      <LandingNavbar />
+      <motion.div
+        variants={navbarVariants}
+        initial="hidden"
+        animate={revealContent ? "visible" : "hidden"}
+        className="w-full relative z-40"
+      >
+        <LandingNavbar />
+      </motion.div>
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 px-6">
@@ -241,8 +484,9 @@ export default function Home() {
         
         <div className="mx-auto max-w-5xl text-center space-y-6 relative">
           <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
+            variants={badgeIntroVariants}
+            initial="hidden"
+            animate={revealContent ? "visible" : "hidden"}
             className="inline-flex items-center gap-1.5 rounded-full bg-brand-brown/10 border border-brand-brown/20 px-3.5 py-1 text-xs font-bold text-brand-brown"
           >
             <Sparkles className="h-3.5 w-3.5 animate-pulse" />
@@ -250,27 +494,27 @@ export default function Home() {
           </motion.div>
 
           <motion.h1 
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+            variants={titleVariants}
+            initial="hidden"
+            animate={revealContent ? "visible" : "hidden"}
             className="font-display text-4xl font-extrabold tracking-tight text-brand-charcoal sm:text-5xl md:text-6xl max-w-4xl mx-auto leading-tight"
           >
             Your Personal <span className="text-brand-brown">AI Learning</span> Companion
           </motion.h1>
 
           <motion.p 
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            variants={subtitleVariants}
+            initial="hidden"
+            animate={revealContent ? "visible" : "hidden"}
             className="text-base text-brand-charcoal/70 max-w-2xl mx-auto leading-relaxed sm:text-lg"
           >
             A friendly AI study partner that helps you learn instead of just copying answers. Upload your textbook PDFs, ask questions step-by-step, and practice with custom quizzes.
           </motion.p>
 
           <motion.div 
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+            variants={ctaVariants}
+            initial="hidden"
+            animate={revealContent ? "visible" : "hidden"}
             className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-4"
           >
             <Link
@@ -290,9 +534,9 @@ export default function Home() {
 
           {/* Animated Interactive Socratic Chat Preview Widget */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, type: "spring", stiffness: 80 }}
+            variants={widgetVariants}
+            initial="hidden"
+            animate={revealContent ? "visible" : "hidden"}
             className="relative mx-auto mt-16 max-w-xl rounded-2xl border border-brand-beige bg-white/75 p-5 shadow-xl backdrop-blur-md select-none text-left"
           >
             {/* Header elements for preview card */}
@@ -361,21 +605,35 @@ export default function Home() {
 
             {/* Decorative Floating Badges */}
             <motion.div
-              animate={{ y: [0, -6, 0] }}
-              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-              className="absolute -top-6 -right-12 hidden md:flex items-center gap-1.5 rounded-full bg-white border border-brand-beige/80 px-3.5 py-1.5 shadow-md shadow-brand-brown/5 text-[10px] font-bold text-brand-charcoal select-none"
+              initial={{ opacity: 0, y: 20 }}
+              animate={revealContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ delay: 0.8, duration: 0.6 }}
+              className="absolute -top-6 -right-12 hidden md:flex"
             >
-              <ShieldCheck className="h-3.5 w-3.5 text-brand-brown animate-pulse" />
-              🔒 100% Private & Secure
+              <motion.div
+                animate={{ y: [0, -6, 0] }}
+                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                className="flex items-center gap-1.5 rounded-full bg-white border border-brand-beige/80 px-3.5 py-1.5 shadow-md shadow-brand-brown/5 text-[10px] font-bold text-brand-charcoal select-none"
+              >
+                <ShieldCheck className="h-3.5 w-3.5 text-brand-brown animate-pulse" />
+                🔒 100% Private & Secure
+              </motion.div>
             </motion.div>
 
             <motion.div
-              animate={{ y: [0, 6, 0] }}
-              transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut" }}
-              className="absolute -bottom-6 -left-12 hidden md:flex items-center gap-1.5 rounded-full bg-white border border-brand-beige/80 px-3.5 py-1.5 shadow-md shadow-brand-brown/5 text-[10px] font-bold text-brand-charcoal select-none"
+              initial={{ opacity: 0, y: 20 }}
+              animate={revealContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ delay: 0.9, duration: 0.6 }}
+              className="absolute -bottom-6 -left-12 hidden md:flex"
             >
-              <Sparkles className="h-3.5 w-3.5 text-brand-brown animate-pulse" />
-              🧠 Active Learning Guide
+              <motion.div
+                animate={{ y: [0, 6, 0] }}
+                transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut" }}
+                className="flex items-center gap-1.5 rounded-full bg-white border border-brand-beige/80 px-3.5 py-1.5 shadow-md shadow-brand-brown/5 text-[10px] font-bold text-brand-charcoal select-none"
+              >
+                <Sparkles className="h-3.5 w-3.5 text-brand-brown animate-pulse" />
+                🧠 Active Learning Guide
+              </motion.div>
             </motion.div>
           </motion.div>
         </div>
