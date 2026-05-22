@@ -754,7 +754,8 @@ export default function Home() {
                 variants={widgetVariants}
                 initial="hidden"
                 animate={revealContent ? "visible" : "hidden"}
-                className="w-full max-w-[430px] rounded-3xl border border-white/50 bg-white/70 shadow-[0_24px_50px_-12px_rgba(200,162,124,0.25)] backdrop-blur-xl select-none text-left relative z-10 overflow-hidden"
+                whileTap={{ scale: 0.98 }}
+                className="w-full max-w-[430px] rounded-3xl border border-white/50 bg-white/70 shadow-[0_24px_50px_-12px_rgba(200,162,124,0.25)] backdrop-blur-xl select-none text-left relative z-10 overflow-hidden cursor-pointer"
               >
                 {/* Simulated browser topbar */}
                 <div className="flex items-center justify-between border-b border-brand-beige/40 bg-brand-cream/40 px-5 py-4">
@@ -888,7 +889,9 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.1 }}
-                  className="rounded-2xl border border-brand-beige bg-white p-6 shadow-sm hover:border-brand-brown/40 transition-colors text-left"
+                  whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                  whileTap={{ scale: 0.95 }}
+                  className="rounded-2xl border border-brand-beige bg-white p-6 shadow-sm hover:border-brand-brown/40 transition-all duration-200 text-left cursor-pointer select-none"
                 >
                   <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-brand-cream border border-brand-beige">
                     <FeatIcon className="h-5 w-5 text-brand-brown" />
@@ -941,7 +944,8 @@ export default function Home() {
                   viewport={{ once: true }}
                   transition={{ type: "spring", stiffness: 100, damping: 15, delay: idx * 0.15 }}
                   whileHover={{ y: -6, transition: { duration: 0.2 } }}
-                  className="relative z-10 rounded-2xl border border-brand-beige bg-white p-6 shadow-sm flex flex-col items-center text-center group hover:border-brand-brown/40 transition-colors"
+                  whileTap={{ scale: 0.95 }}
+                  className="relative z-10 rounded-2xl border border-brand-beige bg-white p-6 shadow-sm flex flex-col items-center text-center group hover:border-brand-brown/40 transition-all duration-200 cursor-pointer select-none"
                 >
                   {/* Step Number Badge */}
                   <span className="absolute top-4 right-4 font-mono text-[10px] font-bold text-brand-brown bg-brand-brown/10 border border-brand-brown/25 px-2.5 py-0.5 rounded-full select-none animate-pulse">
@@ -979,9 +983,11 @@ export default function Home() {
 
           <div className="space-y-3.5 text-left">
             {faqs.map((faq, idx) => (
-              <div 
+              <motion.div 
                 key={idx} 
-                className="rounded-xl border border-brand-beige bg-white shadow-sm overflow-hidden"
+                whileHover={{ scale: 1.005 }}
+                whileTap={{ scale: 0.995 }}
+                className="rounded-xl border border-brand-beige bg-white shadow-sm overflow-hidden cursor-pointer"
               >
                 <button
                   onClick={() => setActiveFaq(activeFaq === idx ? null : idx)}
@@ -1008,7 +1014,7 @@ export default function Home() {
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
