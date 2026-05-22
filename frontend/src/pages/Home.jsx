@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { 
   GraduationCap, 
   ArrowRight, 
@@ -250,6 +250,49 @@ export default function Home() {
     };
   }, []);
 
+  // Mouse coordinates for 3D parallax effect
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  // Smooth springs for mouse movements
+  const springConfig = { damping: 25, stiffness: 100 };
+  const smoothMouseX = useSpring(mouseX, springConfig);
+  const smoothMouseY = useSpring(mouseY, springConfig);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      // Calculate normalized position relative to center (-0.5 to 0.5)
+      const { innerWidth, innerHeight } = window;
+      const x = (e.clientX / innerWidth) - 0.5;
+      const y = (e.clientY / innerHeight) - 0.5;
+      mouseX.set(x);
+      mouseY.set(y);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [mouseX, mouseY]);
+
+  // Deep Background Layer parallax transforms (subtle shift)
+  const bgConstellationX = useTransform(smoothMouseX, [-0.5, 0.5], [-12, 12]);
+  const bgConstellationY = useTransform(smoothMouseY, [-0.5, 0.5], [-12, 12]);
+
+  // Graduation Cap (Top-Left) parallax transforms
+  const capParallaxX = useTransform(smoothMouseX, [-0.5, 0.5], [-25, 25]);
+  const capParallaxY = useTransform(smoothMouseY, [-0.5, 0.5], [-25, 25]);
+
+  // Holographic Study Notes (Bottom-Left) parallax transforms
+  const notesParallaxX = useTransform(smoothMouseX, [-0.5, 0.5], [-35, 35]);
+  const notesParallaxY = useTransform(smoothMouseY, [-0.5, 0.5], [-35, 35]);
+
+  // AI Brain Glass Orb (Top-Right) parallax transforms
+  const orbParallaxX = useTransform(smoothMouseX, [-0.5, 0.5], [-30, 30]);
+  const orbParallaxY = useTransform(smoothMouseY, [-0.5, 0.5], [-30, 30]);
+
+  // Isometric 3D Book (Bottom-Right) parallax transforms
+  const bookParallaxX = useTransform(smoothMouseX, [-0.5, 0.5], [-22, 22]);
+  const bookParallaxY = useTransform(smoothMouseY, [-0.5, 0.5], [-22, 22]);
+
   // Simulated Chat Dialogue states for Hero preview
   const [isTyping, setIsTyping] = useState(false);
   const [visibleMessages, setVisibleMessages] = useState([]);
@@ -481,6 +524,190 @@ export default function Home() {
       <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 px-6">
         {/* Floating gradient mesh background */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 h-[450px] w-[450px] rounded-full bg-brand-brown/10 blur-3xl opacity-60"></div>
+
+        {/* Ambient 3D Floating Elements Margin Layer */}
+        {revealContent && (
+          <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-10 hidden lg:block">
+            {/* Soft Blurred Gradient Blobs behind elements */}
+            <div className="absolute top-12 left-10 h-72 w-72 rounded-full bg-brand-brown/5 blur-3xl opacity-40 animate-pulse" style={{ animationDuration: '8s' }}></div>
+            <div className="absolute bottom-20 right-10 h-80 w-80 rounded-full bg-brand-beige/25 blur-3xl opacity-50 animate-pulse" style={{ animationDuration: '10s' }}></div>
+
+            {/* Neural Network Constellations Background Layer */}
+            <motion.div
+              style={{ x: bgConstellationX, y: bgConstellationY }}
+              animate={{ rotate: [0, 360] }}
+              transition={{ repeat: Infinity, duration: 120, ease: "linear" }}
+              className="absolute top-[10%] left-[-5%] h-[400px] w-[400px] opacity-15 pointer-events-none"
+            >
+              <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="40" cy="60" r="3" fill="#C8A27C" />
+                <circle cx="160" cy="50" r="2.5" fill="#C8A27C" />
+                <circle cx="100" cy="150" r="4" fill="#8C6A4A" />
+                <circle cx="30" cy="140" r="2.5" fill="#C8A27C" />
+                <circle cx="170" cy="130" r="3" fill="#8C6A4A" />
+                <line x1="40" y1="60" x2="160" y2="50" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
+                <line x1="40" y1="60" x2="100" y2="150" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
+                <line x1="160" y1="50" x2="100" y2="150" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
+                <line x1="40" y1="60" x2="30" y2="140" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
+                <line x1="30" y1="140" x2="100" y2="150" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
+                <line x1="170" y1="130" x2="160" y2="50" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
+                <line x1="170" y1="130" x2="100" y2="150" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
+              </svg>
+            </motion.div>
+
+            <motion.div
+              style={{ x: bgConstellationX, y: bgConstellationY }}
+              animate={{ rotate: [360, 0] }}
+              transition={{ repeat: Infinity, duration: 140, ease: "linear" }}
+              className="absolute bottom-[-10%] right-[-5%] h-[400px] w-[400px] opacity-15 pointer-events-none"
+            >
+              <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="3" fill="#C8A27C" />
+                <circle cx="150" cy="60" r="2.5" fill="#8C6A4A" />
+                <circle cx="90" cy="130" r="3.5" fill="#C8A27C" />
+                <circle cx="40" cy="120" r="2" fill="#8C6A4A" />
+                <circle cx="160" cy="140" r="3" fill="#C8A27C" />
+                <line x1="50" y1="50" x2="150" y2="60" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
+                <line x1="50" y1="50" x2="90" y2="130" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
+                <line x1="150" y1="60" x2="90" y2="130" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
+                <line x1="50" y1="50" x2="40" y2="120" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
+                <line x1="40" y1="120" x2="90" y2="130" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
+                <line x1="160" y1="140" x2="150" y2="60" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
+                <line x1="160" y1="140" x2="90" y2="130" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
+              </svg>
+            </motion.div>
+
+            {/* ELEMENT 1: 3D Graduation Cap (Top-Left Margin) */}
+            <motion.div
+              style={{ x: capParallaxX, y: capParallaxY }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.5, duration: 0.8 }}
+              className="absolute top-[18%] left-[4%] xl:left-[8%] h-24 w-24 z-20"
+            >
+              <motion.div
+                animate={{ y: [0, -10, 0], rotate: [0, 3, -3, 0] }}
+                transition={{ repeat: Infinity, duration: 6.8, ease: "easeInOut" }}
+                className="w-full h-full drop-shadow-[0_10px_20px_rgba(200,162,124,0.15)] filter blur-[0.4px] hover:blur-none transition-all duration-300 cursor-pointer"
+              >
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                  <path d="M50 20 L85 32 L50 44 L15 32 Z" fill="#C8A27C" opacity="0.95" stroke="#8C6A4A" strokeWidth="1"/>
+                  <path d="M30 40 L30 50 C30 56, 70 56, 70 50 L70 40 L50 46 Z" fill="#8C6A4A" stroke="#C8A27C" strokeWidth="1"/>
+                  <ellipse cx="50" cy="32" rx="3.5" ry="1.8" fill="#FAF7F2"/>
+                  <path d="M50 32 Q68 34, 76 46 L78 56" stroke="#E8DCCF" strokeWidth="1.8" fill="none"/>
+                  <rect x="76" y="54" width="4" height="8" fill="#E8DCCF" rx="1"/>
+                </svg>
+              </motion.div>
+            </motion.div>
+
+            {/* ELEMENT 2: Holographic Study Notes (Bottom-Left Margin) */}
+            <motion.div
+              style={{ x: notesParallaxX, y: notesParallaxY }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.7, duration: 0.8 }}
+              className="absolute bottom-[20%] left-[3%] xl:left-[7%] h-28 w-28 z-20"
+            >
+              <motion.div
+                animate={{ y: [0, 12, 0], rotate: [0, -4, 4, 0] }}
+                transition={{ repeat: Infinity, duration: 7.4, ease: "easeInOut" }}
+                className="w-full h-full drop-shadow-[0_12px_24px_rgba(200,162,124,0.12)] cursor-pointer"
+              >
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                  <path d="M30 20 L80 26 L70 80 L20 74 Z" fill="#FFFFFF" fillOpacity="0.45" stroke="white" strokeWidth="1.5" strokeOpacity="0.75" style={{ backdropFilter: 'blur(6px)' }} />
+                  <path d="M36 34 L68 38" stroke="#C8A27C" strokeWidth="3" opacity="0.65" strokeLinecap="round"/>
+                  <path d="M33 46 L65 50" stroke="#C8A27C" strokeWidth="3" opacity="0.65" strokeLinecap="round"/>
+                  <path d="M30 58 L54 61" stroke="#8C6A4A" strokeWidth="3" opacity="0.55" strokeLinecap="round"/>
+                  <path d="M70 66 L72 61 L77 60 L73 56 L74 51 L69 54 L64 52 L67 57 L63 61 L68 61 Z" fill="#C8A27C" opacity="0.85"/>
+                </svg>
+              </motion.div>
+            </motion.div>
+
+            {/* ELEMENT 3: AI Brain Glass Orb (Top-Right Margin) */}
+            <motion.div
+              style={{ x: orbParallaxX, y: orbParallaxY }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.6, duration: 0.8 }}
+              className="absolute top-[15%] right-[4%] xl:right-[8%] h-28 w-28 z-20"
+            >
+              <motion.div
+                animate={{ y: [0, -14, 0], rotate: [0, 5, -5, 0] }}
+                transition={{ repeat: Infinity, duration: 8.2, ease: "easeInOut" }}
+                className="w-full h-full drop-shadow-[0_15px_30px_rgba(200,162,124,0.22)] filter blur-[0.2px] hover:blur-none transition-all duration-300 cursor-pointer"
+              >
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                  <defs>
+                    <radialGradient id="orbGrad" cx="35%" cy="35%" r="65%">
+                      <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95"/>
+                      <stop offset="35%" stopColor="#FAF7F2" stopOpacity="0.45"/>
+                      <stop offset="75%" stopColor="#E8DCCF" stopOpacity="0.25"/>
+                      <stop offset="100%" stopColor="#C8A27C" stopOpacity="0.55"/>
+                    </radialGradient>
+                    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                      <feGaussianBlur stdDeviation="5" result="blur" />
+                      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                    </filter>
+                  </defs>
+                  <circle cx="50" cy="50" r="41" fill="#C8A27C" opacity="0.25" filter="url(#glow)"/>
+                  <circle cx="50" cy="50" r="37" fill="url(#orbGrad)" stroke="#C8A27C" strokeWidth="1.5" strokeOpacity="0.45"/>
+                  <path d="M38 50 Q50 35 62 50 T50 72 Z" stroke="#C8A27C" strokeWidth="1" strokeDasharray="3 2" opacity="0.6"/>
+                  <circle cx="50" cy="38" r="3" fill="#C8A27C" filter="url(#glow)"/>
+                  <circle cx="38" cy="50" r="3.5" fill="#8C6A4A" filter="url(#glow)"/>
+                  <circle cx="62" cy="50" r="2.5" fill="#C8A27C" filter="url(#glow)"/>
+                  <circle cx="50" cy="62" r="3" fill="#E8DCCF" filter="url(#glow)"/>
+                  <line x1="50" y1="38" x2="38" y2="50" stroke="#C8A27C" strokeWidth="0.8" opacity="0.45"/>
+                  <line x1="50" y1="38" x2="62" y2="50" stroke="#C8A27C" strokeWidth="0.8" opacity="0.45"/>
+                  <line x1="38" y1="50" x2="50" y2="62" stroke="#C8A27C" strokeWidth="0.8" opacity="0.45"/>
+                  <line x1="62" y1="50" x2="50" y2="62" stroke="#C8A27C" strokeWidth="0.8" opacity="0.45"/>
+                  <line x1="38" y1="50" x2="62" y2="50" stroke="#C8A27C" strokeWidth="0.8" opacity="0.45"/>
+                </svg>
+              </motion.div>
+            </motion.div>
+
+            {/* ELEMENT 4: Isometric 3D Book (Bottom-Right Margin) */}
+            <motion.div
+              style={{ x: bookParallaxX, y: bookParallaxY }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.8, duration: 0.8 }}
+              className="absolute bottom-[16%] right-[3%] xl:right-[7%] h-26 w-26 z-20"
+            >
+              <motion.div
+                animate={{ y: [0, -10, 0], rotate: [0, -3, 3, 0] }}
+                transition={{ repeat: Infinity, duration: 6.2, ease: "easeInOut" }}
+                className="w-full h-full drop-shadow-[0_12px_24px_rgba(200,162,124,0.18)] filter blur-[0.3px] hover:blur-none transition-all duration-300 cursor-pointer"
+              >
+                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                  <path d="M50 30 L20 45 L20 75 L50 60 Z" fill="#C8A27C" opacity="0.95" />
+                  <path d="M50 30 L80 45 L80 75 L50 60 Z" fill="#E8DCCF" opacity="0.95" />
+                  <path d="M50 30 L50 60" stroke="#8C6A4A" strokeWidth="2.5" />
+                  <path d="M50 34 L24 47 L24 72 L50 59 Z" fill="#FAF7F2" />
+                  <path d="M50 34 L76 47 L76 72 L50 59 Z" fill="#FFFFFF" />
+                  <path d="M50 35 L50 41" stroke="#C8A27C" strokeWidth="2" />
+                  <path d="M50 50 L50 56" stroke="#C8A27C" strokeWidth="2" />
+                </svg>
+              </motion.div>
+            </motion.div>
+
+            {/* ELEMENT 5: Tiny floating abstract AI symbols (Scattered stars) */}
+            <motion.div
+              animate={{ y: [0, 8, 0], opacity: [0.3, 0.7, 0.3] }}
+              transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut" }}
+              className="absolute top-[45%] left-[2%] xl:left-[5%] text-brand-brown/50"
+            >
+              <Sparkles className="h-5 w-5" />
+            </motion.div>
+            
+            <motion.div
+              animate={{ y: [0, -8, 0], opacity: [0.3, 0.7, 0.3] }}
+              transition={{ repeat: Infinity, duration: 5.2, ease: "easeInOut" }}
+              className="absolute top-[50%] right-[2%] xl:right-[5%] text-brand-brown/50"
+            >
+              <Sparkles className="h-5 w-5" />
+            </motion.div>
+          </div>
+        )}
         
         <div className="mx-auto max-w-5xl text-center space-y-6 relative">
           <motion.div 
