@@ -18,6 +18,28 @@ import { LandingNavbar } from '../components';
 export default function Home() {
   const [activeFaq, setActiveFaq] = useState(null);
 
+  // Simulated preloader state
+  const [isLoading, setIsLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 350);
+          return 100;
+        }
+        const increment = Math.floor(Math.random() * 20) + 8;
+        return Math.min(prev + increment, 100);
+      });
+    }, 90);
+
+    return () => clearInterval(interval);
+  }, []);
+
   // Simulated Chat Dialogue states for Hero preview
   const [isTyping, setIsTyping] = useState(false);
   const [visibleMessages, setVisibleMessages] = useState([]);
@@ -146,6 +168,69 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-brand-cream text-brand-charcoal overflow-x-hidden selection:bg-brand-brown selection:text-white">
       
+      {/* Brand Preloader Overlay */}
+      <AnimatePresence>
+        {isLoading && (
+          <motion.div
+            key="preloader"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, y: -20, transition: { duration: 0.5, ease: [0.76, 0, 0.24, 1] } }}
+            className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-brand-cream"
+          >
+            <div className="relative flex flex-col items-center text-center px-6 max-w-sm w-full">
+              {/* Pulsing book-brain brand logo */}
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: [1, 1.05, 1], opacity: 1 }}
+                transition={{
+                  scale: { repeat: Infinity, duration: 1.8, ease: "easeInOut" },
+                  opacity: { duration: 0.4 }
+                }}
+                className="mb-8"
+              >
+                <img 
+                  src="/logo.png" 
+                  alt="Pathshala AI Logo" 
+                  className="h-20 w-auto object-contain drop-shadow-[0_0_15px_rgba(200,162,124,0.2)]" 
+                />
+              </motion.div>
+
+              {/* Title & Subtitle */}
+              <motion.h2 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15 }}
+                className="font-display text-lg font-bold text-brand-charcoal"
+              >
+                Pathshala AI
+              </motion.h2>
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.6 }}
+                transition={{ delay: 0.25 }}
+                className="text-[10px] uppercase font-bold tracking-widest text-brand-charcoal/50 mt-1"
+              >
+                Setting up your study space...
+              </motion.p>
+
+              {/* Glowing Progress bar */}
+              <div className="w-full mt-8 space-y-2">
+                <div className="h-1.5 w-full rounded-full bg-brand-beige/40 border border-brand-beige/25 overflow-hidden">
+                  <motion.div 
+                    className="h-full bg-brand-brown shadow-[0_0_8px_rgba(200,162,124,0.4)] transition-all duration-100"
+                    style={{ width: `${progress}%` }}
+                  ></motion.div>
+                </div>
+                <div className="flex justify-between items-center text-[10px] font-bold text-brand-charcoal/50 px-0.5">
+                  <span>{progress}%</span>
+                  <span>Beta Sandbox 1.0</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Landing Sticky Glass Navbar */}
       <LandingNavbar />
 
