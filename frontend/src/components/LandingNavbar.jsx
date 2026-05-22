@@ -51,10 +51,10 @@ export default function LandingNavbar() {
               Features
             </button>
             <button 
-              onClick={() => handleScrollTo('testimonials')} 
+              onClick={() => handleScrollTo('how-it-works')} 
               className="text-sm font-medium text-brand-charcoal/75 transition-colors hover:text-brand-brown"
             >
-              Testimonials
+              How It Works
             </button>
             <button 
               onClick={() => handleScrollTo('faq')} 
@@ -102,10 +102,10 @@ export default function LandingNavbar() {
               Features
             </button>
             <button 
-              onClick={() => handleScrollTo('testimonials')} 
+              onClick={() => handleScrollTo('how-it-works')} 
               className="text-left text-base font-semibold text-brand-charcoal/85 hover:text-brand-brown transition-colors"
             >
-              Testimonials
+              How It Works
             </button>
             <button 
               onClick={() => handleScrollTo('faq')} 

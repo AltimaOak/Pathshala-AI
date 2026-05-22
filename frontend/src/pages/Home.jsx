@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -10,14 +10,76 @@ import {
   FileText, 
   ShieldCheck, 
   HelpCircle, 
-  ChevronDown,
-  Quote
+  ChevronDown
 } from 'lucide-react';
 import { LandingNavbar } from '../components';
 
 // Public Landing Page
 export default function Home() {
   const [activeFaq, setActiveFaq] = useState(null);
+
+  // Simulated Chat Dialogue states for Hero preview
+  const [isTyping, setIsTyping] = useState(false);
+  const [visibleMessages, setVisibleMessages] = useState([]);
+
+  const demoDialogue = [
+    { sender: 'user', text: "Explain why sound travels faster in warm air." },
+    { sender: 'ai', text: "A great question! Let's think about temperature. What is temperature a measure of, at the molecular level?" },
+    { sender: 'user', text: "It's the average kinetic energy of the molecules." },
+    { sender: 'ai', text: "Exactly! So in warmer air, how do you think the molecules behave when a pressure wave travels through them?" }
+  ];
+
+  useEffect(() => {
+    let active = true;
+    
+    const runDialogue = async () => {
+      if (!active) return;
+      setVisibleMessages([]);
+      setIsTyping(false);
+      
+      const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+      
+      await sleep(1000);
+      
+      // Step 0: User Msg
+      if (!active) return;
+      setVisibleMessages(prev => [...prev, demoDialogue[0]]);
+      
+      // Step 1: AI Typing
+      await sleep(1200);
+      if (!active) return;
+      setIsTyping(true);
+      await sleep(1500);
+      if (!active) return;
+      setIsTyping(false);
+      setVisibleMessages(prev => [...prev, demoDialogue[1]]);
+      
+      // Step 2: User Msg
+      await sleep(2200);
+      if (!active) return;
+      setVisibleMessages(prev => [...prev, demoDialogue[2]]);
+      
+      // Step 3: AI Typing
+      await sleep(1200);
+      if (!active) return;
+      setIsTyping(true);
+      await sleep(1500);
+      if (!active) return;
+      setIsTyping(false);
+      setVisibleMessages(prev => [...prev, demoDialogue[3]]);
+      
+      // Hold for final read, then restart
+      await sleep(5500);
+      if (active) {
+        runDialogue();
+      }
+    };
+    
+    runDialogue();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   // Bento features data
   const features = [
@@ -43,18 +105,25 @@ export default function Home() {
     }
   ];
 
-
-  // Testimonials data
-  const testimonials = [
+  // How it works steps data
+  const steps = [
     {
-      quote: "Pathshala AI behaves like a real tutor. It refuses to copy answers, prompting me to figure out physics formulas on my own.",
-      author: "Aditya Y.",
-      role: "Engineering Student"
+      step: "01",
+      icon: FileText,
+      title: "Index Your Materials",
+      desc: "Drop textbook chapters, PDF study guides, or lecture notes. Our pipeline chunks and indexes the content securely into your sandboxed Vector DB."
     },
     {
-      quote: "The ability to generate instant conceptual quizzes directly from my history PDF notes has completely re-shaped my revision routine.",
-      author: "Sneha M.",
-      role: "Medical Candidate"
+      step: "02",
+      icon: MessageSquare,
+      title: "Interactive Socratic Chat",
+      desc: "Converse with your AI Study Buddy. Instead of giving flat, copy-paste answers, it guides your deductive thinking with conceptual prompts."
+    },
+    {
+      step: "03",
+      icon: BookOpen,
+      title: "Active Recall Compiler",
+      desc: "Trigger active retention by compiling custom mock quizzes and conceptual MCQs directly from your files with real pedagogical feedback."
     }
   ];
 
@@ -133,6 +202,97 @@ export default function Home() {
               Explore Features
             </a>
           </motion.div>
+
+          {/* Animated Interactive Socratic Chat Preview Widget */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, type: "spring", stiffness: 80 }}
+            className="relative mx-auto mt-16 max-w-xl rounded-2xl border border-brand-beige bg-white/75 p-5 shadow-xl backdrop-blur-md select-none text-left"
+          >
+            {/* Header elements for preview card */}
+            <div className="flex items-center justify-between border-b border-brand-beige/50 pb-3 mb-4">
+              <div className="flex items-center gap-2">
+                <div className="h-2.5 w-2.5 rounded-full bg-red-400"></div>
+                <div className="h-2.5 w-2.5 rounded-full bg-yellow-400"></div>
+                <div className="h-2.5 w-2.5 rounded-full bg-green-400"></div>
+                <span className="text-[10px] font-bold text-brand-charcoal/50 uppercase ml-2 tracking-wider">
+                  Live Socratic Dialogue Preview
+                </span>
+              </div>
+              <span className="text-[9px] font-semibold bg-brand-brown/15 text-brand-brown px-2 py-0.5 rounded-full">
+                Pedagogy: Active
+              </span>
+            </div>
+
+            {/* Chat message space */}
+            <div className="space-y-4 min-h-[160px] flex flex-col justify-end">
+              <AnimatePresence>
+                {visibleMessages.map((msg, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className={`flex items-start gap-2.5 max-w-[85%] ${msg.sender === 'user' ? 'ml-auto flex-row-reverse' : ''}`}
+                  >
+                    <div className={`flex h-6.5 w-6.5 shrink-0 items-center justify-center rounded-lg border text-[10px] font-bold ${
+                      msg.sender === 'user' ? 'bg-brand-cream border-brand-beige text-brand-charcoal' : 'bg-brand-brown border-brand-brown/20 text-white'
+                    }`}>
+                      {msg.sender === 'user' ? 'S' : 'P'}
+                    </div>
+                    <div className={`rounded-xl px-3.5 py-2 text-[11px] shadow-sm border ${
+                      msg.sender === 'user' 
+                        ? 'bg-brand-cream/60 border-brand-beige text-brand-charcoal rounded-tr-none' 
+                        : 'bg-white border-brand-beige text-brand-charcoal rounded-tl-none leading-relaxed font-medium'
+                    }`}>
+                      <p className="font-semibold">{msg.text}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+
+              {/* Typing Dot indicator */}
+              {isTyping && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-start gap-2.5 max-w-[85%]"
+                >
+                  <div className="flex h-6.5 w-6.5 shrink-0 items-center justify-center rounded-lg border bg-brand-brown border-brand-brown/20 text-white text-[10px] font-bold">
+                    P
+                  </div>
+                  <div className="rounded-xl rounded-tl-none border border-brand-beige bg-white px-3.5 py-2 shadow-sm">
+                    <div className="flex items-center gap-1">
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-brown/40"></span>
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-brown/70 [animation-delay:0.2s]"></span>
+                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-brown [animation-delay:0.4s]"></span>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </div>
+
+            {/* Decorative Floating Badges */}
+            <motion.div
+              animate={{ y: [0, -6, 0] }}
+              transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+              className="absolute -top-6 -right-12 hidden md:flex items-center gap-1.5 rounded-full bg-white border border-brand-beige/80 px-3.5 py-1.5 shadow-md shadow-brand-brown/5 text-[10px] font-bold text-brand-charcoal select-none"
+            >
+              <ShieldCheck className="h-3.5 w-3.5 text-brand-brown animate-pulse" />
+              🔒 Sandbox Isolated
+            </motion.div>
+
+            <motion.div
+              animate={{ y: [0, 6, 0] }}
+              transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut" }}
+              className="absolute -bottom-6 -left-12 hidden md:flex items-center gap-1.5 rounded-full bg-white border border-brand-beige/80 px-3.5 py-1.5 shadow-md shadow-brand-brown/5 text-[10px] font-bold text-brand-charcoal select-none"
+            >
+              <Sparkles className="h-3.5 w-3.5 text-brand-brown animate-pulse" />
+              🧠 Socratic Pedagogy
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
@@ -177,42 +337,60 @@ export default function Home() {
       </section>
 
 
-      {/* Minimal Testimonials */}
-      <section id="testimonials" className="py-20 px-6 bg-white/35 border-t border-b border-brand-beige/50">
+      {/* Socratic How It Works Section */}
+      <section id="how-it-works" className="py-20 md:py-28 px-6 bg-white/35 border-t border-b border-brand-beige/50">
         <div className="mx-auto max-w-5xl">
           <div className="text-center max-w-xl mx-auto mb-16 space-y-2">
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="inline-flex items-center gap-1 rounded-full bg-brand-brown/10 border border-brand-brown/20 px-3 py-1 text-[10px] font-bold text-brand-brown uppercase tracking-wider select-none"
+            >
+              The Learning Cycle
+            </motion.div>
             <h2 className="font-display text-2xl font-bold tracking-tight text-brand-charcoal sm:text-3xl">
-              Praise for Socratic Dialogue
+              How Pathshala AI Works
             </h2>
             <p className="text-sm text-brand-charcoal/70">
-              See how learners accelerate their understanding using Pathshala AI.
+              Our closed-loop pedagogical system is designed for active retention, deep comprehension, and complete sandboxed security.
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 max-w-4xl mx-auto">
-            {testimonials.map((test, idx) => (
-              <div 
-                key={idx}
-                className="rounded-2xl border border-brand-beige bg-white p-6 shadow-sm flex flex-col justify-between text-left"
-              >
-                <div className="space-y-4">
-                  <Quote className="h-6 w-6 text-brand-brown/30" />
-                  <p className="text-xs font-semibold text-brand-charcoal/80 leading-relaxed italic">
-                    "{test.quote}"
-                  </p>
-                </div>
-                
-                <div className="mt-6 border-t border-brand-beige/40 pt-4 flex justify-between items-center">
-                  <div>
-                    <h4 className="font-display text-xs font-bold text-brand-charcoal">{test.author}</h4>
-                    <p className="text-[10px] text-brand-charcoal/50 font-semibold">{test.role}</p>
-                  </div>
-                  <span className="flex h-5 w-5 items-center justify-center rounded bg-brand-cream text-[9px] font-bold text-brand-brown">
-                    ★
+          <div className="grid gap-8 md:grid-cols-3 relative">
+            {/* Connecting decorative dotted line for desktop */}
+            <div className="hidden md:block absolute top-1/2 left-[12%] right-[12%] h-0.5 border-t-2 border-dashed border-brand-beige -translate-y-12 z-0"></div>
+            
+            {steps.map((step, idx) => {
+              const StepIcon = step.icon;
+              return (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ type: "spring", stiffness: 100, damping: 15, delay: idx * 0.15 }}
+                  whileHover={{ y: -6, transition: { duration: 0.2 } }}
+                  className="relative z-10 rounded-2xl border border-brand-beige bg-white p-6 shadow-sm flex flex-col items-center text-center group hover:border-brand-brown/40 transition-colors"
+                >
+                  {/* Step Number Badge */}
+                  <span className="absolute top-4 right-4 font-mono text-[10px] font-bold text-brand-brown bg-brand-brown/10 border border-brand-brown/25 px-2.5 py-0.5 rounded-full select-none animate-pulse">
+                    Step {step.step}
                   </span>
-                </div>
-              </div>
-            ))}
+
+                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-cream border border-brand-beige group-hover:scale-105 transition-transform">
+                    <StepIcon className="h-6 w-6 text-brand-brown" />
+                  </div>
+                  
+                  <h3 className="font-display text-sm font-bold text-brand-charcoal mb-2 group-hover:text-brand-brown transition-colors">
+                    {step.title}
+                  </h3>
+                  <p className="text-xs text-brand-charcoal/65 leading-relaxed">
+                    {step.desc}
+                  </p>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
