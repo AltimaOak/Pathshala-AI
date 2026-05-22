@@ -521,348 +521,348 @@ export default function Home() {
       </motion.div>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 px-6">
-        {/* Floating gradient mesh background */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 h-[450px] w-[450px] rounded-full bg-brand-brown/10 blur-3xl opacity-60"></div>
+      <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 px-6 bg-dot-grid overflow-hidden">
+        {/* Ambient drifting glowing blobs */}
+        <div className="absolute top-10 left-10 w-96 h-96 rounded-full bg-amber-200/25 blur-3xl animate-drift-slow pointer-events-none" />
+        <div className="absolute bottom-10 right-10 w-[450px] h-[450px] rounded-full bg-[#E8DCCF]/45 blur-3xl animate-drift-slower pointer-events-none" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 h-[550px] w-[550px] rounded-full bg-brand-brown/15 blur-3xl opacity-70 pointer-events-none" />
 
-        {/* Ambient 3D Floating Elements Margin Layer */}
-        {revealContent && (
-          <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-10 hidden lg:block">
-            {/* Soft Blurred Gradient Blobs behind elements */}
-            <div className="absolute top-12 left-10 h-72 w-72 rounded-full bg-brand-brown/5 blur-3xl opacity-40 animate-pulse" style={{ animationDuration: '8s' }}></div>
-            <div className="absolute bottom-20 right-10 h-80 w-80 rounded-full bg-brand-beige/25 blur-3xl opacity-50 animate-pulse" style={{ animationDuration: '10s' }}></div>
-
-            {/* Neural Network Constellations Background Layer */}
-            <motion.div
-              style={{ x: bgConstellationX, y: bgConstellationY }}
-              animate={{ rotate: [0, 360] }}
-              transition={{ repeat: Infinity, duration: 120, ease: "linear" }}
-              className="absolute top-[10%] left-[-5%] h-[400px] w-[400px] opacity-15 pointer-events-none"
-            >
-              <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="40" cy="60" r="3" fill="#C8A27C" />
-                <circle cx="160" cy="50" r="2.5" fill="#C8A27C" />
-                <circle cx="100" cy="150" r="4" fill="#8C6A4A" />
-                <circle cx="30" cy="140" r="2.5" fill="#C8A27C" />
-                <circle cx="170" cy="130" r="3" fill="#8C6A4A" />
-                <line x1="40" y1="60" x2="160" y2="50" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
-                <line x1="40" y1="60" x2="100" y2="150" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
-                <line x1="160" y1="50" x2="100" y2="150" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
-                <line x1="40" y1="60" x2="30" y2="140" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
-                <line x1="30" y1="140" x2="100" y2="150" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
-                <line x1="170" y1="130" x2="160" y2="50" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
-                <line x1="170" y1="130" x2="100" y2="150" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
-              </svg>
-            </motion.div>
-
-            <motion.div
-              style={{ x: bgConstellationX, y: bgConstellationY }}
-              animate={{ rotate: [360, 0] }}
-              transition={{ repeat: Infinity, duration: 140, ease: "linear" }}
-              className="absolute bottom-[-10%] right-[-5%] h-[400px] w-[400px] opacity-15 pointer-events-none"
-            >
-              <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="3" fill="#C8A27C" />
-                <circle cx="150" cy="60" r="2.5" fill="#8C6A4A" />
-                <circle cx="90" cy="130" r="3.5" fill="#C8A27C" />
-                <circle cx="40" cy="120" r="2" fill="#8C6A4A" />
-                <circle cx="160" cy="140" r="3" fill="#C8A27C" />
-                <line x1="50" y1="50" x2="150" y2="60" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
-                <line x1="50" y1="50" x2="90" y2="130" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
-                <line x1="150" y1="60" x2="90" y2="130" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
-                <line x1="50" y1="50" x2="40" y2="120" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
-                <line x1="40" y1="120" x2="90" y2="130" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
-                <line x1="160" y1="140" x2="150" y2="60" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
-                <line x1="160" y1="140" x2="90" y2="130" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
-              </svg>
-            </motion.div>
-
-            {/* ELEMENT 1: 3D Graduation Cap (Top-Left Margin) */}
-            <motion.div
-              style={{ x: capParallaxX, y: capParallaxY }}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
-              className="absolute top-[18%] left-[4%] xl:left-[8%] h-24 w-24 z-20"
-            >
-              <motion.div
-                animate={{ y: [0, -10, 0], rotate: [0, 3, -3, 0] }}
-                transition={{ repeat: Infinity, duration: 6.8, ease: "easeInOut" }}
-                className="w-full h-full drop-shadow-[0_10px_20px_rgba(200,162,124,0.15)] filter blur-[0.4px] hover:blur-none transition-all duration-300 cursor-pointer"
-              >
-                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                  <path d="M50 20 L85 32 L50 44 L15 32 Z" fill="#C8A27C" opacity="0.95" stroke="#8C6A4A" strokeWidth="1"/>
-                  <path d="M30 40 L30 50 C30 56, 70 56, 70 50 L70 40 L50 46 Z" fill="#8C6A4A" stroke="#C8A27C" strokeWidth="1"/>
-                  <ellipse cx="50" cy="32" rx="3.5" ry="1.8" fill="#FAF7F2"/>
-                  <path d="M50 32 Q68 34, 76 46 L78 56" stroke="#E8DCCF" strokeWidth="1.8" fill="none"/>
-                  <rect x="76" y="54" width="4" height="8" fill="#E8DCCF" rx="1"/>
-                </svg>
-              </motion.div>
-            </motion.div>
-
-            {/* ELEMENT 2: Holographic Study Notes (Bottom-Left Margin) */}
-            <motion.div
-              style={{ x: notesParallaxX, y: notesParallaxY }}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.7, duration: 0.8 }}
-              className="absolute bottom-[20%] left-[3%] xl:left-[7%] h-28 w-28 z-20"
-            >
-              <motion.div
-                animate={{ y: [0, 12, 0], rotate: [0, -4, 4, 0] }}
-                transition={{ repeat: Infinity, duration: 7.4, ease: "easeInOut" }}
-                className="w-full h-full drop-shadow-[0_12px_24px_rgba(200,162,124,0.12)] cursor-pointer"
-              >
-                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                  <path d="M30 20 L80 26 L70 80 L20 74 Z" fill="#FFFFFF" fillOpacity="0.45" stroke="white" strokeWidth="1.5" strokeOpacity="0.75" style={{ backdropFilter: 'blur(6px)' }} />
-                  <path d="M36 34 L68 38" stroke="#C8A27C" strokeWidth="3" opacity="0.65" strokeLinecap="round"/>
-                  <path d="M33 46 L65 50" stroke="#C8A27C" strokeWidth="3" opacity="0.65" strokeLinecap="round"/>
-                  <path d="M30 58 L54 61" stroke="#8C6A4A" strokeWidth="3" opacity="0.55" strokeLinecap="round"/>
-                  <path d="M70 66 L72 61 L77 60 L73 56 L74 51 L69 54 L64 52 L67 57 L63 61 L68 61 Z" fill="#C8A27C" opacity="0.85"/>
-                </svg>
-              </motion.div>
-            </motion.div>
-
-            {/* ELEMENT 3: AI Brain Glass Orb (Top-Right Margin) */}
-            <motion.div
-              style={{ x: orbParallaxX, y: orbParallaxY }}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.6, duration: 0.8 }}
-              className="absolute top-[15%] right-[4%] xl:right-[8%] h-28 w-28 z-20"
-            >
-              <motion.div
-                animate={{ y: [0, -14, 0], rotate: [0, 5, -5, 0] }}
-                transition={{ repeat: Infinity, duration: 8.2, ease: "easeInOut" }}
-                className="w-full h-full drop-shadow-[0_15px_30px_rgba(200,162,124,0.22)] filter blur-[0.2px] hover:blur-none transition-all duration-300 cursor-pointer"
-              >
-                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                  <defs>
-                    <radialGradient id="orbGrad" cx="35%" cy="35%" r="65%">
-                      <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95"/>
-                      <stop offset="35%" stopColor="#FAF7F2" stopOpacity="0.45"/>
-                      <stop offset="75%" stopColor="#E8DCCF" stopOpacity="0.25"/>
-                      <stop offset="100%" stopColor="#C8A27C" stopOpacity="0.55"/>
-                    </radialGradient>
-                    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                      <feGaussianBlur stdDeviation="5" result="blur" />
-                      <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                    </filter>
-                  </defs>
-                  <circle cx="50" cy="50" r="41" fill="#C8A27C" opacity="0.25" filter="url(#glow)"/>
-                  <circle cx="50" cy="50" r="37" fill="url(#orbGrad)" stroke="#C8A27C" strokeWidth="1.5" strokeOpacity="0.45"/>
-                  <path d="M38 50 Q50 35 62 50 T50 72 Z" stroke="#C8A27C" strokeWidth="1" strokeDasharray="3 2" opacity="0.6"/>
-                  <circle cx="50" cy="38" r="3" fill="#C8A27C" filter="url(#glow)"/>
-                  <circle cx="38" cy="50" r="3.5" fill="#8C6A4A" filter="url(#glow)"/>
-                  <circle cx="62" cy="50" r="2.5" fill="#C8A27C" filter="url(#glow)"/>
-                  <circle cx="50" cy="62" r="3" fill="#E8DCCF" filter="url(#glow)"/>
-                  <line x1="50" y1="38" x2="38" y2="50" stroke="#C8A27C" strokeWidth="0.8" opacity="0.45"/>
-                  <line x1="50" y1="38" x2="62" y2="50" stroke="#C8A27C" strokeWidth="0.8" opacity="0.45"/>
-                  <line x1="38" y1="50" x2="50" y2="62" stroke="#C8A27C" strokeWidth="0.8" opacity="0.45"/>
-                  <line x1="62" y1="50" x2="50" y2="62" stroke="#C8A27C" strokeWidth="0.8" opacity="0.45"/>
-                  <line x1="38" y1="50" x2="62" y2="50" stroke="#C8A27C" strokeWidth="0.8" opacity="0.45"/>
-                </svg>
-              </motion.div>
-            </motion.div>
-
-            {/* ELEMENT 4: Isometric 3D Book (Bottom-Right Margin) */}
-            <motion.div
-              style={{ x: bookParallaxX, y: bookParallaxY }}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.8, duration: 0.8 }}
-              className="absolute bottom-[16%] right-[3%] xl:right-[7%] h-26 w-26 z-20"
-            >
-              <motion.div
-                animate={{ y: [0, -10, 0], rotate: [0, -3, 3, 0] }}
-                transition={{ repeat: Infinity, duration: 6.2, ease: "easeInOut" }}
-                className="w-full h-full drop-shadow-[0_12px_24px_rgba(200,162,124,0.18)] filter blur-[0.3px] hover:blur-none transition-all duration-300 cursor-pointer"
-              >
-                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                  <path d="M50 30 L20 45 L20 75 L50 60 Z" fill="#C8A27C" opacity="0.95" />
-                  <path d="M50 30 L80 45 L80 75 L50 60 Z" fill="#E8DCCF" opacity="0.95" />
-                  <path d="M50 30 L50 60" stroke="#8C6A4A" strokeWidth="2.5" />
-                  <path d="M50 34 L24 47 L24 72 L50 59 Z" fill="#FAF7F2" />
-                  <path d="M50 34 L76 47 L76 72 L50 59 Z" fill="#FFFFFF" />
-                  <path d="M50 35 L50 41" stroke="#C8A27C" strokeWidth="2" />
-                  <path d="M50 50 L50 56" stroke="#C8A27C" strokeWidth="2" />
-                </svg>
-              </motion.div>
-            </motion.div>
-
-            {/* ELEMENT 5: Tiny floating abstract AI symbols (Scattered stars) */}
-            <motion.div
-              animate={{ y: [0, 8, 0], opacity: [0.3, 0.7, 0.3] }}
-              transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut" }}
-              className="absolute top-[45%] left-[2%] xl:left-[5%] text-brand-brown/50"
-            >
-              <Sparkles className="h-5 w-5" />
-            </motion.div>
-            
-            <motion.div
-              animate={{ y: [0, -8, 0], opacity: [0.3, 0.7, 0.3] }}
-              transition={{ repeat: Infinity, duration: 5.2, ease: "easeInOut" }}
-              className="absolute top-[50%] right-[2%] xl:right-[5%] text-brand-brown/50"
-            >
-              <Sparkles className="h-5 w-5" />
-            </motion.div>
-          </div>
-        )}
-        
-        <div className="mx-auto max-w-5xl text-center space-y-6 relative">
-          <motion.div 
-            variants={badgeIntroVariants}
-            initial="hidden"
-            animate={revealContent ? "visible" : "hidden"}
-            className="inline-flex items-center gap-1.5 rounded-full bg-brand-brown/10 border border-brand-brown/20 px-3.5 py-1 text-xs font-bold text-brand-brown"
-          >
-            <Sparkles className="h-3.5 w-3.5 animate-pulse" />
-            Introducing Pathshala AI
-          </motion.div>
-
-          <motion.h1 
-            variants={titleVariants}
-            initial="hidden"
-            animate={revealContent ? "visible" : "hidden"}
-            className="font-display text-4xl font-extrabold tracking-tight text-brand-charcoal sm:text-5xl md:text-6xl max-w-4xl mx-auto leading-tight"
-          >
-            Your Personal <span className="text-brand-brown">AI Learning</span> Companion
-          </motion.h1>
-
-          <motion.p 
-            variants={subtitleVariants}
-            initial="hidden"
-            animate={revealContent ? "visible" : "hidden"}
-            className="text-base text-brand-charcoal/70 max-w-2xl mx-auto leading-relaxed sm:text-lg"
-          >
-            A friendly AI study partner that helps you learn instead of just copying answers. Upload your textbook PDFs, ask questions step-by-step, and practice with custom quizzes.
-          </motion.p>
-
-          <motion.div 
-            variants={ctaVariants}
-            initial="hidden"
-            animate={revealContent ? "visible" : "hidden"}
-            className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-4"
-          >
-            <Link
-              to="/dashboard"
-              className="group flex w-full sm:w-auto items-center justify-center gap-1.5 rounded-xl bg-brand-brown px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand-brown/15 transition-all hover:bg-brand-brown/95 hover:scale-[1.02] active:scale-[0.98]"
-            >
-              Start Learning Free
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </Link>
-            <a
-              href="#features"
-              className="flex w-full sm:w-auto items-center justify-center gap-1.5 rounded-xl border border-brand-beige bg-white/70 px-6 py-3.5 text-sm font-semibold text-brand-charcoal shadow-sm transition-all hover:bg-white hover:scale-[1.02] active:scale-[0.98]"
-            >
-              Explore Features
-            </a>
-          </motion.div>
-
-          {/* Animated Interactive Socratic Chat Preview Widget */}
+        {/* Ambient background constellation meshes behind the layout */}
+        <div className="absolute inset-0 pointer-events-none select-none z-0 hidden lg:block overflow-hidden">
           <motion.div
-            variants={widgetVariants}
-            initial="hidden"
-            animate={revealContent ? "visible" : "hidden"}
-            className="relative mx-auto mt-16 max-w-xl rounded-2xl border border-brand-beige bg-white/75 p-5 shadow-xl backdrop-blur-md select-none text-left"
+            style={{ x: bgConstellationX, y: bgConstellationY }}
+            animate={{ rotate: [0, 360] }}
+            transition={{ repeat: Infinity, duration: 180, ease: "linear" }}
+            className="absolute top-[10%] left-[-5%] h-[400px] w-[400px] opacity-15 pointer-events-none"
           >
-            {/* Header elements for preview card */}
-            <div className="flex items-center justify-between border-b border-brand-beige/50 pb-3 mb-4">
-              <div className="flex items-center gap-2">
-                <div className="h-2.5 w-2.5 rounded-full bg-red-400"></div>
-                <div className="h-2.5 w-2.5 rounded-full bg-yellow-400"></div>
-                <div className="h-2.5 w-2.5 rounded-full bg-green-400"></div>
-                <span className="text-[10px] font-bold text-brand-charcoal/50 uppercase ml-2 tracking-wider">
-                  Live Chat Preview
-                </span>
-              </div>
-              <span className="text-[9px] font-semibold bg-brand-brown/15 text-brand-brown px-2 py-0.5 rounded-full">
-                AI Guide: Step-by-Step
-              </span>
-            </div>
-
-            {/* Chat message space */}
-            <div className="space-y-4 min-h-[160px] flex flex-col justify-end">
-              <AnimatePresence>
-                {visibleMessages.map((msg, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.25 }}
-                    className={`flex items-start gap-2.5 max-w-[85%] ${msg.sender === 'user' ? 'ml-auto flex-row-reverse' : ''}`}
-                  >
-                    <div className={`flex h-6.5 w-6.5 shrink-0 items-center justify-center rounded-lg border text-[10px] font-bold ${
-                      msg.sender === 'user' ? 'bg-brand-cream border-brand-beige text-brand-charcoal' : 'bg-brand-brown border-brand-brown/20 text-white'
-                    }`}>
-                      {msg.sender === 'user' ? 'S' : 'P'}
-                    </div>
-                    <div className={`rounded-xl px-3.5 py-2 text-[11px] shadow-sm border ${
-                      msg.sender === 'user' 
-                        ? 'bg-brand-cream/60 border-brand-beige text-brand-charcoal rounded-tr-none' 
-                        : 'bg-white border-brand-beige text-brand-charcoal rounded-tl-none leading-relaxed font-medium'
-                    }`}>
-                      <p className="font-semibold">{msg.text}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-
-              {/* Typing Dot indicator */}
-              {isTyping && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex items-start gap-2.5 max-w-[85%]"
-                >
-                  <div className="flex h-6.5 w-6.5 shrink-0 items-center justify-center rounded-lg border bg-brand-brown border-brand-brown/20 text-white text-[10px] font-bold">
-                    P
-                  </div>
-                  <div className="rounded-xl rounded-tl-none border border-brand-beige bg-white px-3.5 py-2 shadow-sm">
-                    <div className="flex items-center gap-1">
-                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-brown/40"></span>
-                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-brown/70 [animation-delay:0.2s]"></span>
-                      <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-brown [animation-delay:0.4s]"></span>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </div>
-
-            {/* Decorative Floating Badges */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={revealContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ delay: 0.8, duration: 0.6 }}
-              className="absolute -top-6 -right-12 hidden md:flex"
-            >
-              <motion.div
-                animate={{ y: [0, -6, 0] }}
-                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                className="flex items-center gap-1.5 rounded-full bg-white border border-brand-beige/80 px-3.5 py-1.5 shadow-md shadow-brand-brown/5 text-[10px] font-bold text-brand-charcoal select-none"
-              >
-                <ShieldCheck className="h-3.5 w-3.5 text-brand-brown animate-pulse" />
-                🔒 100% Private & Secure
-              </motion.div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={revealContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ delay: 0.9, duration: 0.6 }}
-              className="absolute -bottom-6 -left-12 hidden md:flex"
-            >
-              <motion.div
-                animate={{ y: [0, 6, 0] }}
-                transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut" }}
-                className="flex items-center gap-1.5 rounded-full bg-white border border-brand-beige/80 px-3.5 py-1.5 shadow-md shadow-brand-brown/5 text-[10px] font-bold text-brand-charcoal select-none"
-              >
-                <Sparkles className="h-3.5 w-3.5 text-brand-brown animate-pulse" />
-                🧠 Active Learning Guide
-              </motion.div>
-            </motion.div>
+            <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="40" cy="60" r="3" fill="#C8A27C" />
+              <circle cx="160" cy="50" r="2.5" fill="#C8A27C" />
+              <circle cx="100" cy="150" r="4" fill="#8C6A4A" />
+              <circle cx="30" cy="140" r="2.5" fill="#C8A27C" />
+              <circle cx="170" cy="130" r="3" fill="#8C6A4A" />
+              <line x1="40" y1="60" x2="160" y2="50" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
+              <line x1="40" y1="60" x2="100" y2="150" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
+              <line x1="160" y1="50" x2="100" y2="150" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
+              <line x1="40" y1="60" x2="30" y2="140" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
+              <line x1="30" y1="140" x2="100" y2="150" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
+              <line x1="170" y1="130" x2="160" y2="50" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
+              <line x1="170" y1="130" x2="100" y2="150" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
+            </svg>
           </motion.div>
+        </div>
+
+        <div className="mx-auto max-w-7xl relative z-10">
+          <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
+            
+            {/* Left Column: Sales Copy & Core CTAs */}
+            <div className="lg:col-span-7 text-center lg:text-left space-y-7 flex flex-col items-center lg:items-start">
+              <motion.div 
+                variants={badgeIntroVariants}
+                initial="hidden"
+                animate={revealContent ? "visible" : "hidden"}
+                className="inline-flex items-center gap-2 rounded-full bg-brand-brown/10 border border-brand-brown/20 px-4 py-1.5 text-xs font-bold text-brand-brown shadow-sm shadow-brand-brown/5"
+              >
+                <Sparkles className="h-3.5 w-3.5 animate-pulse text-brand-brown" />
+                Introducing Pathshala AI
+              </motion.div>
+
+              <motion.h1 
+                variants={titleVariants}
+                initial="hidden"
+                animate={revealContent ? "visible" : "hidden"}
+                className="font-display text-4xl font-extrabold tracking-tight text-brand-charcoal sm:text-5xl md:text-6xl leading-[1.12] max-w-2xl mx-auto lg:mx-0"
+              >
+                Your Personal <span className="bg-gradient-to-r from-brand-brown via-[#9C7550] to-brand-brown bg-clip-text text-transparent">AI Learning</span> Companion
+              </motion.h1>
+
+              <motion.p 
+                variants={subtitleVariants}
+                initial="hidden"
+                animate={revealContent ? "visible" : "hidden"}
+                className="text-base text-brand-charcoal-light/90 font-medium max-w-2xl mx-auto lg:mx-0 leading-relaxed sm:text-lg"
+              >
+                A friendly, private study partner that guides you step-by-step instead of just handing you answers. Upload textbook PDFs, learn active concepts, and test yourself with customized quizzes.
+              </motion.p>
+
+              <motion.div 
+                variants={ctaVariants}
+                initial="hidden"
+                animate={revealContent ? "visible" : "hidden"}
+                className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-3 w-full sm:w-auto"
+              >
+                <Link
+                  to="/dashboard"
+                  className="group flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-brand-brown px-7 py-4 text-sm font-bold text-white shadow-lg shadow-brand-brown/20 transition-all hover:bg-brand-brown/95 hover:shadow-xl hover:shadow-brand-brown/30 hover:scale-[1.03] active:scale-[0.97]"
+                >
+                  Start Learning Free
+                  <ArrowRight className="h-4.5 w-4.5 transition-transform group-hover:translate-x-1" />
+                </Link>
+                <a
+                  href="#features"
+                  className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-brand-beige bg-white/50 backdrop-blur-md px-7 py-4 text-sm font-bold text-brand-charcoal shadow-sm transition-all hover:bg-white hover:scale-[1.03] hover:border-brand-brown/30 active:scale-[0.97]"
+                >
+                  Explore Features
+                </a>
+              </motion.div>
+
+              {/* High-end Value Props for SaaS Visibility */}
+              <motion.div
+                variants={ctaVariants}
+                initial="hidden"
+                animate={revealContent ? "visible" : "hidden"}
+                className="flex flex-wrap items-center justify-center lg:justify-start gap-6 pt-4 text-xs font-semibold text-brand-charcoal/60"
+              >
+                <div className="flex items-center gap-1.5">
+                  <ShieldCheck className="h-4.5 w-4.5 text-brand-brown" />
+                  100% Private Study space
+                </div>
+                <div className="h-1.5 w-1.5 rounded-full bg-brand-beige" />
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className="h-4.5 w-4.5 text-brand-brown" />
+                  Socratic Thinking Methodology
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Right Column: Premium Socratic Preview Interface with Framed Floats */}
+            <div className="lg:col-span-5 relative mt-16 lg:mt-0 flex justify-center z-10">
+              
+              {/* Backlight halo glow under mockup */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[380px] w-[380px] rounded-full bg-gradient-to-tr from-brand-brown/20 to-amber-200/20 blur-3xl pointer-events-none z-0" />
+
+              {/* Integrated Parallax Floating Elements */}
+              {revealContent && (
+                <div className="absolute inset-0 pointer-events-none select-none z-20">
+                  
+                  {/* Graduation Cap (Top-Left of Card) */}
+                  <motion.div
+                    style={{ x: capParallaxX, y: capParallaxY }}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.5, duration: 0.8 }}
+                    className="absolute -top-12 -left-8 h-20 w-20 z-30"
+                  >
+                    <motion.div
+                      animate={{ y: [0, -8, 0], rotate: [0, 3, -3, 0] }}
+                      transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+                      className="w-full h-full drop-shadow-[0_12px_24px_rgba(200,162,124,0.22)] filter hover:brightness-105 transition-all duration-300 cursor-pointer pointer-events-auto"
+                    >
+                      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                        <path d="M50 20 L85 32 L50 44 L15 32 Z" fill="#C8A27C" opacity="0.95" stroke="#8C6A4A" strokeWidth="1"/>
+                        <path d="M30 40 L30 50 C30 56, 70 56, 70 50 L70 40 L50 46 Z" fill="#8C6A4A" stroke="#C8A27C" strokeWidth="1"/>
+                        <ellipse cx="50" cy="32" rx="3.5" ry="1.8" fill="#FAF7F2"/>
+                        <path d="M50 32 Q68 34, 76 46 L78 56" stroke="#E8DCCF" strokeWidth="1.8" fill="none"/>
+                        <rect x="76" y="54" width="4" height="8" fill="#E8DCCF" rx="1"/>
+                      </svg>
+                    </motion.div>
+                  </motion.div>
+
+                  {/* Holographic Study Notes (Bottom-Left of Card) */}
+                  <motion.div
+                    style={{ x: notesParallaxX, y: notesParallaxY }}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.7, duration: 0.8 }}
+                    className="absolute -bottom-8 -left-10 h-22 w-22 z-30"
+                  >
+                    <motion.div
+                      animate={{ y: [0, 10, 0], rotate: [0, -3, 3, 0] }}
+                      transition={{ repeat: Infinity, duration: 7, ease: "easeInOut" }}
+                      className="w-full h-full drop-shadow-[0_10px_20px_rgba(200,162,124,0.18)] filter hover:brightness-105 transition-all duration-300 cursor-pointer pointer-events-auto"
+                    >
+                      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                        <path d="M30 20 L80 26 L70 80 L20 74 Z" fill="#FFFFFF" fillOpacity="0.55" stroke="white" strokeWidth="1.5" strokeOpacity="0.85" style={{ backdropFilter: 'blur(8px)' }} />
+                        <path d="M36 34 L68 38" stroke="#C8A27C" strokeWidth="3" opacity="0.7" strokeLinecap="round"/>
+                        <path d="M33 46 L65 50" stroke="#C8A27C" strokeWidth="3" opacity="0.7" strokeLinecap="round"/>
+                        <path d="M30 58 L54 61" stroke="#8C6A4A" strokeWidth="3" opacity="0.6" strokeLinecap="round"/>
+                        <path d="M70 66 L72 61 L77 60 L73 56 L74 51 L69 54 L64 52 L67 57 L63 61 L68 61 Z" fill="#C8A27C" opacity="0.9"/>
+                      </svg>
+                    </motion.div>
+                  </motion.div>
+
+                  {/* AI Brain Glass Orb (Top-Right of Card) */}
+                  <motion.div
+                    style={{ x: orbParallaxX, y: orbParallaxY }}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.6, duration: 0.8 }}
+                    className="absolute -top-12 -right-8 h-22 w-22 z-30"
+                  >
+                    <motion.div
+                      animate={{ y: [0, -10, 0], rotate: [0, 4, -4, 0] }}
+                      transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
+                      className="w-full h-full drop-shadow-[0_15px_32px_rgba(200,162,124,0.25)] filter hover:brightness-105 transition-all duration-300 cursor-pointer pointer-events-auto"
+                    >
+                      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                        <defs>
+                          <radialGradient id="orbGrad" cx="35%" cy="35%" r="65%">
+                            <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95"/>
+                            <stop offset="35%" stopColor="#FAF7F2" stopOpacity="0.5"/>
+                            <stop offset="75%" stopColor="#E8DCCF" stopOpacity="0.3"/>
+                            <stop offset="100%" stopColor="#C8A27C" stopOpacity="0.6"/>
+                          </radialGradient>
+                          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feGaussianBlur stdDeviation="4" result="blur" />
+                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                          </filter>
+                        </defs>
+                        <circle cx="50" cy="50" r="41" fill="#C8A27C" opacity="0.25" filter="url(#glow)"/>
+                        <circle cx="50" cy="50" r="37" fill="url(#orbGrad)" stroke="#C8A27C" strokeWidth="1.5" strokeOpacity="0.5"/>
+                        <path d="M38 50 Q50 35 62 50 T50 72 Z" stroke="#C8A27C" strokeWidth="1" strokeDasharray="3 2" opacity="0.6"/>
+                        <circle cx="50" cy="38" r="3" fill="#C8A27C" filter="url(#glow)"/>
+                        <circle cx="38" cy="50" r="3.5" fill="#8C6A4A" filter="url(#glow)"/>
+                        <circle cx="62" cy="50" r="2.5" fill="#C8A27C" filter="url(#glow)"/>
+                        <circle cx="50" cy="62" r="3" fill="#E8DCCF" filter="url(#glow)"/>
+                        <line x1="50" y1="38" x2="38" y2="50" stroke="#C8A27C" strokeWidth="0.8" opacity="0.5"/>
+                        <line x1="50" y1="38" x2="62" y2="50" stroke="#C8A27C" strokeWidth="0.8" opacity="0.5"/>
+                        <line x1="38" y1="50" x2="50" y2="62" stroke="#C8A27C" strokeWidth="0.8" opacity="0.5"/>
+                        <line x1="62" y1="50" x2="50" y2="62" stroke="#C8A27C" strokeWidth="0.8" opacity="0.5"/>
+                      </svg>
+                    </motion.div>
+                  </motion.div>
+
+                  {/* Isometric 3D Book (Bottom-Right of Card) */}
+                  <motion.div
+                    style={{ x: bookParallaxX, y: bookParallaxY }}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.8, duration: 0.8 }}
+                    className="absolute -bottom-10 -right-8 h-20 w-20 z-30"
+                  >
+                    <motion.div
+                      animate={{ y: [0, -8, 0], rotate: [0, -3, 3, 0] }}
+                      transition={{ repeat: Infinity, duration: 6.5, ease: "easeInOut" }}
+                      className="w-full h-full drop-shadow-[0_12px_24px_rgba(200,162,124,0.22)] filter hover:brightness-105 transition-all duration-300 cursor-pointer pointer-events-auto"
+                    >
+                      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                        <path d="M50 30 L20 45 L20 75 L50 60 Z" fill="#C8A27C" opacity="0.95" />
+                        <path d="M50 30 L80 45 L80 75 L50 60 Z" fill="#E8DCCF" opacity="0.95" />
+                        <path d="M50 30 L50 60" stroke="#8C6A4A" strokeWidth="2.5" />
+                        <path d="M50 34 L24 47 L24 72 L50 59 Z" fill="#FAF7F2" />
+                        <path d="M50 34 L76 47 L76 72 L50 59 Z" fill="#FFFFFF" />
+                        <path d="M50 35 L50 41" stroke="#C8A27C" strokeWidth="2" />
+                        <path d="M50 50 L50 56" stroke="#C8A27C" strokeWidth="2" />
+                      </svg>
+                    </motion.div>
+                  </motion.div>
+                </div>
+              )}
+
+              {/* Socratic Chat Mockup Card */}
+              <motion.div
+                variants={widgetVariants}
+                initial="hidden"
+                animate={revealContent ? "visible" : "hidden"}
+                className="w-full max-w-[430px] rounded-3xl border border-white/50 bg-white/70 shadow-[0_24px_50px_-12px_rgba(200,162,124,0.25)] backdrop-blur-xl select-none text-left relative z-10 overflow-hidden"
+              >
+                {/* Simulated browser topbar */}
+                <div className="flex items-center justify-between border-b border-brand-beige/40 bg-brand-cream/40 px-5 py-4">
+                  <div className="flex items-center gap-2">
+                    <div className="h-3 w-3 rounded-full bg-[#FF5F56] shadow-sm"></div>
+                    <div className="h-3 w-3 rounded-full bg-[#FFBD2E] shadow-sm"></div>
+                    <div className="h-3 w-3 rounded-full bg-[#27C93F] shadow-sm"></div>
+                    <span className="text-[10px] font-bold text-brand-charcoal/50 uppercase ml-3 tracking-widest font-sans">
+                      LIVE STUDY PREVIEW
+                    </span>
+                  </div>
+                  <span className="text-[9px] font-extrabold bg-brand-brown/15 text-brand-brown px-2.5 py-1 rounded-full uppercase tracking-wider">
+                    Socratic Buddy
+                  </span>
+                </div>
+
+                {/* Simulated Conversation bubbles */}
+                <div className="p-5 space-y-4 min-h-[200px] flex flex-col justify-end bg-gradient-to-b from-white/30 to-brand-cream/10">
+                  <AnimatePresence>
+                    {visibleMessages.map((msg, i) => (
+                      <motion.div
+                        key={i}
+                        initial={{ opacity: 0, y: 12, scale: 0.97 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className={`flex items-start gap-3 max-w-[88%] ${msg.sender === 'user' ? 'ml-auto flex-row-reverse' : ''}`}
+                      >
+                        {/* Bubble avatar badge */}
+                        <div className={`flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-xl border text-[9px] font-bold shadow-sm ${
+                          msg.sender === 'user' 
+                            ? 'bg-brand-beige border-brand-beige/50 text-brand-charcoal' 
+                            : 'bg-brand-brown border-brand-brown/10 text-white'
+                        }`}>
+                          {msg.sender === 'user' ? 'ME' : 'AI'}
+                        </div>
+                        
+                        {/* Dynamic Bubble content */}
+                        <div className={`rounded-2xl px-4 py-2.5 text-xs shadow-sm border ${
+                          msg.sender === 'user' 
+                            ? 'bg-brand-cream/80 border-brand-beige/60 text-brand-charcoal rounded-tr-none font-medium' 
+                            : 'bg-white border-brand-beige/30 text-brand-charcoal rounded-tl-none leading-relaxed font-semibold'
+                        }`}>
+                          <p>{msg.text}</p>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+
+                  {/* Typing Dots */}
+                  {isTyping && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="flex items-start gap-3 max-w-[88%]"
+                    >
+                      <div className="flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-xl border bg-brand-brown border-brand-brown/10 text-white text-[9px] font-bold shadow-sm animate-pulse">
+                        AI
+                      </div>
+                      <div className="rounded-2xl rounded-tl-none border border-brand-beige/40 bg-white px-4 py-3.5 shadow-sm">
+                        <div className="flex items-center gap-1.5">
+                          <span className="h-2 w-2 animate-bounce rounded-full bg-brand-brown/40"></span>
+                          <span className="h-2 w-2 animate-bounce rounded-full bg-brand-brown/70 [animation-delay:0.2s]"></span>
+                          <span className="h-2 w-2 animate-bounce rounded-full bg-brand-brown [animation-delay:0.4s]"></span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </div>
+
+                {/* Floating tooltips docked dynamically */}
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={revealContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
+                  transition={{ delay: 0.8, duration: 0.6 }}
+                  className="absolute -top-7 -right-8 hidden xl:flex z-30"
+                >
+                  <motion.div
+                    animate={{ y: [0, -5, 0] }}
+                    transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut" }}
+                    className="flex items-center gap-1.5 rounded-full bg-white border border-brand-beige/80 px-4 py-2 shadow-md shadow-brand-brown/10 text-[10px] font-bold text-brand-charcoal select-none cursor-default"
+                  >
+                    <ShieldCheck className="h-4 w-4 text-brand-brown" />
+                    🔒 100% Private & Secure
+                  </motion.div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={revealContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
+                  transition={{ delay: 0.9, duration: 0.6 }}
+                  className="absolute -bottom-7 -left-8 hidden xl:flex z-30"
+                >
+                  <motion.div
+                    animate={{ y: [0, 5, 0] }}
+                    transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
+                    className="flex items-center gap-1.5 rounded-full bg-white border border-brand-beige/80 px-4 py-2 shadow-md shadow-brand-brown/10 text-[10px] font-bold text-brand-charcoal select-none cursor-default"
+                  >
+                    <Sparkles className="h-4 w-4 text-brand-brown" />
+                    🧠 Active Socratic Guide
+                  </motion.div>
+                </motion.div>
+
+              </motion.div>
+
+            </div>
+
+          </div>
         </div>
       </section>
 
