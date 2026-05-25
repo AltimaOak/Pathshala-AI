@@ -10,7 +10,14 @@ import {
   FileText, 
   ShieldCheck, 
   HelpCircle, 
-  ChevronDown
+  ChevronDown,
+  Search,
+  ThumbsUp,
+  ThumbsDown,
+  Check,
+  Send,
+  X,
+  MessageCircle
 } from 'lucide-react';
 import { LandingNavbar } from '../components';
 
@@ -221,6 +228,10 @@ const widgetVariants = {
 export default function Home() {
   const [activeFaq, setActiveFaq] = useState(null);
 
+  // Interactive FAQ states
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [faqFeedbacks, setFaqFeedbacks] = useState({});
+
   // Cinematic preloader state transitions
   const [loaderStep, setLoaderStep] = useState(1);
   const [revealContent, setRevealContent] = useState(false);
@@ -405,14 +416,27 @@ export default function Home() {
   // Socratic FAQs
   const faqs = [
     {
+      category: "general",
       question: "Is Pathshala AI different from standard AI tools?",
       answer: "Yes. Standard AI chatbots just copy and paste the answers for you, which doesn't help you learn. Pathshala AI acts like a real teacher—asking you helpful questions and guiding you step-by-step so you actually understand the concepts."
     },
     {
+      category: "socratic",
+      question: "What is the Socratic study method?",
+      answer: "The Socratic method is a learning approach based on asking and answering questions to stimulate critical thinking. Instead of immediately giving you the answer, Pathshala AI asks gentle, guided questions to help you figure it out yourself, enhancing memory retention by up to 4x."
+    },
+    {
+      category: "socratic",
+      question: "Can it generate practice quizzes and tests?",
+      answer: "Absolutely! You can instantly convert any uploaded chapter or lecture note into interactive multiple-choice questions, flashcards, or short-answer quizzes with detailed feedback for every single answer choice."
+    },
+    {
+      category: "security",
       question: "Can it read scanned textbooks and custom PDFs?",
       answer: "Absolutely. Our app reads through tables, headings, and formatting in your files. It securely saves this information in your private study space so your AI study guide can explain concepts perfectly using your own materials."
     },
     {
+      category: "security",
       question: "Is my study data secure and private?",
       answer: "Yes, privacy is our primary focus. All files you upload are kept completely private and isolated to your account. Your files are never shared with anyone else and are never used to train public AI models."
     }
@@ -972,7 +996,7 @@ export default function Home() {
       {/* Socratic FAQ Section */}
       <section id="faq" className="py-20 md:py-28 px-6">
         <div className="mx-auto max-w-3xl">
-          <div className="text-center mb-16 space-y-2">
+          <div className="text-center mb-12 space-y-2">
             <h2 className="font-display text-2xl font-bold tracking-tight text-brand-charcoal sm:text-3xl">
               Frequently Asked Questions
             </h2>
@@ -981,41 +1005,122 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="space-y-3.5 text-left">
-            {faqs.map((faq, idx) => (
-              <motion.div 
-                key={idx} 
-                whileHover={{ scale: 1.005 }}
-                whileTap={{ scale: 0.995 }}
-                className="rounded-xl border border-brand-beige bg-white shadow-sm overflow-hidden cursor-pointer"
+          {/* Category Tabs */}
+          <div className="flex flex-wrap justify-center gap-2 mb-8">
+            {[
+              { id: 'all', label: 'All FAQs' },
+              { id: 'general', label: 'General' },
+              { id: 'socratic', label: 'Socratic Buddy' },
+              { id: 'security', label: 'Privacy & Trust' }
+            ].map(tab => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => { setActiveCategory(tab.id); setActiveFaq(null); }}
+                className={`relative px-4 py-2 rounded-full text-xs font-bold transition-colors duration-300 select-none cursor-pointer ${
+                  activeCategory === tab.id 
+                    ? 'text-white' 
+                    : 'text-brand-charcoal/75 hover:text-brand-charcoal hover:bg-brand-cream/45'
+                }`}
               >
-                <button
-                  onClick={() => setActiveFaq(activeFaq === idx ? null : idx)}
-                  className="flex w-full items-center justify-between p-5 text-left transition-colors hover:bg-brand-cream/10"
-                >
-                  <span className="font-display text-xs font-bold text-brand-charcoal flex gap-2">
-                    <HelpCircle className="h-4.5 w-4.5 text-brand-brown shrink-0" />
-                    {faq.question}
-                  </span>
-                  <ChevronDown className={`h-4.5 w-4.5 text-brand-charcoal/45 transition-transform duration-200 ${activeFaq === idx ? 'rotate-180' : ''}`} />
-                </button>
-
-                <AnimatePresence initial={false}>
-                  {activeFaq === idx && (
-                    <motion.div
-                      initial={{ height: 0 }}
-                      animate={{ height: 'auto' }}
-                      exit={{ height: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <div className="px-5 pb-5 pt-1 border-t border-brand-beige/25 text-xs text-brand-charcoal/70 leading-relaxed pl-11">
-                        {faq.answer}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
+                {activeCategory === tab.id && (
+                  <motion.span
+                    layoutId="activeFaqTab"
+                    className="absolute inset-0 bg-brand-brown rounded-full z-0"
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10">{tab.label}</span>
+              </button>
             ))}
+          </div>
+
+          {/* FAQ Accordion List */}
+          <div className="space-y-3.5 text-left">
+            <AnimatePresence mode="popLayout">
+              {faqs
+                .filter(faq => activeCategory === 'all' || faq.category === activeCategory)
+                .map((faq) => (
+                    <motion.div 
+                      key={faq.question}
+                      layout
+                      initial={{ opacity: 0, scale: 0.99 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.99 }}
+                      transition={{ duration: 0.2 }}
+                      whileHover={{ scale: 1.002 }}
+                      className="rounded-xl border border-brand-beige bg-white shadow-sm overflow-hidden cursor-pointer"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setActiveFaq(activeFaq === faq.question ? null : faq.question)}
+                        className="flex w-full items-center justify-between p-5 text-left transition-colors hover:bg-brand-cream/10"
+                      >
+                        <span className="font-display text-xs font-bold text-brand-charcoal flex gap-2">
+                          <HelpCircle className="h-4.5 w-4.5 text-brand-brown shrink-0" />
+                          {faq.question}
+                        </span>
+                        <ChevronDown className={`h-4.5 w-4.5 text-brand-charcoal/45 transition-transform duration-200 ${activeFaq === faq.question ? 'rotate-180' : ''}`} />
+                      </button>
+
+                      <AnimatePresence initial={false}>
+                        {activeFaq === faq.question && (
+                          <motion.div
+                            initial={{ height: 0 }}
+                            animate={{ height: 'auto' }}
+                            exit={{ height: 0 }}
+                            transition={{ duration: 0.2 }}
+                          >
+                            <div className="px-5 pb-5 pt-1 border-t border-brand-beige/25 text-xs text-brand-charcoal/70 leading-relaxed pl-11">
+                              <div>{faq.answer}</div>
+                              
+                              {/* Helpful feedback row */}
+                              <div className="mt-4 pt-4 border-t border-brand-beige/25 flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px] text-brand-charcoal/50 font-bold">
+                                <span>Was this answer helpful?</span>
+                                <div className="flex gap-2">
+                                  {faqFeedbacks[faq.question] ? (
+                                    <motion.div 
+                                      initial={{ scale: 0.8, opacity: 0 }}
+                                      animate={{ scale: 1, opacity: 1 }}
+                                      className="flex items-center gap-1.5 text-brand-brown bg-brand-brown/10 px-3 py-1 rounded-lg border border-brand-brown/20 font-bold"
+                                    >
+                                      <Check className="h-3.5 w-3.5" />
+                                      {faqFeedbacks[faq.question] === 'helpful' ? 'Glad to help! 🚀' : 'Feedback recorded. Thanks! ✍️'}
+                                    </motion.div>
+                                  ) : (
+                                    <>
+                                      <button
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setFaqFeedbacks(prev => ({ ...prev, [faq.question]: 'helpful' }));
+                                        }}
+                                        className="flex items-center gap-1.5 px-3 py-1 rounded-lg border border-brand-beige bg-brand-cream/35 hover:bg-brand-brown hover:border-brand-brown hover:text-white transition-all duration-200 select-none cursor-pointer active:scale-95"
+                                      >
+                                        <ThumbsUp className="h-3 w-3" /> Yes
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setFaqFeedbacks(prev => ({ ...prev, [faq.question]: 'not-helpful' }));
+                                        }}
+                                        className="flex items-center gap-1.5 px-3 py-1 rounded-lg border border-brand-beige bg-brand-cream/35 hover:bg-brand-brown hover:border-brand-brown hover:text-white transition-all duration-200 select-none cursor-pointer active:scale-95"
+                                      >
+                                        <ThumbsDown className="h-3 w-3" /> No
+                                      </button>
+                                    </>
+                                  )}
+                                </div>
+                              </div>
+
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+                  ))}
+            </AnimatePresence>
           </div>
         </div>
       </section>
