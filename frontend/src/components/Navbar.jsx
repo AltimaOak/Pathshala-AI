@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { Bell, Search } from 'lucide-react';
+import { Bell, Search, Menu } from 'lucide-react';
 import ThemeSelector from './ThemeSelector';
 
 
-export default function Navbar() {
+export default function Navbar({ toggleSidebar }) {
   const location = useLocation();
   const [initials, setInitials] = useState('AY');
 
@@ -49,6 +49,15 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-brand-beige/55 bg-brand-cream/80 px-6 backdrop-blur-md">
       <div className="flex items-center gap-4">
+        {/* Sidebar Menu Toggle Button */}
+        <button
+          onClick={toggleSidebar}
+          className="p-1.5 rounded-lg border border-brand-beige hover:border-brand-brown/40 hover:bg-brand-cream/35 text-brand-charcoal/65 hover:text-brand-brown transition-all cursor-pointer"
+          title="Toggle Navigation Menu"
+        >
+          <Menu className="h-4.5 w-4.5" />
+        </button>
+
         {/* Page Title */}
         <h1 className="text-xl font-semibold tracking-tight text-brand-charcoal font-display">
           {getPageTitle()}

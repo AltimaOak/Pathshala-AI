@@ -9,7 +9,9 @@ import {
   GraduationCap, 
   FileText,
   User,
-  Volume2
+  Volume2,
+  Menu,
+  X
 } from 'lucide-react';
 import { EmptyState } from '../components';
 
@@ -18,6 +20,7 @@ export default function Chat() {
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 768);
   const messagesEndRef = useRef(null);
   const recognitionRef = useRef(null);
 
@@ -224,11 +227,77 @@ export default function Chat() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-8.5rem)] gap-6 overflow-hidden">
+    <div className="flex h-[calc(100vh-8.5rem)] gap-6 overflow-hidden relative">
       
-      {/* Left Chat Sidebar: History Panel - STRICTLY Empty State to start */}
-      <div className="hidden w-64 shrink-0 flex-col rounded-2xl border border-brand-beige bg-white p-4 shadow-sm md:flex">
+      {/* Mobile Drawer Overlay Backdrop */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsSidebarOpen(false)}
+            className="md:hidden fixed inset-0 z-45 bg-[#0F0E0D]/30 backdrop-blur-sm"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Mobile Left Chat Sidebar Drawer */}
+      <motion.div
+        initial={{ x: "-100%" }}
+        animate={{ x: isSidebarOpen ? 0 : "-100%" }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="md:hidden fixed inset-y-0 left-0 z-50 w-64 flex flex-col bg-white p-4 border-r border-brand-beige shadow-2xl h-full"
+      >
         <div className="flex items-center justify-between pb-3 border-b border-brand-beige/50 mb-4">
+          <h3 className="font-display text-xs font-bold uppercase tracking-wider text-brand-charcoal/70">
+            Sessions History
+          </h3>
+          <button
+            onClick={() => setIsSidebarOpen(false)}
+            className="p-1 rounded-lg hover:bg-brand-cream/65 transition-colors cursor-pointer"
+          >
+            <X className="h-4 w-4 text-brand-charcoal/70" />
+          </button>
+        </div>
+
+        <div className="flex-1 flex flex-col justify-center items-center">
+          {messages.length === 0 ? (
+            <div className="text-center p-3 select-none">
+              <MessageSquare className="h-8 w-8 text-brand-brown/30 mx-auto mb-2" />
+              <p className="text-xs font-semibold text-brand-charcoal/65">
+                No active conversations
+              </p>
+              <p className="text-[10px] text-brand-charcoal/45 mt-1 leading-normal">
+                Your study dialog history starts fresh here.
+              </p>
+            </div>
+          ) : (
+            <div className="w-full space-y-1 overflow-y-auto max-h-[400px] text-left">
+              <button 
+                onClick={() => setIsSidebarOpen(false)}
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl bg-brand-cream border border-brand-beige text-xs text-brand-charcoal font-semibold"
+              >
+                <MessageSquare className="h-3.5 w-3.5 text-brand-brown" />
+                <span className="truncate max-w-[120px]">{messages[0].text}</span>
+              </button>
+            </div>
+          )}
+        </div>
+      </motion.div>
+
+      {/* Desktop Left Chat Sidebar: History Panel */}
+      <motion.div
+        initial={false}
+        animate={{
+          width: isSidebarOpen ? 256 : 0,
+          opacity: isSidebarOpen ? 1 : 0,
+          marginRight: isSidebarOpen ? 24 : 0,
+        }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="hidden md:flex flex-col shrink-0 rounded-2xl border border-brand-beige bg-white p-4 shadow-sm overflow-hidden"
+      >
+        <div className="flex items-center justify-between pb-3 border-b border-brand-beige/50 mb-4 whitespace-nowrap">
           <h3 className="font-display text-xs font-bold uppercase tracking-wider text-brand-charcoal/70">
             Sessions History
           </h3>
@@ -242,7 +311,7 @@ export default function Chat() {
 
         <div className="flex-1 flex flex-col justify-center items-center">
           {messages.length === 0 ? (
-            <div className="text-center p-3 select-none">
+            <div className="text-center p-3 select-none whitespace-normal">
               <MessageSquare className="h-8 w-8 text-brand-brown/30 mx-auto mb-2" />
               <p className="text-xs font-semibold text-brand-charcoal/65">
                 No active conversations
@@ -260,10 +329,35 @@ export default function Chat() {
             </div>
           )}
         </div>
-      </div>
+      </motion.div>
 
       {/* Main Chat Frame */}
       <div className="flex flex-1 flex-col rounded-2xl border border-brand-beige bg-white shadow-sm overflow-hidden relative">
+        
+        {/* Main Chat Frame Header */}
+        <div className="flex items-center justify-between border-b border-brand-beige bg-white/70 backdrop-blur-md px-6 py-3.5 select-none relative z-40">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              className="p-1.5 rounded-lg border border-brand-beige hover:border-brand-brown/40 hover:bg-brand-cream/35 text-brand-charcoal/65 hover:text-brand-brown transition-all cursor-pointer"
+              title={isSidebarOpen ? "Collapse Sidebar" : "Expand Sidebar"}
+            >
+              <Menu className="h-4 w-4" />
+            </button>
+            <div className="flex items-center gap-1.5">
+              <GraduationCap className="h-4.5 w-4.5 text-brand-brown" />
+              <span className="font-display text-xs font-extrabold uppercase tracking-widest text-brand-charcoal">
+                Socratic Study Buddy
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-extrabold bg-brand-brown/15 text-brand-brown px-2.5 py-1 rounded-full uppercase tracking-wider">
+              Active Session
+            </span>
+          </div>
+        </div>
         
         {/* Floating Real-Time Voice Waveform Assistant Card */}
         <AnimatePresence>

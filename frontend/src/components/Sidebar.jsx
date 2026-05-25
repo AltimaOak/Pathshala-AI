@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
   MessageSquare,
@@ -8,7 +8,7 @@ import {
   FileText,
   Settings,
   LogOut,
-  GraduationCap
+  X
 } from 'lucide-react';
 
 const navItems = [
@@ -19,11 +19,11 @@ const navItems = [
   { path: '/settings', label: 'Settings', icon: Settings },
 ];
 
-export default function Sidebar() {
-  return (
-    <aside className="sticky top-0 left-0 z-40 flex h-screen w-64 flex-col border-r border-brand-beige/55 bg-brand-cream px-4 py-6">
+export default function Sidebar({ isOpen, setIsOpen }) {
+  const content = (
+    <>
       {/* Brand Logo */}
-      <div className="flex flex-col items-start px-2 mb-8 select-none">
+      <div className="flex flex-col items-start px-2 mb-8 select-none whitespace-nowrap">
         <img src="/logo.png" alt="Pathshala AI Logo" className="h-16 w-auto object-contain" />
       </div>
 
@@ -35,6 +35,11 @@ export default function Sidebar() {
             <NavLink
               key={item.path}
               to={item.path}
+              onClick={() => {
+                if (window.innerWidth < 1024) {
+                  setIsOpen(false);
+                }
+              }}
               className={({ isActive }) =>
                 `group relative flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
                   isActive
@@ -72,12 +77,64 @@ export default function Sidebar() {
       <div className="border-t border-brand-beige/50 pt-4">
         <NavLink
           to="/login"
-          className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-600/85 hover:bg-red-50 hover:text-red-700 transition-colors"
+          className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-600/85 hover:bg-red-50 hover:text-red-700 transition-colors whitespace-nowrap"
         >
           <LogOut className="h-5 w-5 text-red-500/70" />
           <span>Sign Out</span>
         </NavLink>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile Drawer Overlay Backdrop */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsOpen(false)}
+            className="lg:hidden fixed inset-0 z-45 bg-[#0F0E0D]/30 backdrop-blur-sm"
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Mobile Left Sidebar Drawer */}
+      <motion.aside
+        initial={{ x: "-100%" }}
+        animate={{ x: isOpen ? 0 : "-100%" }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="lg:hidden fixed inset-y-0 left-0 z-50 w-64 flex flex-col border-r border-brand-beige/55 bg-brand-cream px-4 py-6 shadow-2xl h-screen"
+      >
+        {/* Drawer header with close button */}
+        <div className="flex items-center justify-between pb-3 border-b border-brand-beige/50 mb-6">
+          <span className="font-display text-xs font-bold uppercase tracking-wider text-brand-charcoal/70">
+            Menu
+          </span>
+          <button
+            onClick={() => setIsOpen(false)}
+            className="p-1 rounded-lg hover:bg-brand-beige/25 transition-colors cursor-pointer"
+          >
+            <X className="h-4 w-4 text-brand-charcoal" />
+          </button>
+        </div>
+        {content}
+      </motion.aside>
+
+      {/* Desktop Collapsible Left Sidebar Panel */}
+      <motion.aside
+        initial={false}
+        animate={{
+          width: isOpen ? 256 : 0,
+          opacity: isOpen ? 1 : 0,
+        }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="hidden lg:flex sticky top-0 left-0 z-40 h-screen flex-col border-r border-brand-beige/55 bg-brand-cream px-4 py-6 overflow-hidden shrink-0"
+      >
+        {content}
+      </motion.aside>
+    </>
   );
 }

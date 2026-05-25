@@ -1,5 +1,6 @@
 // src/App.jsx
 
+import React, { useState } from "react"
 import { BrowserRouter as Router, Routes, Route, Outlet } from "react-router-dom"
 import { ThemeProvider } from "./context/ThemeContext"
 
@@ -17,15 +18,17 @@ import Signup from "./pages/Signup"
 
 // Shared Workspace layout for internal application pages
 function WorkspaceLayout() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024);
+
   return (
-    <div className="flex min-h-screen bg-brand-cream">
+    <div className="flex min-h-screen bg-brand-cream relative overflow-hidden">
       {/* Sidebar navigation */}
-      <Sidebar />
+      <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
 
       {/* Main Workspace Frame */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Workspace Top Header */}
-        <Navbar />
+        <Navbar toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
 
         {/* Dynamic page container */}
         <main className="flex-1 overflow-y-auto px-6 py-8 md:px-8">
