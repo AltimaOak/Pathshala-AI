@@ -19,6 +19,7 @@ export default function Chat() {
   const [isTyping, setIsTyping] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const messagesEndRef = useRef(null);
+  const recognitionRef = useRef(null);
 
   // Auto-scroll messages
   const scrollToBottom = () => {
@@ -28,6 +29,136 @@ export default function Chat() {
   useEffect(() => {
     scrollToBottom();
   }, [messages, isTyping]);
+
+  // Initialize SpeechRecognition
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+
+      recognition.onstart = () => {
+        setIsRecording(true);
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        if (transcript) {
+          setInputValue(transcript);
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.error("Speech recognition error:", event.error);
+        setIsRecording(false);
+      };
+
+      recognition.onend = () => {
+        setIsRecording(false);
+      };
+
+      recognitionRef.current = recognition;
+    }
+  }, []);
+
+  const audioContextRef = useRef(null);
+  const analyserRef = useRef(null);
+  const dataArrayRef = useRef(null);
+  const streamRef = useRef(null);
+  const animationFrameRef = useRef(null);
+  const visualizerBarsRef = useRef([]);
+
+  // Web Audio Analyzer for Voice Volume visualization
+  useEffect(() => {
+    if (isRecording) {
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+          streamRef.current = stream;
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          const audioContext = new AudioContext();
+          audioContextRef.current = audioContext;
+
+          const source = audioContext.createMediaStreamSource(stream);
+          const analyser = audioContext.createAnalyser();
+          analyser.fftSize = 32;
+          analyserRef.current = analyser;
+
+          source.connect(analyser);
+
+          const bufferLength = analyser.frequencyBinCount;
+          const dataArray = new Uint8Array(bufferLength);
+          dataArrayRef.current = dataArray;
+
+          const updateVolume = () => {
+            if (!analyserRef.current) return;
+            analyserRef.current.getByteFrequencyData(dataArray);
+            
+            // Map frequencies to scaleY values on the bar references
+            if (visualizerBarsRef.current) {
+              for (let i = 0; i < 8; i++) {
+                const barElement = visualizerBarsRef.current[i];
+                if (barElement) {
+                  // Retrieve frequency data and compute a nice scaling factor
+                  const val = dataArray[i] || 0;
+                  const scale = Math.max(0.15, (val / 255) * 2.8);
+                  barElement.style.transform = `scaleY(${scale})`;
+                }
+              }
+            }
+            animationFrameRef.current = requestAnimationFrame(updateVolume);
+          };
+
+          updateVolume();
+        })
+        .catch(err => {
+          console.warn("Speech API microphone fallback active:", err);
+          
+          // Simulated voice visualizer loop if mediaDevices access is pending or disabled
+          let phase = 0;
+          const updateSimulated = () => {
+            phase += 0.15;
+            if (visualizerBarsRef.current) {
+              for (let i = 0; i < 8; i++) {
+                const barElement = visualizerBarsRef.current[i];
+                if (barElement) {
+                  const val = Math.abs(Math.sin(phase + i * 0.5)) * 2.0 + 0.15;
+                  barElement.style.transform = `scaleY(${val})`;
+                }
+              }
+            }
+            animationFrameRef.current = requestAnimationFrame(updateSimulated);
+          };
+          updateSimulated();
+        });
+    } else {
+      // Clean up Web Audio resources
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+      if (audioContextRef.current) {
+        audioContextRef.current.close().catch(() => {});
+      }
+      // Reset visualizer bars
+      if (visualizerBarsRef.current) {
+        visualizerBarsRef.current.forEach(barElement => {
+          if (barElement) {
+            barElement.style.transform = 'scaleY(0.15)';
+          }
+        });
+      }
+    }
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [isRecording]);
 
   const handleSend = (e) => {
     e.preventDefault();
@@ -73,13 +204,22 @@ export default function Chat() {
   };
 
   const handleVoiceInput = () => {
-    setIsRecording(!isRecording);
-    if (!isRecording) {
-      // Simulate speech-to-text input
-      setTimeout(() => {
-        setInputValue("Can you explain active recall in detail?");
-        setIsRecording(false);
-      }, 3000);
+    if (!recognitionRef.current) {
+      // Speech recognition fallback simulation if browser doesn't support Web Speech API
+      setIsRecording(!isRecording);
+      if (!isRecording) {
+        setTimeout(() => {
+          setInputValue("Can you explain active recall in detail?");
+          setIsRecording(false);
+        }, 2500);
+      }
+      return;
+    }
+
+    if (isRecording) {
+      recognitionRef.current.stop();
+    } else {
+      recognitionRef.current.start();
     }
   };
 
@@ -123,7 +263,60 @@ export default function Chat() {
       </div>
 
       {/* Main Chat Frame */}
-      <div className="flex flex-1 flex-col rounded-2xl border border-brand-beige bg-white shadow-sm overflow-hidden">
+      <div className="flex flex-1 flex-col rounded-2xl border border-brand-beige bg-white shadow-sm overflow-hidden relative">
+        
+        {/* Floating Real-Time Voice Waveform Assistant Card */}
+        <AnimatePresence>
+          {isRecording && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              className="absolute inset-x-6 bottom-20 z-50 flex items-center justify-center pointer-events-none"
+            >
+              <div className="w-full max-w-sm rounded-2xl border border-brand-brown/25 bg-white/95 p-5 shadow-xl shadow-brand-brown/5 backdrop-blur-md pointer-events-auto text-center flex flex-col items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-brown/40 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-brand-brown"></span>
+                  </span>
+                  <span className="font-display text-xs font-bold uppercase tracking-wider text-brand-brown">
+                    Voice Study Assistant Active
+                  </span>
+                </div>
+
+                <p className="text-xs font-semibold text-brand-charcoal/80 leading-normal max-w-xs">
+                  Speak now! Bouncing in response to your real voice:
+                </p>
+
+                {/* Real-time Voice Waveform Visualizer */}
+                <div className="flex items-end justify-center gap-1.5 h-16 w-full py-2">
+                  {[...Array(8)].map((_, idx) => (
+                    <span
+                      key={idx}
+                      ref={el => {
+                        if (visualizerBarsRef.current) {
+                          visualizerBarsRef.current[idx] = el;
+                        }
+                      }}
+                      style={{ transform: 'scaleY(0.15)', transition: 'transform 0.05s ease-out' }}
+                      className="w-2 bg-brand-brown rounded-full origin-bottom h-full"
+                    />
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleVoiceInput}
+                  className="flex items-center gap-2 rounded-xl bg-brand-brown hover:bg-brand-brown/95 px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-brand-brown/20 transition-all active:scale-95 cursor-pointer"
+                >
+                  <Mic className="h-4 w-4 animate-pulse" />
+                  Stop Listening
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         
         {/* Chat Playground Area */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
@@ -236,23 +429,49 @@ export default function Chat() {
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Ask Pathshala AI anything..."
-              className="w-full h-11 rounded-xl border border-brand-beige bg-white pl-11 pr-24 text-xs text-brand-charcoal placeholder-brand-charcoal/35 transition-colors focus:border-brand-brown focus:outline-none"
+              placeholder={isRecording ? "Listening... Speak clearly into your mic" : "Ask Pathshala AI anything..."}
+              className={`w-full h-11 rounded-xl border bg-white pl-11 pr-24 text-xs text-brand-charcoal placeholder-brand-charcoal/35 transition-all focus:outline-none ${
+                isRecording 
+                  ? 'border-brand-brown ring-2 ring-brand-brown/20 placeholder-brand-brown/60 font-semibold' 
+                  : 'border-brand-beige focus:border-brand-brown'
+              }`}
             />
 
             {/* Controls panel: Voice Input + Send buttons */}
-            <div className="absolute right-2 flex items-center gap-1">
+            <div className="absolute right-2 flex items-center gap-2">
+              {isRecording && (
+                <div className="flex items-end gap-[2px] h-3.5 px-1 select-none pointer-events-none">
+                  {[0.5, 0.9, 0.6, 0.4].map((speed, idx) => (
+                    <motion.span
+                      key={idx}
+                      animate={{
+                        height: ["4px", "14px", "4px"]
+                      }}
+                      transition={{
+                        duration: speed,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                      className="w-[2px] bg-brand-brown rounded-full origin-bottom"
+                    />
+                  ))}
+                </div>
+              )}
+
               <button
                 type="button"
                 onClick={handleVoiceInput}
-                className={`p-1.5 rounded-lg transition-all ${
+                className={`p-1.5 rounded-lg transition-all relative ${
                   isRecording 
-                    ? 'bg-red-500 text-white animate-pulse' 
+                    ? 'bg-brand-brown text-white shadow-md shadow-brand-brown/20' 
                     : 'text-brand-charcoal/50 hover:text-brand-brown hover:bg-brand-beige/40'
                 }`}
-                title={isRecording ? "Recording voice..." : "Voice Input"}
+                title={isRecording ? "Listening..." : "Voice Input"}
               >
-                <Mic className="h-4 w-4" />
+                {isRecording && (
+                  <span className="absolute inset-0 rounded-lg bg-brand-brown animate-ping opacity-75 pointer-events-none" />
+                )}
+                <Mic className="h-4 w-4 relative z-10" />
               </button>
               
               <button
