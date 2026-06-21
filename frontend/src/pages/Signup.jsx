@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { GraduationCap, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { register } from "../services/auth";
 
 export default function Signup() {
   const [name, setName] = useState('');
@@ -10,11 +11,27 @@ export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Simulate real authentic transition to the SaaS dashboard onboarding
-    navigate('/dashboard');
-  };
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+
+    await register({
+      name,
+      email,
+      password,
+    });
+
+    alert("Account Created Successfully!");
+
+    navigate("/login");
+
+  } catch (error) {
+
+    alert(error.message);
+
+  }
+};
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
