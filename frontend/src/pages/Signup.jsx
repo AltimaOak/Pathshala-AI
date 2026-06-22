@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { GraduationCap, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { register } from "../services/auth";
+import { register, googleLogin } from "../services/auth";
+import { useGoogleLogin } from '@react-oauth/google';
 
 export default function Signup() {
   const [name, setName] = useState('');
@@ -32,6 +33,41 @@ export default function Signup() {
 
   }
 };
+
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const googleUserRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+          headers: {
+            "Authorization": `Bearer ${tokenResponse.access_token}`
+          }
+        });
+        if (!googleUserRes.ok) {
+          throw new Error("Failed to get Google user info");
+        }
+        const googleUser = await googleUserRes.json();
+        
+        const response = await googleLogin({
+          name: googleUser.name,
+          email: googleUser.email
+        });
+        
+        localStorage.setItem("token", response.access_token);
+        localStorage.setItem("profileName", response.name);
+        localStorage.setItem("profileEmail", response.email);
+        
+        window.dispatchEvent(new Event('storage'));
+        
+        alert("Google Login Successful!");
+        navigate("/dashboard");
+      } catch (error) {
+        alert("Google authentication failed: " + error.message);
+      }
+    },
+    onError: () => {
+      alert("Google login failed");
+    }
+  });
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -113,7 +149,7 @@ export default function Signup() {
         <motion.div variants={itemVariants} className="mb-6">
           <button 
             id="google-signup"
-            onClick={() => navigate('/dashboard')}
+            onClick={() => handleGoogleLogin()}
             className="flex w-full items-center justify-center gap-2 rounded-xl border border-brand-beige bg-white py-2.5 text-xs font-semibold text-brand-charcoal transition-all hover:bg-brand-cream/55 hover:scale-[1.01] active:scale-[0.99] cursor-pointer"
           >
             <svg className="h-4 w-4" viewBox="0 0 24 24">

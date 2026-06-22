@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database.connection import get_db
-from app.database.schemas import UserCreate, UserLogin, Token
+from app.database.schemas import UserCreate, UserLogin, Token, GoogleLoginRequest
 from app.database import crud
 
 from app.utils.password import hash_password, verify_password
@@ -60,5 +60,35 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
 
     return {
         "access_token": token,
-        "token_type": "bearer"
+        "token_type": "bearer",
+        "name": db_user.name,
+        "email": db_user.email
+    }
+
+
+@router.post("/google-login", response_model=Token)
+def google_login(data: GoogleLoginRequest, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_email(db, data.email)
+
+    if not db_user:
+        import uuid
+        dummy_password = hash_password(str(uuid.uuid4()))
+        user_create = UserCreate(
+            name=data.name,
+            email=data.email,
+            password=dummy_password
+        )
+        db_user = crud.create_user(db, user_create, dummy_password)
+
+    token = create_access_token(
+        {
+            "sub": db_user.email
+        }
+    )
+
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+        "name": db_user.name,
+        "email": db_user.email
     }

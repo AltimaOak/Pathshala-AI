@@ -10,6 +10,7 @@ import {
   Sparkles,
   RefreshCw
 } from 'lucide-react';
+import { updateProfile } from '../services/auth';
 
 export default function Settings() {
   const [activeTab, setActiveTab] = useState('profile');
@@ -42,8 +43,21 @@ export default function Settings() {
     }, 3000);
   };
 
-  const handleProfileSave = (e) => {
+  const handleProfileSave = async (e) => {
     e.preventDefault();
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        await updateProfile({
+          name: profileName.trim(),
+          email: profileEmail.trim()
+        }, token);
+      } catch (err) {
+        triggerToast("Failed to save profile: " + err.message);
+        return;
+      }
+    }
+    
     localStorage.setItem('profileName', profileName.trim());
     localStorage.setItem('profileEmail', profileEmail.trim());
     

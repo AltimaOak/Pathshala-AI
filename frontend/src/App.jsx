@@ -1,8 +1,9 @@
 // src/App.jsx
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { BrowserRouter as Router, Routes, Route, Outlet } from "react-router-dom"
 import { ThemeProvider } from "./context/ThemeContext"
+import { GoogleOAuthProvider } from "@react-oauth/google"
 
 import Navbar from "./components/Navbar"
 import Sidebar from "./components/Sidebar"
@@ -19,6 +20,29 @@ import Signup from "./pages/Signup"
 // Shared Workspace layout for internal application pages
 function WorkspaceLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/user/me`, {
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        if (response.ok) {
+          const user = await response.json();
+          localStorage.setItem('profileName', user.name);
+          localStorage.setItem('profileEmail', user.email);
+          window.dispatchEvent(new Event('storage'));
+        }
+      } catch (err) {
+        console.error("Failed to fetch user profile", err);
+      }
+    };
+    fetchUserData();
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-brand-cream relative overflow-hidden">
@@ -41,25 +65,27 @@ function WorkspaceLayout() {
 
 function App() {
   return (
-    <ThemeProvider>
-      <Router>
-        <Routes>
-          {/* Public Pages */}
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <ThemeProvider>
+        <Router>
+          <Routes>
+            {/* Public Pages */}
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
 
-          {/* Private Workspace Shell */}
-          <Route element={<WorkspaceLayout />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/chat" element={<Chat />} />
-            <Route path="/quiz" element={<Quiz />} />
-            <Route path="/upload" element={<Upload />} />
-            <Route path="/settings" element={<Settings />} />
-          </Route>
-        </Routes>
-      </Router>
-    </ThemeProvider>
+            {/* Private Workspace Shell */}
+            <Route element={<WorkspaceLayout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/chat" element={<Chat />} />
+              <Route path="/quiz" element={<Quiz />} />
+              <Route path="/upload" element={<Upload />} />
+              <Route path="/settings" element={<Settings />} />
+            </Route>
+          </Routes>
+        </Router>
+      </ThemeProvider>
+    </GoogleOAuthProvider>
   )
 }
 

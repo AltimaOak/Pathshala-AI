@@ -38,3 +38,13 @@ class UserResponse(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    name: str
+    email: str
+
+
+# -----------------------------
+# Google Login Request
+# -----------------------------
+class GoogleLoginRequest(BaseModel):
+    name: str
+    email: EmailStr
