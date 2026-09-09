@@ -1,0 +1,36 @@
+# Environment & Secrets
+.env
+.env*.local
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Production builds
+dist/
+dist-ssr/
+.vercel
+
+# Python cache & bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
