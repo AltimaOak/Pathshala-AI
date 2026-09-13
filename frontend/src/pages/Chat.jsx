@@ -11,7 +11,8 @@ import {
   User,
   Volume2,
   Menu,
-  X
+  X,
+  Bot
 } from 'lucide-react';
 import { EmptyState } from '../components';
 
@@ -103,7 +104,6 @@ export default function Chat() {
               for (let i = 0; i < 8; i++) {
                 const barElement = visualizerBarsRef.current[i];
                 if (barElement) {
-                  // Retrieve frequency data and compute a nice scaling factor
                   const val = dataArray[i] || 0;
                   const scale = Math.max(0.15, (val / 255) * 2.8);
                   barElement.style.transform = `scaleY(${scale})`;
@@ -118,7 +118,6 @@ export default function Chat() {
         .catch(err => {
           console.warn("Speech API microphone fallback active:", err);
           
-          // Simulated voice visualizer loop if mediaDevices access is pending or disabled
           let phase = 0;
           const updateSimulated = () => {
             phase += 0.15;
@@ -136,7 +135,6 @@ export default function Chat() {
           updateSimulated();
         });
     } else {
-      // Clean up Web Audio resources
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
@@ -146,7 +144,6 @@ export default function Chat() {
       if (audioContextRef.current) {
         audioContextRef.current.close().catch(() => {});
       }
-      // Reset visualizer bars
       if (visualizerBarsRef.current) {
         visualizerBarsRef.current.forEach(barElement => {
           if (barElement) {
@@ -208,7 +205,6 @@ export default function Chat() {
 
   const handleVoiceInput = () => {
     if (!recognitionRef.current) {
-      // Speech recognition fallback simulation if browser doesn't support Web Speech API
       setIsRecording(!isRecording);
       if (!isRecording) {
         setTimeout(() => {
@@ -227,7 +223,7 @@ export default function Chat() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-8.5rem)] gap-6 overflow-hidden relative">
+    <div className="flex h-[calc(100vh-8.5rem)] gap-5 overflow-hidden relative">
       
       {/* Mobile Drawer Overlay Backdrop */}
       <AnimatePresence>
@@ -237,7 +233,7 @@ export default function Chat() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsSidebarOpen(false)}
-            className="md:hidden fixed inset-0 z-45 bg-[#0F0E0D]/30 backdrop-blur-sm"
+            className="md:hidden fixed inset-0 z-45 bg-[#0F0E0D]/40 backdrop-blur-sm"
           />
         )}
       </AnimatePresence>
@@ -246,40 +242,45 @@ export default function Chat() {
       <motion.div
         initial={{ x: "-100%" }}
         animate={{ x: isSidebarOpen ? 0 : "-100%" }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="md:hidden fixed inset-y-0 left-0 z-50 w-64 flex flex-col bg-white p-4 border-r border-brand-beige shadow-2xl h-full"
+        transition={{ type: "spring", stiffness: 320, damping: 32 }}
+        className="md:hidden fixed inset-y-0 left-0 z-50 w-72 flex flex-col bg-white p-5 border-r border-brand-beige shadow-2xl h-full"
       >
-        <div className="flex items-center justify-between pb-3 border-b border-brand-beige/50 mb-4">
-          <h3 className="font-display text-xs font-bold uppercase tracking-wider text-brand-charcoal/70">
-            Sessions History
-          </h3>
+        <div className="flex items-center justify-between pb-3.5 border-b border-brand-beige/50 mb-4">
+          <div className="flex items-center gap-2">
+            <MessageSquare className="h-4 w-4 text-brand-brown" />
+            <h3 className="font-display text-xs font-bold uppercase tracking-wider text-brand-charcoal">
+              Study Sessions
+            </h3>
+          </div>
           <button
             onClick={() => setIsSidebarOpen(false)}
-            className="p-1 rounded-lg hover:bg-brand-cream/65 transition-colors cursor-pointer"
+            className="p-1 rounded-lg hover:bg-brand-cream/80 text-brand-charcoal/60 hover:text-brand-charcoal transition-colors cursor-pointer"
           >
-            <X className="h-4 w-4 text-brand-charcoal/70" />
+            <X className="h-4 w-4" />
           </button>
         </div>
 
         <div className="flex-1 flex flex-col justify-center items-center">
           {messages.length === 0 ? (
-            <div className="text-center p-3 select-none">
-              <MessageSquare className="h-8 w-8 text-brand-brown/30 mx-auto mb-2" />
-              <p className="text-xs font-semibold text-brand-charcoal/65">
+            <div className="text-center p-4 select-none">
+              <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-brand-cream border border-brand-beige text-brand-brown">
+                <MessageSquare className="h-5 w-5" />
+              </div>
+              <p className="text-xs font-semibold text-brand-charcoal">
                 No active conversations
               </p>
-              <p className="text-[10px] text-brand-charcoal/45 mt-1 leading-normal">
+              <p className="text-[11px] text-brand-charcoal/50 mt-1 leading-relaxed">
                 Your study dialog history starts fresh here.
               </p>
             </div>
           ) : (
-            <div className="w-full space-y-1 overflow-y-auto max-h-[400px] text-left">
+            <div className="w-full space-y-1.5 overflow-y-auto max-h-[400px] text-left">
               <button 
                 onClick={() => setIsSidebarOpen(false)}
-                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl bg-brand-cream border border-brand-beige text-xs text-brand-charcoal font-semibold"
+                className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-brand-cream/70 border border-brand-brown/20 text-xs text-brand-charcoal font-semibold hover:bg-brand-cream transition-colors"
               >
-                <MessageSquare className="h-3.5 w-3.5 text-brand-brown" />
-                <span className="truncate max-w-[120px]">{messages[0].text}</span>
+                <div className="h-2 w-2 rounded-full bg-brand-brown shrink-0" />
+                <span className="truncate max-w-[150px]">{messages[0].text}</span>
               </button>
             </div>
           )}
@@ -290,41 +291,48 @@ export default function Chat() {
       <motion.div
         initial={false}
         animate={{
-          width: isSidebarOpen ? 256 : 0,
+          width: isSidebarOpen ? 260 : 0,
           opacity: isSidebarOpen ? 1 : 0,
-          marginRight: isSidebarOpen ? 24 : 0,
+          marginRight: isSidebarOpen ? 0 : -20,
         }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="hidden md:flex flex-col shrink-0 rounded-2xl border border-brand-beige bg-white p-4 shadow-sm overflow-hidden"
+        transition={{ type: "spring", stiffness: 320, damping: 32 }}
+        className="hidden md:flex flex-col shrink-0 rounded-2xl border border-brand-beige/80 bg-white/90 p-4.5 shadow-2xs overflow-hidden backdrop-blur-sm"
       >
         <div className="flex items-center justify-between pb-3 border-b border-brand-beige/50 mb-4 whitespace-nowrap">
-          <h3 className="font-display text-xs font-bold uppercase tracking-wider text-brand-charcoal/70">
-            Sessions History
-          </h3>
-          <button 
-            onClick={() => setMessages([])} 
-            className="text-[10px] font-semibold text-brand-brown hover:underline"
-          >
-            Clear All
-          </button>
+          <div className="flex items-center gap-2">
+            <MessageSquare className="h-3.5 w-3.5 text-brand-brown" />
+            <h3 className="font-display text-xs font-bold uppercase tracking-wider text-brand-charcoal/80">
+              Sessions
+            </h3>
+          </div>
+          {messages.length > 0 && (
+            <button 
+              onClick={() => setMessages([])} 
+              className="text-[10px] font-semibold text-brand-brown hover:text-brand-brown/80 transition-colors cursor-pointer"
+            >
+              Clear All
+            </button>
+          )}
         </div>
 
         <div className="flex-1 flex flex-col justify-center items-center">
           {messages.length === 0 ? (
             <div className="text-center p-3 select-none whitespace-normal">
-              <MessageSquare className="h-8 w-8 text-brand-brown/30 mx-auto mb-2" />
-              <p className="text-xs font-semibold text-brand-charcoal/65">
-                No active conversations
+              <div className="mx-auto mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-brand-cream/80 border border-brand-beige/60 text-brand-brown/70">
+                <MessageSquare className="h-4.5 w-4.5" />
+              </div>
+              <p className="text-xs font-semibold text-brand-charcoal/80">
+                No active session
               </p>
-              <p className="text-[10px] text-brand-charcoal/45 mt-1 leading-normal">
-                Your study dialog history starts fresh here.
+              <p className="text-[10px] text-brand-charcoal/50 mt-1 leading-normal max-w-[170px]">
+                Ask any question on the right to start your study dialogue.
               </p>
             </div>
           ) : (
-            <div className="w-full space-y-1 overflow-y-auto max-h-[400px] text-left">
-              <button className="w-full flex items-center gap-2 px-3 py-2 rounded-xl bg-brand-cream border border-brand-beige text-xs text-brand-charcoal font-semibold">
-                <MessageSquare className="h-3.5 w-3.5 text-brand-brown" />
-                <span className="truncate max-w-[120px]">{messages[0].text}</span>
+            <div className="w-full space-y-1.5 overflow-y-auto max-h-[400px] text-left">
+              <button className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-brand-cream/70 border border-brand-brown/25 text-xs text-brand-charcoal font-semibold shadow-2xs hover:bg-brand-cream transition-colors cursor-pointer">
+                <div className="h-2 w-2 rounded-full bg-brand-brown shrink-0" />
+                <span className="truncate max-w-[150px]">{messages[0].text}</span>
               </button>
             </div>
           )}
@@ -332,30 +340,38 @@ export default function Chat() {
       </motion.div>
 
       {/* Main Chat Frame */}
-      <div className="flex flex-1 flex-col rounded-2xl border border-brand-beige bg-white shadow-sm overflow-hidden relative">
+      <div className="flex flex-1 flex-col rounded-2xl border border-brand-beige/80 bg-white shadow-xs overflow-hidden relative">
         
         {/* Main Chat Frame Header */}
-        <div className="flex items-center justify-between border-b border-brand-beige bg-white/70 backdrop-blur-md px-6 py-3.5 select-none relative z-40">
+        <div className="flex items-center justify-between border-b border-brand-beige/60 bg-white/80 backdrop-blur-md px-5 py-3 select-none relative z-40">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="p-1.5 rounded-lg border border-brand-beige hover:border-brand-brown/40 hover:bg-brand-cream/35 text-brand-charcoal/65 hover:text-brand-brown transition-all cursor-pointer"
+              className="p-1.5 rounded-lg border border-brand-beige/70 hover:border-brand-brown/40 hover:bg-brand-cream/40 text-brand-charcoal/65 hover:text-brand-brown transition-all cursor-pointer"
               title={isSidebarOpen ? "Collapse Sidebar" : "Expand Sidebar"}
             >
               <Menu className="h-4 w-4" />
             </button>
-            <div className="flex items-center gap-1.5">
-              <GraduationCap className="h-4.5 w-4.5 text-brand-brown" />
-              <span className="font-display text-xs font-extrabold uppercase tracking-widest text-brand-charcoal">
-                Socratic Study Buddy
-              </span>
+            <div className="flex items-center gap-2">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-brown/10 text-brand-brown">
+                <GraduationCap className="h-4 w-4" />
+              </div>
+              <div>
+                <span className="font-display text-xs font-bold tracking-tight text-brand-charcoal block leading-none">
+                  AI Study Buddy
+                </span>
+                <span className="text-[10px] text-brand-charcoal/45 font-medium">
+                  Socratic Mode
+                </span>
+              </div>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-extrabold bg-brand-brown/15 text-brand-brown px-2.5 py-1 rounded-full uppercase tracking-wider">
-              Active Session
-            </span>
+            <div className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 text-[10px] font-semibold text-emerald-800">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Ready to Tutor</span>
+            </div>
           </div>
         </div>
         
@@ -368,23 +384,23 @@ export default function Chat() {
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               className="absolute inset-x-6 bottom-20 z-50 flex items-center justify-center pointer-events-none"
             >
-              <div className="w-full max-w-sm rounded-2xl border border-brand-brown/25 bg-white/95 p-5 shadow-xl shadow-brand-brown/5 backdrop-blur-md pointer-events-auto text-center flex flex-col items-center gap-4">
+              <div className="w-full max-w-sm rounded-2xl border border-brand-brown/30 bg-white/95 p-5 shadow-xl shadow-brand-brown/10 backdrop-blur-md pointer-events-auto text-center flex flex-col items-center gap-3.5">
                 <div className="flex items-center gap-2">
-                  <span className="relative flex h-3 w-3">
+                  <span className="relative flex h-2.5 w-2.5">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-brown/40 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-brand-brown"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand-brown"></span>
                   </span>
                   <span className="font-display text-xs font-bold uppercase tracking-wider text-brand-brown">
-                    Voice Study Assistant Active
+                    Listening to your voice...
                   </span>
                 </div>
 
-                <p className="text-xs font-semibold text-brand-charcoal/80 leading-normal max-w-xs">
-                  Speak now! Bouncing in response to your real voice:
+                <p className="text-xs text-brand-charcoal/70 leading-normal max-w-xs">
+                  Speak clearly. Your speech is converted into your question:
                 </p>
 
                 {/* Real-time Voice Waveform Visualizer */}
-                <div className="flex items-end justify-center gap-1.5 h-16 w-full py-2">
+                <div className="flex items-end justify-center gap-1.5 h-12 w-full py-1">
                   {[...Array(8)].map((_, idx) => (
                     <span
                       key={idx}
@@ -394,7 +410,7 @@ export default function Chat() {
                         }
                       }}
                       style={{ transform: 'scaleY(0.15)', transition: 'transform 0.05s ease-out' }}
-                      className="w-2 bg-brand-brown rounded-full origin-bottom h-full"
+                      className="w-1.5 bg-brand-brown rounded-full origin-bottom h-full"
                     />
                   ))}
                 </div>
@@ -402,10 +418,10 @@ export default function Chat() {
                 <button
                   type="button"
                   onClick={handleVoiceInput}
-                  className="flex items-center gap-2 rounded-xl bg-brand-brown hover:bg-brand-brown/95 px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-brand-brown/20 transition-all active:scale-95 cursor-pointer"
+                  className="flex items-center gap-2 rounded-xl bg-brand-brown hover:bg-brand-brown/95 px-5 py-2 text-xs font-bold text-white shadow-sm transition-all active:scale-95 cursor-pointer"
                 >
-                  <Mic className="h-4 w-4 animate-pulse" />
-                  Stop Listening
+                  <Mic className="h-3.5 w-3.5 animate-pulse" />
+                  <span>Done Speaking</span>
                 </button>
               </div>
             </motion.div>
@@ -413,43 +429,48 @@ export default function Chat() {
         </AnimatePresence>
         
         {/* Chat Playground Area */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-5 md:p-6 space-y-6">
           <AnimatePresence mode="wait">
             {messages.length === 0 ? (
               <motion.div 
                 key="welcome"
-                initial={{ opacity: 0, y: 15 }}
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="flex flex-col items-center justify-center text-center h-full max-w-lg mx-auto py-12"
+                className="flex flex-col items-center justify-center text-center h-full max-w-lg mx-auto py-8"
               >
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-brown shadow-md shadow-brand-brown/15 mb-4 animate-float">
-                  <GraduationCap className="h-8 w-8 text-brand-cream" />
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-brown/10 text-brand-brown mb-4 border border-brand-brown/20 shadow-xs">
+                  <GraduationCap className="h-6 w-6" />
                 </div>
-                <h3 className="font-display text-xl font-bold text-brand-charcoal">
-                  Pathshala AI Study Buddy
+                <h3 className="font-display text-xl font-bold tracking-tight text-brand-charcoal">
+                  What would you like to study?
                 </h3>
                 <p className="text-xs text-brand-charcoal/65 mt-2 leading-relaxed max-w-sm">
-                  Start learning step-by-step. Ask any question, or upload a textbook PDF in the Study Materials page to ask questions about your files.
+                  Ask any concept question, request step-by-step problem breakdowns, or explore your study materials.
                 </p>
 
                 {/* Conceptual Socratic suggestions */}
-                <div className="grid grid-cols-2 gap-3.5 mt-8 w-full">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-7 w-full text-left">
                   <button 
                     onClick={() => handleSuggestionClick("How does Pathshala AI help me study?")}
-                    className="flex flex-col items-start rounded-xl border border-brand-beige hover:border-brand-brown bg-brand-cream/25 hover:bg-brand-cream/65 p-3.5 text-left transition-all hover:scale-[1.01]"
+                    className="group flex flex-col items-start rounded-xl border border-brand-beige bg-brand-cream/30 hover:bg-white hover:border-brand-brown/50 p-4 transition-all hover:shadow-2xs cursor-pointer"
                   >
-                    <Sparkles className="h-4 w-4 text-brand-brown mb-1.5" />
-                    <span className="text-[11px] font-bold text-brand-charcoal">Learn & Remember</span>
-                    <span className="text-[9px] text-brand-charcoal/50 mt-0.5 leading-normal">Explain how to study and remember concepts easily.</span>
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <Sparkles className="h-3.5 w-3.5 text-brand-brown" />
+                      <span className="text-xs font-bold text-brand-charcoal group-hover:text-brand-brown transition-colors">Study Tips</span>
+                    </div>
+                    <span className="text-[11px] text-brand-charcoal/60 leading-normal">How does Pathshala AI help me learn concepts faster?</span>
                   </button>
+
                   <button 
                     onClick={() => handleSuggestionClick("How to think step-by-step?")}
-                    className="flex flex-col items-start rounded-xl border border-brand-beige hover:border-brand-brown bg-brand-cream/25 hover:bg-brand-cream/65 p-3.5 text-left transition-all hover:scale-[1.01]"
+                    className="group flex flex-col items-start rounded-xl border border-brand-beige bg-brand-cream/30 hover:bg-white hover:border-brand-brown/50 p-4 transition-all hover:shadow-2xs cursor-pointer"
                   >
-                    <Volume2 className="h-4 w-4 text-brand-brown mb-1.5" />
-                    <span className="text-[11px] font-bold text-brand-charcoal">Step-by-Step Guide</span>
-                    <span className="text-[9px] text-brand-charcoal/50 mt-0.5 leading-normal">Explain how to solve tough problems.</span>
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <Volume2 className="h-3.5 w-3.5 text-brand-brown" />
+                      <span className="text-xs font-bold text-brand-charcoal group-hover:text-brand-brown transition-colors">Step-by-Step</span>
+                    </div>
+                    <span className="text-[11px] text-brand-charcoal/60 leading-normal">Explain how to break down and solve difficult questions.</span>
                   </button>
                 </div>
               </motion.div>
@@ -461,22 +482,24 @@ export default function Chat() {
                     className={`flex items-start gap-3 max-w-2xl ${msg.sender === 'user' ? 'ml-auto flex-row-reverse' : 'mr-auto'}`}
                   >
                     {/* Avatar Indicator */}
-                    <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${
+                    <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border ${
                       msg.sender === 'user' 
                         ? 'bg-brand-cream border-brand-beige text-brand-charcoal' 
-                        : 'bg-brand-brown border-brand-brown/20 text-white'
+                        : 'bg-brand-brown border-brand-brown/30 text-white shadow-2xs'
                     }`}>
                       {msg.sender === 'user' ? <User className="h-4 w-4" /> : <GraduationCap className="h-4.5 w-4.5" />}
                     </div>
 
                     {/* Chat Bubble content */}
-                    <div className={`rounded-2xl px-4 py-3 text-xs shadow-sm border ${
+                    <div className={`rounded-2xl px-4.5 py-3.5 text-xs shadow-2xs border ${
                       msg.sender === 'user' 
-                        ? 'bg-brand-cream/60 border-brand-beige text-brand-charcoal rounded-tr-none' 
-                        : 'bg-white border-brand-beige text-brand-charcoal rounded-tl-none leading-relaxed'
+                        ? 'bg-brand-brown text-white border-brand-brown/30 rounded-tr-xs' 
+                        : 'bg-white border-brand-beige/80 text-brand-charcoal rounded-tl-xs leading-relaxed'
                     }`}>
-                      <p className="font-medium whitespace-pre-wrap">{msg.text}</p>
-                      <span className="block text-[8px] text-brand-charcoal/45 mt-1.5 text-right font-semibold">
+                      <p className={`whitespace-pre-wrap ${msg.sender === 'user' ? 'font-normal' : 'font-medium'}`}>{msg.text}</p>
+                      <span className={`block text-[9px] mt-1.5 text-right font-medium ${
+                        msg.sender === 'user' ? 'text-white/70' : 'text-brand-charcoal/40'
+                      }`}>
                         {msg.timestamp}
                       </span>
                     </div>
@@ -489,14 +512,14 @@ export default function Chat() {
           {/* AI Typing Loader Component */}
           {isTyping && (
             <div className="flex items-start gap-3 max-w-md text-left">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border bg-brand-brown border-brand-brown/20 text-white">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border bg-brand-brown border-brand-brown/30 text-white shadow-2xs">
                 <GraduationCap className="h-4.5 w-4.5" />
               </div>
-              <div className="rounded-2xl rounded-tl-none border border-brand-beige bg-white px-4 py-3.5 shadow-sm">
+              <div className="rounded-2xl rounded-tl-xs border border-brand-beige/80 bg-white px-4 py-3 shadow-2xs">
                 <div className="flex items-center gap-1.5">
-                  <span className="h-2 w-2 animate-bounce rounded-full bg-brand-brown/40"></span>
-                  <span className="h-2 w-2 animate-bounce rounded-full bg-brand-brown/70 [animation-delay:0.2s]"></span>
-                  <span className="h-2 w-2 animate-bounce rounded-full bg-brand-brown [animation-delay:0.4s]"></span>
+                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-brown/40"></span>
+                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-brown/70 [animation-delay:0.2s]"></span>
+                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-brown [animation-delay:0.4s]"></span>
                 </div>
               </div>
             </div>
@@ -506,13 +529,14 @@ export default function Chat() {
         </div>
 
         {/* Input Bar Section */}
-        <div className="border-t border-brand-beige bg-brand-cream/35 px-4 py-4">
+        <div className="border-t border-brand-beige/60 bg-brand-cream/20 px-4 py-3.5">
           <form onSubmit={handleSend} className="relative flex items-center">
             {/* Attachment Button */}
             <button
               type="button"
               onClick={() => alert("To attach a PDF study material, please navigate to the 'Study Materials' upload dashboard to parse your file.")}
-              className="absolute left-3.5 p-1.5 rounded-lg text-brand-charcoal/50 hover:text-brand-brown hover:bg-brand-beige/40 transition-colors"
+              className="absolute left-3 p-1.5 rounded-lg text-brand-charcoal/45 hover:text-brand-brown hover:bg-brand-cream/80 transition-colors cursor-pointer"
+              title="Attach study file"
             >
               <Paperclip className="h-4 w-4" />
             </button>
@@ -523,16 +547,16 @@ export default function Chat() {
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder={isRecording ? "Listening... Speak clearly into your mic" : "Ask Pathshala AI anything..."}
-              className={`w-full h-11 rounded-xl border bg-white pl-11 pr-24 text-xs text-brand-charcoal placeholder-brand-charcoal/35 transition-all focus:outline-none ${
+              placeholder={isRecording ? "Listening... Speak clearly into your mic" : "Ask anything or type a concept..."}
+              className={`w-full h-11 rounded-xl border bg-white pl-10 pr-24 text-xs text-brand-charcoal placeholder-brand-charcoal/40 transition-all focus:outline-none ${
                 isRecording 
                   ? 'border-brand-brown ring-2 ring-brand-brown/20 placeholder-brand-brown/60 font-semibold' 
-                  : 'border-brand-beige focus:border-brand-brown'
+                  : 'border-brand-beige/80 focus:border-brand-brown/70 focus:ring-2 focus:ring-brand-brown/10'
               }`}
             />
 
             {/* Controls panel: Voice Input + Send buttons */}
-            <div className="absolute right-2 flex items-center gap-2">
+            <div className="absolute right-2 flex items-center gap-1.5">
               {isRecording && (
                 <div className="flex items-end gap-[2px] h-3.5 px-1 select-none pointer-events-none">
                   {[0.5, 0.9, 0.6, 0.4].map((speed, idx) => (
@@ -555,10 +579,10 @@ export default function Chat() {
               <button
                 type="button"
                 onClick={handleVoiceInput}
-                className={`p-1.5 rounded-lg transition-all relative ${
+                className={`p-1.5 rounded-lg transition-all relative cursor-pointer ${
                   isRecording 
-                    ? 'bg-brand-brown text-white shadow-md shadow-brand-brown/20' 
-                    : 'text-brand-charcoal/50 hover:text-brand-brown hover:bg-brand-beige/40'
+                    ? 'bg-brand-brown text-white shadow-xs' 
+                    : 'text-brand-charcoal/50 hover:text-brand-brown hover:bg-brand-cream/80'
                 }`}
                 title={isRecording ? "Listening..." : "Voice Input"}
               >
@@ -571,7 +595,8 @@ export default function Chat() {
               <button
                 type="submit"
                 disabled={!inputValue.trim()}
-                className="flex h-7.5 w-7.5 items-center justify-center rounded-lg bg-brand-brown text-white transition-all hover:bg-brand-brown/95 active:scale-95 disabled:opacity-35 disabled:pointer-events-none"
+                className="flex h-7.5 w-7.5 items-center justify-center rounded-lg bg-brand-brown text-white transition-all hover:bg-brand-brown/90 active:scale-95 disabled:opacity-35 disabled:pointer-events-none cursor-pointer shadow-2xs"
+                title="Send message"
               >
                 <Send className="h-3.5 w-3.5" />
               </button>

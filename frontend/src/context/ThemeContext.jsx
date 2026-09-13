@@ -6,13 +6,19 @@ export const themes = [
   {
     id: 'classic-warm',
     name: 'Classic Warm',
-    colors: ['#C8A27C', '#FAF7F2'],
+    colors: ['#A16639', '#FAF7F2'],
     isDark: false,
   },
   {
     id: 'forest-sage',
     name: 'Forest Sage',
-    colors: ['#557A61', '#F3F6F4'],
+    colors: ['#557A61', '#F2F6F3'],
+    isDark: false,
+  },
+  {
+    id: 'sunset-clay',
+    name: 'Sunset Clay',
+    colors: ['#C25E2E', '#FDF8F4'],
     isDark: false,
   },
 ];

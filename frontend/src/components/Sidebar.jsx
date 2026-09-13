@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard,
@@ -23,9 +23,13 @@ export default function Sidebar({ isOpen, setIsOpen }) {
   const content = (
     <>
       {/* Brand Logo */}
-      <div className="flex flex-col items-start px-2 mb-8 select-none whitespace-nowrap">
+      <Link 
+        to="/dashboard" 
+        className="flex flex-col items-start px-2 mb-8 select-none whitespace-nowrap cursor-pointer transition-transform hover:scale-[1.02]"
+        title="Pathshala AI"
+      >
         <img src="/logo.png" alt="Pathshala AI Logo" className="h-16 w-auto object-contain" />
-      </div>
+      </Link>
 
       {/* Navigation Links */}
       <nav className="flex-1 space-y-1">
@@ -73,11 +77,11 @@ export default function Sidebar({ isOpen, setIsOpen }) {
         })}
       </nav>
 
-      {/* Footer / Logout Section */}
+      {/* Footer / Section */}
       <div className="border-t border-brand-beige/50 pt-4">
         <NavLink
           to="/login"
-          className="flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-600/85 hover:bg-red-50 hover:text-red-700 transition-colors whitespace-nowrap"
+          className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-red-600/85 hover:bg-red-50 hover:text-red-700 transition-colors whitespace-nowrap"
         >
           <LogOut className="h-5 w-5 text-red-500/70" />
           <span>Sign Out</span>

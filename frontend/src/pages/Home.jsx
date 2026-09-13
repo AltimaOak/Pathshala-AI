@@ -6,6 +6,10 @@ import {
   ArrowRight, 
   Sparkles, 
   BookOpen, 
+  Lightbulb,
+  Target,
+  Brain,
+  Zap,
   MessageSquare, 
   FileText, 
   ShieldCheck, 
@@ -17,7 +21,8 @@ import {
   Check,
   Send,
   X,
-  MessageCircle
+  MessageCircle,
+  ChevronUp
 } from 'lucide-react';
 import { LandingNavbar } from '../components';
 
@@ -227,6 +232,16 @@ const widgetVariants = {
 // Public Landing Page
 export default function Home() {
   const [activeFaq, setActiveFaq] = useState(null);
+
+  // Back to Navigation floating button visibility on scroll
+  const [showBackToNav, setShowBackToNav] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToNav(window.scrollY > 400);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Interactive FAQ states
   const [activeCategory, setActiveCategory] = useState('all');
@@ -544,346 +559,243 @@ export default function Home() {
         <LandingNavbar />
       </motion.div>
 
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 px-6 bg-dot-grid overflow-hidden">
-        {/* Ambient drifting glowing blobs */}
-        <div className="absolute top-10 left-10 w-96 h-96 rounded-full bg-amber-200/25 blur-3xl animate-drift-slow pointer-events-none" />
-        <div className="absolute bottom-10 right-10 w-[450px] h-[450px] rounded-full bg-[#E8DCCF]/45 blur-3xl animate-drift-slower pointer-events-none" />
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 h-[550px] w-[550px] rounded-full bg-brand-brown/15 blur-3xl opacity-70 pointer-events-none" />
+      {/* Hero Section Recreated From Reference & Fully Theme-Responsive */}
+      <section className="relative min-h-[92vh] lg:min-h-screen flex items-center pt-28 pb-16 md:pt-36 md:pb-24 px-6 md:px-10 lg:px-16 overflow-hidden bg-brand-cream transition-colors duration-500">
+        
+        {/* Photographic Study Desk Background Asset */}
+        <div 
+          className="absolute inset-0 bg-cover pointer-events-none select-none z-0"
+          style={{ 
+            backgroundImage: `url('/hero-study-desk.jpg')`,
+            backgroundPosition: 'right 25% center',
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: 'cover'
+          }}
+        />
 
-        {/* Ambient background constellation meshes behind the layout */}
-        <div className="absolute inset-0 pointer-events-none select-none z-0 hidden lg:block overflow-hidden">
-          <motion.div
-            style={{ x: bgConstellationX, y: bgConstellationY }}
-            animate={{ rotate: [0, 360] }}
-            transition={{ repeat: Infinity, duration: 180, ease: "linear" }}
-            className="absolute top-[10%] left-[-5%] h-[400px] w-[400px] opacity-15 pointer-events-none"
-          >
-            <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="40" cy="60" r="3" fill="#C8A27C" />
-              <circle cx="160" cy="50" r="2.5" fill="#C8A27C" />
-              <circle cx="100" cy="150" r="4" fill="#8C6A4A" />
-              <circle cx="30" cy="140" r="2.5" fill="#C8A27C" />
-              <circle cx="170" cy="130" r="3" fill="#8C6A4A" />
-              <line x1="40" y1="60" x2="160" y2="50" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
-              <line x1="40" y1="60" x2="100" y2="150" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
-              <line x1="160" y1="50" x2="100" y2="150" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
-              <line x1="40" y1="60" x2="30" y2="140" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
-              <line x1="30" y1="140" x2="100" y2="150" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
-              <line x1="170" y1="130" x2="160" y2="50" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
-              <line x1="170" y1="130" x2="100" y2="150" stroke="#C8A27C" strokeWidth="0.5" strokeDasharray="3 3" />
-            </svg>
-          </motion.div>
-        </div>
+        {/* Dynamic Studio Lighting & Legibility Gradient Overlays using Theme Variables */}
+        <div 
+          className="absolute inset-0 pointer-events-none z-0 hidden md:block transition-all duration-500"
+          style={{
+            background: 'linear-gradient(90deg, var(--brand-cream) 0%, var(--brand-cream) 36%, color-mix(in srgb, var(--brand-cream) 94%, transparent) 48%, color-mix(in srgb, var(--brand-cream) 45%, transparent) 68%, transparent 100%)'
+          }}
+        />
+        {/* Mobile / Tablet vertical overlay */}
+        <div 
+          className="absolute inset-0 pointer-events-none z-0 md:hidden bg-brand-cream/90 transition-colors duration-500"
+        />
 
-        <div className="mx-auto max-w-7xl relative z-10">
+        {/* Atmospheric Theme Tint over the Desk Image - adapts automatically to Forest Sage, Sunset Clay, etc. */}
+        <div 
+          className="absolute inset-0 mix-blend-color pointer-events-none z-0 transition-colors duration-500"
+          style={{ backgroundColor: 'var(--hero-tint, transparent)' }}
+        />
+        <div 
+          className="absolute inset-0 mix-blend-multiply pointer-events-none z-0 transition-colors duration-500"
+          style={{ backgroundColor: 'var(--hero-ambient, transparent)' }}
+        />
+
+        <div className="mx-auto max-w-7xl w-full relative z-10 py-6">
           <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
             
-            {/* Left Column: Sales Copy & Core CTAs */}
-            <div className="lg:col-span-7 text-center lg:text-left space-y-7 flex flex-col items-center lg:items-start">
+            {/* Left Column: Headline, Description, CTAs, and Trust Badges */}
+            <div className="lg:col-span-7 text-left space-y-6 sm:space-y-7 max-w-2xl">
+              
+              {/* Badge: Introducing Pathshala AI */}
               <motion.div 
                 variants={badgeIntroVariants}
                 initial="hidden"
                 animate={revealContent ? "visible" : "hidden"}
-                className="inline-flex items-center gap-2 rounded-full bg-brand-brown/10 border border-brand-brown/20 px-4 py-1.5 text-xs font-bold text-brand-brown shadow-sm shadow-brand-brown/5"
+                className="inline-flex items-center gap-2 rounded-full bg-brand-beige/70 border border-brand-beige px-3.5 py-1 text-xs font-semibold text-brand-terracotta shadow-xs backdrop-blur-xs transition-colors duration-300"
               >
-                <Sparkles className="h-3.5 w-3.5 animate-pulse text-brand-brown" />
-                Introducing Pathshala AI
+                <Sparkles className="h-3.5 w-3.5 text-brand-terracotta fill-brand-terracotta/20 transition-colors duration-300" />
+                <span>Introducing Pathshala AI</span>
               </motion.div>
 
+              {/* Serif Headline matching reference editorial styling */}
               <motion.h1 
                 variants={titleVariants}
                 initial="hidden"
                 animate={revealContent ? "visible" : "hidden"}
-                className="font-display text-4xl font-extrabold tracking-tight text-brand-charcoal sm:text-5xl md:text-6xl leading-[1.12] max-w-2xl mx-auto lg:mx-0"
+                className="font-serif-hero text-5xl sm:text-6xl lg:text-[72px] leading-[1.08] tracking-tight text-brand-charcoal transition-colors duration-300"
               >
-                Your Personal <span className="bg-gradient-to-r from-brand-brown via-[#9C7550] to-brand-brown bg-clip-text text-transparent">AI Learning</span> Companion
+                Your Personal AI <br />
+                <span className="text-brand-terracotta font-normal transition-colors duration-300">
+                  Learning Companion
+                </span>
               </motion.h1>
 
+              {/* Subtitle / Value Proposition */}
               <motion.p 
                 variants={subtitleVariants}
                 initial="hidden"
                 animate={revealContent ? "visible" : "hidden"}
-                className="text-base text-brand-charcoal-light/90 font-medium max-w-2xl mx-auto lg:mx-0 leading-relaxed sm:text-lg"
+                className="text-base sm:text-lg text-brand-charcoal-light leading-relaxed max-w-xl font-sans transition-colors duration-300"
               >
                 A friendly, private study partner that guides you step-by-step instead of just handing you answers. Upload textbook PDFs, learn active concepts, and test yourself with customized quizzes.
               </motion.p>
 
+              {/* Dual Action CTAs */}
               <motion.div 
                 variants={ctaVariants}
                 initial="hidden"
                 animate={revealContent ? "visible" : "hidden"}
-                className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-3 w-full sm:w-auto"
+                className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2"
               >
                 <Link
-                  to="/dashboard"
-                  className="group flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-brand-brown px-7 py-4 text-sm font-bold text-white shadow-lg shadow-brand-brown/20 transition-all hover:bg-brand-brown/95 hover:shadow-xl hover:shadow-brand-brown/30 hover:scale-[1.03] active:scale-[0.97]"
+                  to="/signup"
+                  className="group inline-flex items-center justify-center gap-2.5 rounded-full bg-brand-coffee hover:opacity-95 px-8 py-3.5 text-sm sm:text-base font-semibold text-white shadow-md shadow-brand-coffee/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  Start Learning Free
-                  <ArrowRight className="h-4.5 w-4.5 transition-transform group-hover:translate-x-1" />
+                  <span>Start Learning Free</span>
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
+                
                 <a
                   href="#features"
-                  className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-brand-beige bg-white/50 backdrop-blur-md px-7 py-4 text-sm font-bold text-brand-charcoal shadow-sm transition-all hover:bg-white hover:scale-[1.03] hover:border-brand-brown/30 active:scale-[0.97]"
+                  className="inline-flex items-center justify-center rounded-full bg-brand-beige/50 hover:bg-brand-beige/80 border border-brand-beige px-8 py-3.5 text-sm sm:text-base font-semibold text-brand-charcoal transition-all hover:scale-[1.02] active:scale-[0.98] backdrop-blur-xs text-center"
                 >
                   Explore Features
                 </a>
               </motion.div>
 
-              {/* High-end Value Props for SaaS Visibility */}
+              {/* Bottom Trust Indicators */}
               <motion.div
                 variants={ctaVariants}
                 initial="hidden"
                 animate={revealContent ? "visible" : "hidden"}
-                className="flex flex-wrap items-center justify-center lg:justify-start gap-6 pt-4 text-xs font-semibold text-brand-charcoal/60"
+                className="flex flex-wrap items-center gap-4 sm:gap-6 pt-5 text-xs sm:text-sm font-medium text-brand-charcoal transition-colors duration-300"
               >
-                <div className="flex items-center gap-1.5">
-                  <ShieldCheck className="h-4.5 w-4.5 text-brand-brown" />
-                  100% Private Study space
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="h-4.5 w-4.5 text-brand-terracotta transition-colors duration-300" />
+                  <span>100% Private Study Space</span>
                 </div>
-                <div className="h-1.5 w-1.5 rounded-full bg-brand-beige" />
-                <div className="flex items-center gap-1.5">
-                  <Sparkles className="h-4.5 w-4.5 text-brand-brown" />
-                  Socratic Thinking Methodology
+                
+                <div className="hidden sm:block h-3.5 w-[1px] bg-brand-beige transition-colors duration-300" />
+                
+                <div className="flex items-center gap-2">
+                  <Brain className="h-4.5 w-4.5 text-brand-terracotta transition-colors duration-300" />
+                  <span>Smart Learning Path</span>
+                </div>
+                
+                <div className="hidden sm:block h-3.5 w-[1px] bg-brand-beige transition-colors duration-300" />
+                
+                <div className="flex items-center gap-2">
+                  <Zap className="h-4.5 w-4.5 text-brand-terracotta transition-colors duration-300" />
+                  <span>Active Concepts & Quizzes</span>
                 </div>
               </motion.div>
+
             </div>
 
-            {/* Right Column: Premium Socratic Preview Interface with Framed Floats */}
-            <div className="lg:col-span-5 relative mt-16 lg:mt-0 flex justify-center z-10">
+            {/* Right Column: Handwritten Note & 3 Floating Feature Cards */}
+            <div className="lg:col-span-5 relative mt-8 lg:mt-0 flex flex-col items-center lg:items-end z-10">
               
-              {/* Backlight halo glow under mockup */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[380px] w-[380px] rounded-full bg-gradient-to-tr from-brand-brown/20 to-amber-200/20 blur-3xl pointer-events-none z-0" />
-
-              {/* Integrated Parallax Floating Elements */}
-              {revealContent && (
-                <div className="absolute inset-0 pointer-events-none select-none z-20">
-                  
-                  {/* Graduation Cap (Top-Left of Card) */}
-                  <motion.div
-                    style={{ x: capParallaxX, y: capParallaxY }}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.5, duration: 0.8 }}
-                    className="absolute -top-12 -left-8 h-20 w-20 z-30"
-                  >
-                    <motion.div
-                      animate={{ y: [0, -8, 0], rotate: [0, 3, -3, 0] }}
-                      transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-                      className="w-full h-full drop-shadow-[0_12px_24px_rgba(200,162,124,0.22)] filter hover:brightness-105 transition-all duration-300 cursor-pointer pointer-events-auto"
-                    >
-                      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                        <path d="M50 20 L85 32 L50 44 L15 32 Z" fill="#C8A27C" opacity="0.95" stroke="#8C6A4A" strokeWidth="1"/>
-                        <path d="M30 40 L30 50 C30 56, 70 56, 70 50 L70 40 L50 46 Z" fill="#8C6A4A" stroke="#C8A27C" strokeWidth="1"/>
-                        <ellipse cx="50" cy="32" rx="3.5" ry="1.8" fill="#FAF7F2"/>
-                        <path d="M50 32 Q68 34, 76 46 L78 56" stroke="#E8DCCF" strokeWidth="1.8" fill="none"/>
-                        <rect x="76" y="54" width="4" height="8" fill="#E8DCCF" rx="1"/>
-                      </svg>
-                    </motion.div>
-                  </motion.div>
-
-                  {/* Holographic Study Notes (Bottom-Left of Card) */}
-                  <motion.div
-                    style={{ x: notesParallaxX, y: notesParallaxY }}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.7, duration: 0.8 }}
-                    className="absolute -bottom-8 -left-10 h-22 w-22 z-30"
-                  >
-                    <motion.div
-                      animate={{ y: [0, 10, 0], rotate: [0, -3, 3, 0] }}
-                      transition={{ repeat: Infinity, duration: 7, ease: "easeInOut" }}
-                      className="w-full h-full drop-shadow-[0_10px_20px_rgba(200,162,124,0.18)] filter hover:brightness-105 transition-all duration-300 cursor-pointer pointer-events-auto"
-                    >
-                      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                        <path d="M30 20 L80 26 L70 80 L20 74 Z" fill="#FFFFFF" fillOpacity="0.55" stroke="white" strokeWidth="1.5" strokeOpacity="0.85" style={{ backdropFilter: 'blur(8px)' }} />
-                        <path d="M36 34 L68 38" stroke="#C8A27C" strokeWidth="3" opacity="0.7" strokeLinecap="round"/>
-                        <path d="M33 46 L65 50" stroke="#C8A27C" strokeWidth="3" opacity="0.7" strokeLinecap="round"/>
-                        <path d="M30 58 L54 61" stroke="#8C6A4A" strokeWidth="3" opacity="0.6" strokeLinecap="round"/>
-                        <path d="M70 66 L72 61 L77 60 L73 56 L74 51 L69 54 L64 52 L67 57 L63 61 L68 61 Z" fill="#C8A27C" opacity="0.9"/>
-                      </svg>
-                    </motion.div>
-                  </motion.div>
-
-                  {/* AI Brain Glass Orb (Top-Right of Card) */}
-                  <motion.div
-                    style={{ x: orbParallaxX, y: orbParallaxY }}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.6, duration: 0.8 }}
-                    className="absolute -top-12 -right-8 h-22 w-22 z-30"
-                  >
-                    <motion.div
-                      animate={{ y: [0, -10, 0], rotate: [0, 4, -4, 0] }}
-                      transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
-                      className="w-full h-full drop-shadow-[0_15px_32px_rgba(200,162,124,0.25)] filter hover:brightness-105 transition-all duration-300 cursor-pointer pointer-events-auto"
-                    >
-                      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                        <defs>
-                          <radialGradient id="orbGrad" cx="35%" cy="35%" r="65%">
-                            <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95"/>
-                            <stop offset="35%" stopColor="#FAF7F2" stopOpacity="0.5"/>
-                            <stop offset="75%" stopColor="#E8DCCF" stopOpacity="0.3"/>
-                            <stop offset="100%" stopColor="#C8A27C" stopOpacity="0.6"/>
-                          </radialGradient>
-                          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                            <feGaussianBlur stdDeviation="4" result="blur" />
-                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                          </filter>
-                        </defs>
-                        <circle cx="50" cy="50" r="41" fill="#C8A27C" opacity="0.25" filter="url(#glow)"/>
-                        <circle cx="50" cy="50" r="37" fill="url(#orbGrad)" stroke="#C8A27C" strokeWidth="1.5" strokeOpacity="0.5"/>
-                        <path d="M38 50 Q50 35 62 50 T50 72 Z" stroke="#C8A27C" strokeWidth="1" strokeDasharray="3 2" opacity="0.6"/>
-                        <circle cx="50" cy="38" r="3" fill="#C8A27C" filter="url(#glow)"/>
-                        <circle cx="38" cy="50" r="3.5" fill="#8C6A4A" filter="url(#glow)"/>
-                        <circle cx="62" cy="50" r="2.5" fill="#C8A27C" filter="url(#glow)"/>
-                        <circle cx="50" cy="62" r="3" fill="#E8DCCF" filter="url(#glow)"/>
-                        <line x1="50" y1="38" x2="38" y2="50" stroke="#C8A27C" strokeWidth="0.8" opacity="0.5"/>
-                        <line x1="50" y1="38" x2="62" y2="50" stroke="#C8A27C" strokeWidth="0.8" opacity="0.5"/>
-                        <line x1="38" y1="50" x2="50" y2="62" stroke="#C8A27C" strokeWidth="0.8" opacity="0.5"/>
-                        <line x1="62" y1="50" x2="50" y2="62" stroke="#C8A27C" strokeWidth="0.8" opacity="0.5"/>
-                      </svg>
-                    </motion.div>
-                  </motion.div>
-
-                  {/* Isometric 3D Book (Bottom-Right of Card) */}
-                  <motion.div
-                    style={{ x: bookParallaxX, y: bookParallaxY }}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.8, duration: 0.8 }}
-                    className="absolute -bottom-10 -right-8 h-20 w-20 z-30"
-                  >
-                    <motion.div
-                      animate={{ y: [0, -8, 0], rotate: [0, -3, 3, 0] }}
-                      transition={{ repeat: Infinity, duration: 6.5, ease: "easeInOut" }}
-                      className="w-full h-full drop-shadow-[0_12px_24px_rgba(200,162,124,0.22)] filter hover:brightness-105 transition-all duration-300 cursor-pointer pointer-events-auto"
-                    >
-                      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-                        <path d="M50 30 L20 45 L20 75 L50 60 Z" fill="#C8A27C" opacity="0.95" />
-                        <path d="M50 30 L80 45 L80 75 L50 60 Z" fill="#E8DCCF" opacity="0.95" />
-                        <path d="M50 30 L50 60" stroke="#8C6A4A" strokeWidth="2.5" />
-                        <path d="M50 34 L24 47 L24 72 L50 59 Z" fill="#FAF7F2" />
-                        <path d="M50 34 L76 47 L76 72 L50 59 Z" fill="#FFFFFF" />
-                        <path d="M50 35 L50 41" stroke="#C8A27C" strokeWidth="2" />
-                        <path d="M50 50 L50 56" stroke="#C8A27C" strokeWidth="2" />
-                      </svg>
-                    </motion.div>
-                  </motion.div>
-                </div>
-              )}
-
-              {/* Socratic Chat Mockup Card */}
+              {/* Handwritten "Learn Smarter Not Harder" playful annotation with sketched arrow */}
               <motion.div
-                variants={widgetVariants}
-                initial="hidden"
-                animate={revealContent ? "visible" : "hidden"}
-                whileTap={{ scale: 0.98 }}
-                className="w-full max-w-[430px] rounded-3xl border border-white/50 bg-white/70 shadow-[0_24px_50px_-12px_rgba(200,162,124,0.25)] backdrop-blur-xl select-none text-left relative z-10 overflow-hidden cursor-pointer"
+                initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                animate={revealContent ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0 }}
+                transition={{ delay: 0.6, duration: 0.6 }}
+                className="absolute -top-16 left-2 lg:-left-16 hidden md:flex flex-col items-center pointer-events-none select-none z-20"
               >
-                {/* Simulated browser topbar */}
-                <div className="flex items-center justify-between border-b border-brand-beige/40 bg-brand-cream/40 px-5 py-4">
-                  <div className="flex items-center gap-2">
-                    <div className="h-3 w-3 rounded-full bg-[#FF5F56] shadow-sm"></div>
-                    <div className="h-3 w-3 rounded-full bg-[#FFBD2E] shadow-sm"></div>
-                    <div className="h-3 w-3 rounded-full bg-[#27C93F] shadow-sm"></div>
-                    <span className="text-[10px] font-bold text-brand-charcoal/50 uppercase ml-3 tracking-widest font-sans">
-                      LIVE STUDY PREVIEW
-                    </span>
-                  </div>
-                  <span className="text-[9px] font-extrabold bg-brand-brown/15 text-brand-brown px-2.5 py-1 rounded-full uppercase tracking-wider">
-                    Socratic Buddy
-                  </span>
-                </div>
-
-                {/* Simulated Conversation bubbles */}
-                <div className="p-5 space-y-4 min-h-[200px] flex flex-col justify-end bg-gradient-to-b from-white/30 to-brand-cream/10">
-                  <AnimatePresence>
-                    {visibleMessages.map((msg, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, y: 12, scale: 0.97 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className={`flex items-start gap-3 max-w-[88%] ${msg.sender === 'user' ? 'ml-auto flex-row-reverse' : ''}`}
-                      >
-                        {/* Bubble avatar badge */}
-                        <div className={`flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-xl border text-[9px] font-bold shadow-sm ${
-                          msg.sender === 'user' 
-                            ? 'bg-brand-beige border-brand-beige/50 text-brand-charcoal' 
-                            : 'bg-brand-brown border-brand-brown/10 text-white'
-                        }`}>
-                          {msg.sender === 'user' ? 'ME' : 'AI'}
-                        </div>
-                        
-                        {/* Dynamic Bubble content */}
-                        <div className={`rounded-2xl px-4 py-2.5 text-xs shadow-sm border ${
-                          msg.sender === 'user' 
-                            ? 'bg-brand-cream/80 border-brand-beige/60 text-brand-charcoal rounded-tr-none font-medium' 
-                            : 'bg-white border-brand-beige/30 text-brand-charcoal rounded-tl-none leading-relaxed font-semibold'
-                        }`}>
-                          <p>{msg.text}</p>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-
-                  {/* Typing Dots */}
-                  {isTyping && (
-                    <motion.div 
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="flex items-start gap-3 max-w-[88%]"
-                    >
-                      <div className="flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-xl border bg-brand-brown border-brand-brown/10 text-white text-[9px] font-bold shadow-sm animate-pulse">
-                        AI
-                      </div>
-                      <div className="rounded-2xl rounded-tl-none border border-brand-beige/40 bg-white px-4 py-3.5 shadow-sm">
-                        <div className="flex items-center gap-1.5">
-                          <span className="h-2 w-2 animate-bounce rounded-full bg-brand-brown/40"></span>
-                          <span className="h-2 w-2 animate-bounce rounded-full bg-brand-brown/70 [animation-delay:0.2s]"></span>
-                          <span className="h-2 w-2 animate-bounce rounded-full bg-brand-brown [animation-delay:0.4s]"></span>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </div>
-
-                {/* Floating tooltips docked dynamically */}
-                <motion.div
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={revealContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
-                  transition={{ delay: 0.8, duration: 0.6 }}
-                  className="absolute -top-7 -right-8 hidden xl:flex z-30"
+                <span className="font-handwriting text-2xl lg:text-3xl font-bold text-brand-terracotta -rotate-6 tracking-wide leading-tight text-center drop-shadow-xs transition-colors duration-300">
+                  Learn<br />Smarter<br />Not Harder
+                </span>
+                <svg 
+                  className="w-10 h-7 text-brand-terracotta -rotate-12 mt-1 opacity-85 transition-colors duration-300" 
+                  viewBox="0 0 50 30" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
                 >
-                  <motion.div
-                    animate={{ y: [0, -5, 0] }}
-                    transition={{ repeat: Infinity, duration: 4.5, ease: "easeInOut" }}
-                    className="flex items-center gap-1.5 rounded-full bg-white border border-brand-beige/80 px-4 py-2 shadow-md shadow-brand-brown/10 text-[10px] font-bold text-brand-charcoal select-none cursor-default"
-                  >
-                    <ShieldCheck className="h-4 w-4 text-brand-brown" />
-                    🔒 100% Private & Secure
-                  </motion.div>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={revealContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
-                  transition={{ delay: 0.9, duration: 0.6 }}
-                  className="absolute -bottom-7 -left-8 hidden xl:flex z-30"
-                >
-                  <motion.div
-                    animate={{ y: [0, 5, 0] }}
-                    transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
-                    className="flex items-center gap-1.5 rounded-full bg-white border border-brand-beige/80 px-4 py-2 shadow-md shadow-brand-brown/10 text-[10px] font-bold text-brand-charcoal select-none cursor-default"
-                  >
-                    <Sparkles className="h-4 w-4 text-brand-brown" />
-                    🧠 Active Socratic Guide
-                  </motion.div>
-                </motion.div>
-
+                  <path d="M 8,5 Q 22,18 42,19" />
+                  <path d="M 33,13 L 42,19 L 34,25" />
+                </svg>
               </motion.div>
+
+              {/* Stacked 3 Floating Feature Cards */}
+              <div className="w-full max-w-[420px] space-y-4">
+                
+                {/* Card 1: Upload & Learn */}
+                <motion.div
+                  initial={{ opacity: 0, x: 25, y: 15 }}
+                  animate={revealContent ? { opacity: 1, x: 0, y: 0 } : { opacity: 0 }}
+                  transition={{ delay: 0.3, duration: 0.6 }}
+                  whileHover={{ y: -3, scale: 1.01 }}
+                  className="group relative rounded-2xl border border-white/80 hover:border-brand-beige bg-white/85 hover:bg-white/95 p-4 sm:p-5 shadow-[0_12px_28px_rgba(0,0,0,0.06)] hover:shadow-[0_16px_36px_rgba(0,0,0,0.1)] backdrop-blur-md transition-all duration-300 cursor-pointer"
+                >
+                  <Link to="/upload" className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-beige/60 text-brand-coffee group-hover:bg-brand-beige group-hover:text-brand-terracotta transition-colors duration-300">
+                        <BookOpen className="h-6 w-6 stroke-[1.8]" />
+                      </div>
+                      <div>
+                        <h3 className="font-display font-bold text-base text-brand-charcoal group-hover:text-brand-coffee transition-colors duration-300">
+                          Upload & Learn
+                        </h3>
+                        <p className="text-xs text-brand-charcoal-light mt-0.5 transition-colors duration-300">
+                          Turn your PDFs into understandable lessons
+                        </p>
+                      </div>
+                    </div>
+                    <ArrowRight className="h-5 w-5 text-brand-charcoal-light/60 group-hover:text-brand-coffee group-hover:translate-x-1 transition-all shrink-0" />
+                  </Link>
+                </motion.div>
+
+                {/* Card 2: Concept Clarity */}
+                <motion.div
+                  initial={{ opacity: 0, x: 25, y: 15 }}
+                  animate={revealContent ? { opacity: 1, x: 0, y: 0 } : { opacity: 0 }}
+                  transition={{ delay: 0.45, duration: 0.6 }}
+                  whileHover={{ y: -3, scale: 1.01 }}
+                  className="group relative rounded-2xl border border-white/80 hover:border-brand-beige bg-white/85 hover:bg-white/95 p-4 sm:p-5 shadow-[0_12px_28px_rgba(0,0,0,0.06)] hover:shadow-[0_16px_36px_rgba(0,0,0,0.1)] backdrop-blur-md transition-all duration-300 cursor-pointer"
+                >
+                  <Link to="/chat" className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-beige/60 text-brand-coffee group-hover:bg-brand-beige group-hover:text-brand-terracotta transition-colors duration-300">
+                        <Lightbulb className="h-6 w-6 stroke-[1.8]" />
+                      </div>
+                      <div>
+                        <h3 className="font-display font-bold text-base text-brand-charcoal group-hover:text-brand-coffee transition-colors duration-300">
+                          Concept Clarity
+                        </h3>
+                        <p className="text-xs text-brand-charcoal-light mt-0.5 transition-colors duration-300">
+                          Step-by-step explanations in simple language
+                        </p>
+                      </div>
+                    </div>
+                    <ArrowRight className="h-5 w-5 text-brand-charcoal-light/60 group-hover:text-brand-coffee group-hover:translate-x-1 transition-all shrink-0" />
+                  </Link>
+                </motion.div>
+
+                {/* Card 3: Practice & Improve */}
+                <motion.div
+                  initial={{ opacity: 0, x: 25, y: 15 }}
+                  animate={revealContent ? { opacity: 1, x: 0, y: 0 } : { opacity: 0 }}
+                  transition={{ delay: 0.6, duration: 0.6 }}
+                  whileHover={{ y: -3, scale: 1.01 }}
+                  className="group relative rounded-2xl border border-white/80 hover:border-brand-beige bg-white/85 hover:bg-white/95 p-4 sm:p-5 shadow-[0_12px_28px_rgba(0,0,0,0.06)] hover:shadow-[0_16px_36px_rgba(0,0,0,0.1)] backdrop-blur-md transition-all duration-300 cursor-pointer"
+                >
+                  <Link to="/quiz" className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-beige/60 text-brand-coffee group-hover:bg-brand-beige group-hover:text-brand-terracotta transition-colors duration-300">
+                        <Target className="h-6 w-6 stroke-[1.8]" />
+                      </div>
+                      <div>
+                        <h3 className="font-display font-bold text-base text-brand-charcoal group-hover:text-brand-coffee transition-colors duration-300">
+                          Practice & Improve
+                        </h3>
+                        <p className="text-xs text-brand-charcoal-light mt-0.5 transition-colors duration-300">
+                          Custom quizzes to track your progress
+                        </p>
+                      </div>
+                    </div>
+                    <ArrowRight className="h-5 w-5 text-brand-charcoal-light/60 group-hover:text-brand-coffee group-hover:translate-x-1 transition-all shrink-0" />
+                  </Link>
+                </motion.div>
+
+              </div>
 
             </div>
 
@@ -1185,6 +1097,23 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Simple Back to Navigation floating button */}
+      <AnimatePresence>
+        {showBackToNav && (
+          <motion.button
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 15 }}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="fixed bottom-6 right-6 z-40 inline-flex items-center gap-2 rounded-full border border-brand-beige bg-white/95 px-4 py-2.5 text-xs font-bold text-brand-charcoal shadow-lg backdrop-blur-md transition-all hover:border-brand-brown hover:text-brand-brown hover:scale-105 active:scale-95 cursor-pointer"
+            title="Back to Navigation"
+          >
+            <ChevronUp className="h-4 w-4 text-brand-brown" />
+            <span>Back to Navigation</span>
+          </motion.button>
+        )}
+      </AnimatePresence>
 
     </div>
   );

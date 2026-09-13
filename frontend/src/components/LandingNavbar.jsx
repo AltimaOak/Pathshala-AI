@@ -1,20 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { GraduationCap, Menu, X, ArrowRight } from 'lucide-react';
+import { GraduationCap, Menu, X } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import ThemeSelector from './ThemeSelector';
-
 
 export default function LandingNavbar() {
   const { theme, setTheme, themes } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('features');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  // Monitor auth state
+  useEffect(() => {
+    const checkAuth = () => {
+      setIsLoggedIn(!!localStorage.getItem('token'));
+    };
+    checkAuth();
+    window.addEventListener('storage', checkAuth);
+    return () => window.removeEventListener('storage', checkAuth);
+  }, []);
 
   // Monitor scroll height to add borders/shadows dynamically
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
+      if (window.scrollY > 15) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
@@ -26,6 +36,7 @@ export default function LandingNavbar() {
 
   // Helper function to handle smooth scrolling to landing page sections
   const handleScrollTo = (id) => {
+    setActiveSection(id);
     setMobileMenuOpen(false);
     const element = document.getElementById(id);
     if (element) {
@@ -34,65 +45,104 @@ export default function LandingNavbar() {
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
       isScrolled 
-        ? 'border-b border-brand-beige bg-brand-cream/80 py-3 backdrop-blur-md shadow-sm' 
+        ? 'border-b border-brand-beige bg-brand-cream/90 py-3 backdrop-blur-md shadow-xs' 
         : 'bg-transparent py-5'
     }`}>
-      <div className="mx-auto max-w-7xl px-6 md:px-8">
+      <div className="mx-auto max-w-7xl px-6 md:px-10">
         <div className="flex items-center justify-between">
           
-          {/* Logo Brand */}
-          <Link to="/" className="flex items-center group">
-            <img src="/logo.png" alt="Pathshala AI Logo" className="h-11 w-auto object-contain transition-transform group-hover:scale-[1.02]" />
+          {/* Logo Brand matching reference */}
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <div className="flex h-9 w-9 items-center justify-center text-brand-coffee group-hover:scale-105 transition-transform">
+              <GraduationCap className="h-8 w-8 stroke-[2.2]" />
+            </div>
+            <span className="font-display font-extrabold text-lg md:text-xl tracking-wider text-brand-charcoal">
+              PATHSHALA AI
+            </span>
           </Link>
 
-          {/* Public Desktop Navigation Links */}
-          <div className="hidden items-center gap-8 md:flex">
+          {/* Desktop Navigation Links */}
+          <div className="hidden items-center gap-9 md:flex">
             <button 
               onClick={() => handleScrollTo('features')} 
-              className="text-sm font-medium text-brand-charcoal/75 transition-colors hover:text-brand-brown"
+              className={`text-sm font-medium transition-colors relative py-1 cursor-pointer ${
+                activeSection === 'features' 
+                  ? 'text-brand-charcoal font-semibold' 
+                  : 'text-brand-charcoal-light/80 hover:text-brand-charcoal'
+              }`}
             >
               Features
+              {activeSection === 'features' && (
+                <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-brand-terracotta rounded-full transition-colors" />
+              )}
             </button>
             <button 
               onClick={() => handleScrollTo('how-it-works')} 
-              className="text-sm font-medium text-brand-charcoal/75 transition-colors hover:text-brand-brown"
+              className={`text-sm font-medium transition-colors relative py-1 cursor-pointer ${
+                activeSection === 'how-it-works' 
+                  ? 'text-brand-charcoal font-semibold' 
+                  : 'text-brand-charcoal-light/80 hover:text-brand-charcoal'
+              }`}
             >
               How It Works
+              {activeSection === 'how-it-works' && (
+                <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-brand-terracotta rounded-full transition-colors" />
+              )}
             </button>
             <button 
               onClick={() => handleScrollTo('faq')} 
-              className="text-sm font-medium text-brand-charcoal/75 transition-colors hover:text-brand-brown"
+              className={`text-sm font-medium transition-colors relative py-1 cursor-pointer ${
+                activeSection === 'faq' 
+                  ? 'text-brand-charcoal font-semibold' 
+                  : 'text-brand-charcoal-light/80 hover:text-brand-charcoal'
+              }`}
             >
               FAQ
+              {activeSection === 'faq' && (
+                <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-brand-terracotta rounded-full transition-colors" />
+              )}
             </button>
           </div>
 
-          {/* Action CTAs */}
-          <div className="hidden items-center gap-4 md:flex">
-            {/* Theme Selector */}
-            <ThemeSelector />
+            {/* Action CTAs */}
+            <div className="hidden items-center gap-3.5 md:flex">
+              {/* Theme Selector */}
+              <ThemeSelector />
 
-            <Link 
-              to="/login" 
-              className="text-sm font-semibold text-brand-charcoal/80 transition-colors hover:text-brand-brown"
-            >
-              Sign In
-            </Link>
-            <Link 
-              to="/dashboard" 
-              className="group inline-flex items-center gap-1.5 rounded-xl bg-brand-brown px-4 py-2 text-sm font-semibold text-white shadow-md shadow-brand-brown/10 transition-all hover:bg-brand-brown/95 hover:scale-[1.02] active:scale-[0.98]"
-            >
-              Start Learning
-              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-            </Link>
-          </div>
+              {isLoggedIn ? (
+                <Link 
+                  to="/dashboard" 
+                  className="rounded-full bg-brand-coffee hover:opacity-95 px-5 py-2 text-xs md:text-sm font-semibold text-white shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  Dashboard →
+                </Link>
+              ) : (
+                <>
+                  {/* Sign In Button */}
+                  <Link 
+                    to="/login" 
+                    className="rounded-full bg-brand-beige/50 hover:bg-brand-beige/80 border border-brand-beige px-5 py-2 text-xs md:text-sm font-medium text-brand-charcoal transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    Sign In
+                  </Link>
+
+                  {/* Get Started Button */}
+                  <Link 
+                    to="/signup" 
+                    className="rounded-full bg-brand-coffee hover:opacity-95 px-5 py-2 text-xs md:text-sm font-medium text-white shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    Get Started
+                  </Link>
+                </>
+              )}
+            </div>
 
           {/* Mobile Menu Icon */}
           <button 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="rounded-lg p-1.5 text-brand-charcoal hover:bg-brand-beige/30 md:hidden transition-colors"
+            className="rounded-lg p-2 text-brand-charcoal hover:bg-brand-beige/50 md:hidden transition-colors cursor-pointer"
           >
             {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -101,32 +151,32 @@ export default function LandingNavbar() {
 
       {/* Mobile Drawer Navigation */}
       {mobileMenuOpen && (
-        <div className="border-b border-brand-beige bg-brand-cream/95 py-6 px-6 backdrop-blur-lg md:hidden animate-in fade-in slide-in-from-top-4 duration-200">
+        <div className="border-b border-brand-beige bg-brand-cream/98 py-6 px-6 backdrop-blur-lg md:hidden">
           <div className="flex flex-col gap-5">
             <button 
               onClick={() => handleScrollTo('features')} 
-              className="text-left text-base font-semibold text-brand-charcoal/85 hover:text-brand-brown transition-colors"
+              className="text-left text-base font-semibold text-brand-charcoal hover:text-brand-terracotta transition-colors"
             >
               Features
             </button>
             <button 
               onClick={() => handleScrollTo('how-it-works')} 
-              className="text-left text-base font-semibold text-brand-charcoal/85 hover:text-brand-brown transition-colors"
+              className="text-left text-base font-semibold text-brand-charcoal hover:text-brand-terracotta transition-colors"
             >
               How It Works
             </button>
             <button 
               onClick={() => handleScrollTo('faq')} 
-              className="text-left text-base font-semibold text-brand-charcoal/85 hover:text-brand-brown transition-colors"
+              className="text-left text-base font-semibold text-brand-charcoal hover:text-brand-terracotta transition-colors"
             >
               FAQ
             </button>
             
-            <div className="h-px bg-brand-beige/50 my-1"></div>
+            <div className="h-px bg-brand-beige my-1" />
 
             {/* Mobile Theme Selector */}
             <div className="flex flex-col gap-2 py-1">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-brand-charcoal-light/50">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-brand-charcoal-light/60">
                 Theme Accent
               </span>
               <div className="flex items-center gap-2">
@@ -153,24 +203,35 @@ export default function LandingNavbar() {
               </div>
             </div>
 
-            <div className="h-px bg-brand-beige/50 my-1"></div>
+            <div className="h-px bg-brand-beige my-1" />
             
             <div className="flex flex-col gap-3">
-              <Link 
-                to="/login"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-center rounded-xl border border-brand-beige bg-white py-2.5 text-center text-sm font-semibold text-brand-charcoal"
-              >
-                Sign In
-              </Link>
-              <Link 
-                to="/dashboard"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-center gap-1.5 rounded-xl bg-brand-brown py-2.5 text-center text-sm font-semibold text-white shadow-md shadow-brand-brown/10"
-              >
-                Start Learning
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
+              {isLoggedIn ? (
+                <Link 
+                  to="/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-center rounded-full bg-brand-coffee py-2.5 text-center text-sm font-semibold text-white shadow-sm"
+                >
+                  Go to Dashboard →
+                </Link>
+              ) : (
+                <>
+                  <Link 
+                    to="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-center rounded-full border border-brand-beige bg-brand-beige/50 py-2.5 text-center text-sm font-semibold text-brand-charcoal"
+                  >
+                    Sign In
+                  </Link>
+                  <Link 
+                    to="/signup"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-center rounded-full bg-brand-coffee py-2.5 text-center text-sm font-semibold text-white shadow-sm"
+                  >
+                    Get Started
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

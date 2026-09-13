@@ -56,6 +56,9 @@ The current development phase mainly focuses on:
 - Database and memory system integration
 - Training and fine-tuning educational models
 
+uvicorn app.main:app --reload --port 8000
+
+
 ---
 
 # 📄 License
