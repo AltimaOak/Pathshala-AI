@@ -142,9 +142,33 @@ def generate_tutor_response(
 
     try:
         import google.generativeai as genai
-        active_model = os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite")
-        model = genai.GenerativeModel(active_model)
-        response = model.generate_content(full_prompt)
+        configured_model = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
+        candidate_models = list(dict.fromkeys([
+            configured_model,
+            "gemini-3.5-flash-lite",
+            "gemini-3.1-flash-lite",
+            "gemini-2.5-flash",
+            "gemini-1.5-flash"
+        ]))
+
+        response = None
+        last_error = None
+        for m_name in candidate_models:
+            try:
+                model = genai.GenerativeModel(m_name)
+                response = model.generate_content(full_prompt)
+                if response:
+                    break
+            except Exception as err:
+                last_error = err
+                err_str = str(err).lower()
+                if "404" in err_str or "not found" in err_str or "no longer available" in err_str or "deprecated" in err_str:
+                    continue
+                raise err
+
+        if not response and last_error:
+            raise last_error
+
         raw_text = response.text or ""
 
         # Extract suggested follow-up questions if present
