@@ -34,3 +34,19 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 .idea/
+
+# Vector database & storage
+backend/chroma_db/
+*.sqlite3
+
+# Backend uploads (user files, not committed)
+backend/uploads/
+
+# ML model cache (downloaded at runtime on Railway)
+.cache/
+backend/.cache/
+backend/models/
+
+# Python build artifacts
+*.egg-info/
+build/

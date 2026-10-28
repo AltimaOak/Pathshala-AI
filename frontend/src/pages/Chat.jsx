@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { 
   MessageSquare, 
-  Send, 
+  ArrowUp, 
   Mic, 
   Paperclip, 
   Sparkles, 
@@ -10,22 +12,170 @@ import {
   FileText,
   User,
   Volume2,
-  Menu,
-  X,
-  Bot
+  Copy,
+  Check,
+  RotateCcw,
+  Plus,
+  Trash2,
+  PanelLeftClose,
+  PanelLeft,
+  ChevronDown,
+  BookOpen,
+  HelpCircle,
+  Lightbulb,
+  Zap,
+  StopCircle
 } from 'lucide-react';
-import { EmptyState } from '../components';
+
+// Code Block with Language Badge & Copy Button (ChatGPT Style)
+function CodeBlock({ language, value }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(value);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="my-3 overflow-hidden rounded-xl border border-zinc-800 bg-[#1e1e24] text-zinc-100 shadow-md">
+      <div className="flex items-center justify-between border-b border-zinc-800/80 bg-[#18181b] px-4 py-1.5 text-xs text-zinc-400 font-mono">
+        <span className="font-semibold uppercase tracking-wider">{language || 'code'}</span>
+        <button
+          onClick={handleCopy}
+          className="flex items-center gap-1.5 rounded px-2 py-0.5 text-xs text-zinc-300 hover:bg-zinc-700/60 hover:text-white transition-colors cursor-pointer"
+        >
+          {copied ? (
+            <>
+              <Check className="h-3.5 w-3.5 text-emerald-400" />
+              <span className="text-emerald-400 font-medium">Copied!</span>
+            </>
+          ) : (
+            <>
+              <Copy className="h-3.5 w-3.5" />
+              <span>Copy code</span>
+            </>
+          )}
+        </button>
+      </div>
+      <pre className="p-4 overflow-x-auto text-xs font-mono leading-relaxed selection:bg-brand-brown/40">
+        <code>{value}</code>
+      </pre>
+    </div>
+  );
+}
+
+// Markdown Formatter Component
+function FormattedMessage({ content }) {
+  return (
+    <div className="prose prose-sm max-w-none text-brand-charcoal leading-relaxed space-y-2">
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          h1: ({ children }) => (
+            <h1 className="text-lg md:text-xl font-bold tracking-tight text-brand-charcoal mt-4 mb-2 pb-1 border-b border-brand-beige/60">
+              {children}
+            </h1>
+          ),
+          h2: ({ children }) => (
+            <h2 className="text-base md:text-lg font-bold text-brand-charcoal mt-3.5 mb-1.5">
+              {children}
+            </h2>
+          ),
+          h3: ({ children }) => (
+            <h3 className="text-sm md:text-base font-bold text-brand-charcoal mt-3 mb-1">
+              {children}
+            </h3>
+          ),
+          p: ({ children }) => (
+            <p className="text-xs md:text-sm text-brand-charcoal/90 leading-relaxed mb-2.5 last:mb-0">
+              {children}
+            </p>
+          ),
+          ul: ({ children }) => (
+            <ul className="list-disc pl-5 my-2 space-y-1 text-xs md:text-sm text-brand-charcoal/90">
+              {children}
+            </ul>
+          ),
+          ol: ({ children }) => (
+            <ol className="list-decimal pl-5 my-2 space-y-1 text-xs md:text-sm text-brand-charcoal/90">
+              {children}
+            </ol>
+          ),
+          li: ({ children }) => (
+            <li className="leading-relaxed pl-0.5">
+              {children}
+            </li>
+          ),
+          strong: ({ children }) => (
+            <strong className="font-semibold text-brand-charcoal">
+              {children}
+            </strong>
+          ),
+          blockquote: ({ children }) => (
+            <blockquote className="border-l-4 border-brand-brown/70 bg-brand-brown/5 pl-3.5 py-1.5 my-2.5 rounded-r-lg italic text-brand-charcoal/80 text-xs md:text-sm">
+              {children}
+            </blockquote>
+          ),
+          hr: () => (
+            <hr className="my-4 border-t border-brand-beige" />
+          ),
+          table: ({ children }) => (
+            <div className="my-3 overflow-x-auto rounded-lg border border-brand-beige/80">
+              <table className="min-w-full divide-y divide-brand-beige text-xs text-left">
+                {children}
+              </table>
+            </div>
+          ),
+          th: ({ children }) => (
+            <th className="bg-brand-cream/80 px-3.5 py-2 font-bold text-brand-charcoal">
+              {children}
+            </th>
+          ),
+          td: ({ children }) => (
+            <td className="px-3.5 py-2 text-brand-charcoal/85 border-t border-brand-beige/40">
+              {children}
+            </td>
+          ),
+          code: ({ node, inline, className, children, ...props }) => {
+            const match = /language-(\w+)/.exec(className || '');
+            const codeString = String(children).replace(/\n$/, '');
+            if (!inline && match) {
+              return <CodeBlock language={match[1]} value={codeString} />;
+            } else if (!inline && codeString.includes('\n')) {
+              return <CodeBlock language="text" value={codeString} />;
+            }
+            return (
+              <code className="rounded bg-brand-cream border border-brand-beige px-1.5 py-0.5 font-mono text-[11px] font-semibold text-brand-brown">
+                {children}
+              </code>
+            );
+          }
+        }}
+      >
+        {content}
+      </ReactMarkdown>
+    </div>
+  );
+}
 
 export default function Chat() {
-  const [messages, setMessages] = useState([]); // STRICTLY empty to start - no fake chats
+  const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 768);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024);
+  const [tutorStyle, setTutorStyle] = useState(localStorage.getItem('tutorStyle') || 'balanced');
+  const [isStyleDropdownOpen, setIsStyleDropdownOpen] = useState(false);
+  const [speakingMessageId, setSpeakingMessageId] = useState(null);
+
   const messagesEndRef = useRef(null);
+  const textareaRef = useRef(null);
   const recognitionRef = useRef(null);
 
-  // Auto-scroll messages
+  const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+
+  // Auto-scroll
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -34,7 +184,15 @@ export default function Chat() {
     scrollToBottom();
   }, [messages, isTyping]);
 
-  // Initialize SpeechRecognition
+  // Auto-resize input textarea
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 180)}px`;
+    }
+  }, [inputValue]);
+
+  // Speech Recognition setup
   useEffect(() => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
@@ -43,178 +201,24 @@ export default function Chat() {
       recognition.interimResults = false;
       recognition.lang = 'en-US';
 
-      recognition.onstart = () => {
-        setIsRecording(true);
-      };
-
+      recognition.onstart = () => setIsRecording(true);
       recognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
         if (transcript) {
-          setInputValue(transcript);
+          setInputValue(prev => prev ? `${prev} ${transcript}` : transcript);
         }
       };
-
-      recognition.onerror = (event) => {
-        console.error("Speech recognition error:", event.error);
-        setIsRecording(false);
-      };
-
-      recognition.onend = () => {
-        setIsRecording(false);
-      };
-
+      recognition.onerror = () => setIsRecording(false);
+      recognition.onend = () => setIsRecording(false);
       recognitionRef.current = recognition;
     }
   }, []);
 
-  const audioContextRef = useRef(null);
-  const analyserRef = useRef(null);
-  const dataArrayRef = useRef(null);
-  const streamRef = useRef(null);
-  const animationFrameRef = useRef(null);
-  const visualizerBarsRef = useRef([]);
-
-  // Web Audio Analyzer for Voice Volume visualization
-  useEffect(() => {
-    if (isRecording) {
-      navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(stream => {
-          streamRef.current = stream;
-          const AudioContext = window.AudioContext || window.webkitAudioContext;
-          const audioContext = new AudioContext();
-          audioContextRef.current = audioContext;
-
-          const source = audioContext.createMediaStreamSource(stream);
-          const analyser = audioContext.createAnalyser();
-          analyser.fftSize = 32;
-          analyserRef.current = analyser;
-
-          source.connect(analyser);
-
-          const bufferLength = analyser.frequencyBinCount;
-          const dataArray = new Uint8Array(bufferLength);
-          dataArrayRef.current = dataArray;
-
-          const updateVolume = () => {
-            if (!analyserRef.current) return;
-            analyserRef.current.getByteFrequencyData(dataArray);
-            
-            // Map frequencies to scaleY values on the bar references
-            if (visualizerBarsRef.current) {
-              for (let i = 0; i < 8; i++) {
-                const barElement = visualizerBarsRef.current[i];
-                if (barElement) {
-                  const val = dataArray[i] || 0;
-                  const scale = Math.max(0.15, (val / 255) * 2.8);
-                  barElement.style.transform = `scaleY(${scale})`;
-                }
-              }
-            }
-            animationFrameRef.current = requestAnimationFrame(updateVolume);
-          };
-
-          updateVolume();
-        })
-        .catch(err => {
-          console.warn("Speech API microphone fallback active:", err);
-          
-          let phase = 0;
-          const updateSimulated = () => {
-            phase += 0.15;
-            if (visualizerBarsRef.current) {
-              for (let i = 0; i < 8; i++) {
-                const barElement = visualizerBarsRef.current[i];
-                if (barElement) {
-                  const val = Math.abs(Math.sin(phase + i * 0.5)) * 2.0 + 0.15;
-                  barElement.style.transform = `scaleY(${val})`;
-                }
-              }
-            }
-            animationFrameRef.current = requestAnimationFrame(updateSimulated);
-          };
-          updateSimulated();
-        });
-    } else {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
-      }
-      if (audioContextRef.current) {
-        audioContextRef.current.close().catch(() => {});
-      }
-      if (visualizerBarsRef.current) {
-        visualizerBarsRef.current.forEach(barElement => {
-          if (barElement) {
-            barElement.style.transform = 'scaleY(0.15)';
-          }
-        });
-      }
-    }
-
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-  }, [isRecording]);
-
-  const handleSend = (e) => {
-    e.preventDefault();
-    if (!inputValue.trim()) return;
-
-    const userMessage = {
-      id: Date.now(),
-      sender: 'user',
-      text: inputValue.trim(),
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    };
-
-    setMessages(prev => [...prev, userMessage]);
-    setInputValue('');
-    setIsTyping(true);
-
-    // Dynamic simulated tutor response based on active tutorStyle setting
-    setTimeout(() => {
-      setIsTyping(false);
-      const activeStyle = localStorage.getItem('tutorStyle') || 'socratic';
-      
-      let responseText = '';
-      if (activeStyle === 'socratic') {
-        responseText = `That is a great question! Let us break down "${userMessage.text}" step-by-step. What is the first thing that comes to your mind when you think about this?`;
-      } else if (activeStyle === 'direct') {
-        responseText = `Here is a clear, structured summary regarding "${userMessage.text}":\n\n• Core Concept: Explains the fundamental idea clearly.\n• Key Info: Structured logically for instant learning.\n• Actionable Practice: Try using this in a real example.`;
-      } else {
-        responseText = `[Practice Exam Mode]\nHow would you define "${userMessage.text}"? Try to explain it in your own words, and I will check your answer!`;
-      }
-
-      const aiResponse = {
-        id: Date.now() + 1,
-        sender: 'ai',
-        text: responseText,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-      setMessages(prev => [...prev, aiResponse]);
-    }, 2000);
-  };
-
-  const handleSuggestionClick = (suggestion) => {
-    setInputValue(suggestion);
-  };
-
-  const handleVoiceInput = () => {
+  const handleVoiceToggle = () => {
     if (!recognitionRef.current) {
-      setIsRecording(!isRecording);
-      if (!isRecording) {
-        setTimeout(() => {
-          setInputValue("Can you explain active recall in detail?");
-          setIsRecording(false);
-        }, 2500);
-      }
+      alert("Speech recognition is not supported in this browser. Please use Chrome or Edge.");
       return;
     }
-
     if (isRecording) {
       recognitionRef.current.stop();
     } else {
@@ -222,387 +226,501 @@ export default function Chat() {
     }
   };
 
+  // Text-To-Speech Reader
+  const handleSpeak = (messageId, text) => {
+    if (!('speechSynthesis' in window)) return;
+
+    if (speakingMessageId === messageId) {
+      window.speechSynthesis.cancel();
+      setSpeakingMessageId(null);
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+    // Clean markdown symbols for cleaner speech
+    const cleanText = text.replace(/[*#`_~\[\]]/g, '');
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.rate = 1.0;
+    utterance.onend = () => setSpeakingMessageId(null);
+    utterance.onerror = () => setSpeakingMessageId(null);
+    setSpeakingMessageId(messageId);
+    window.speechSynthesis.speak(utterance);
+  };
+
+  // Submit message
+  const handleSend = async (textOverride) => {
+    const textToSend = (typeof textOverride === 'string' ? textOverride : inputValue).trim();
+    if (!textToSend || isTyping) return;
+
+    const userMessage = {
+      id: Date.now(),
+      sender: 'user',
+      text: textToSend,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInputValue('');
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+    }
+    setIsTyping(true);
+
+    try {
+      const res = await fetch(`${API_URL}/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: textToSend,
+          tutor_style: tutorStyle,
+          session_id: 'default'
+        })
+      });
+
+      if (!res.ok) {
+        throw new Error(`Server returned HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+      const aiResponse = {
+        id: Date.now() + 1,
+        sender: 'ai',
+        text: data.response || "No response received.",
+        sources: data.sources || [],
+        suggested_questions: data.suggested_questions || [],
+        model: data.model || 'gemini',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      setMessages(prev => [...prev, aiResponse]);
+    } catch (err) {
+      console.warn("Backend chat request failed:", err);
+      const fallbackResponse = {
+        id: Date.now() + 1,
+        sender: 'ai',
+        text: `Unable to connect to Pathshala AI backend (${API_URL}). Please verify that your backend server is running on port 8000.`,
+        sources: [],
+        suggested_questions: ["Retry question", "Check backend status"],
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      setMessages(prev => [...prev, fallbackResponse]);
+    } finally {
+      setIsTyping(false);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  // Clear chat
+  const handleClearChat = async () => {
+    setMessages([]);
+    window.speechSynthesis?.cancel();
+    setSpeakingMessageId(null);
+    try {
+      await fetch(`${API_URL}/chat/clear`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: 'default' })
+      });
+    } catch (err) {
+      console.warn("Failed to clear backend memory:", err);
+    }
+  };
+
+  const handleStyleChange = (style) => {
+    setTutorStyle(style);
+    localStorage.setItem('tutorStyle', style);
+    setIsStyleDropdownOpen(false);
+  };
+
+  const tutorStyles = [
+    { id: 'balanced', label: 'Balanced Tutor', desc: 'Clear, encouraging, structured walkthroughs' },
+    { id: 'socratic', label: 'Socratic Coach', desc: 'Asks guiding hints & interactive questions' },
+    { id: 'simple', label: 'Concept & Analogy', desc: 'Simple explanations using vivid analogies' },
+    { id: 'exam', label: 'Exam & Prep Mode', desc: 'Formulas, definitions, and high-yield revision' }
+  ];
+
+  const quickPrompts = [
+    { title: "Explain a core concept", desc: "How does photosynthesis convert light into glucose?", icon: Lightbulb },
+    { title: "Step-by-step problem", desc: "Walk me through calculating kinetic energy with an example", icon: Zap },
+    { title: "Practice quiz question", desc: "Quiz me on cell structure and organelles with 3 MCQs", icon: HelpCircle },
+    { title: "Summarize study guide", desc: "Summarize the key takeaways from Chapter 1", icon: BookOpen }
+  ];
+
   return (
-    <div className="flex h-[calc(100vh-8.5rem)] gap-5 overflow-hidden relative">
+    <div className="flex h-[calc(100vh-5rem)] md:h-[calc(100vh-4.5rem)] w-full overflow-hidden rounded-2xl border border-brand-beige/80 bg-white shadow-sm relative">
       
-      {/* Mobile Drawer Overlay Backdrop */}
-      <AnimatePresence>
+      {/* ========================================================
+          LEFT SIDEBAR: CHATGPT STYLE HISTORY & NEW CHAT
+          ======================================================== */}
+      <AnimatePresence initial={false}>
         {isSidebarOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setIsSidebarOpen(false)}
-            className="md:hidden fixed inset-0 z-45 bg-[#0F0E0D]/40 backdrop-blur-sm"
-          />
+          <motion.aside
+            initial={{ width: 0, opacity: 0 }}
+            animate={{ width: 260, opacity: 1 }}
+            exit={{ width: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className="hidden md:flex flex-col border-r border-brand-beige/80 bg-[#faf8f5] overflow-hidden shrink-0 select-none"
+          >
+            {/* New Chat Button */}
+            <div className="p-3">
+              <button
+                onClick={handleClearChat}
+                className="w-full flex items-center justify-between rounded-xl border border-brand-beige bg-white px-3.5 py-2.5 text-xs font-semibold text-brand-charcoal shadow-2xs hover:bg-brand-cream/60 hover:border-brand-brown/40 transition-all cursor-pointer group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <Plus className="h-4 w-4 text-brand-brown transition-transform group-hover:rotate-90" />
+                  <span>New Chat</span>
+                </div>
+                <span className="text-[10px] text-brand-charcoal/40 font-mono">Ctrl+K</span>
+              </button>
+            </div>
+
+            {/* Conversation History List */}
+            <div className="flex-1 overflow-y-auto px-3 space-y-1">
+              <div className="px-2 py-1.5 text-[10px] font-bold uppercase tracking-wider text-brand-charcoal/50">
+                Recent Conversations
+              </div>
+
+              {messages.length === 0 ? (
+                <div className="p-4 text-center text-xs text-brand-charcoal/50">
+                  <p>No chat history yet.</p>
+                  <p className="text-[11px] mt-1 text-brand-charcoal/40">Ask a question to start!</p>
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between rounded-lg bg-brand-brown/10 border border-brand-brown/20 px-3 py-2 text-xs font-medium text-brand-charcoal group">
+                    <div className="flex items-center gap-2 overflow-hidden">
+                      <MessageSquare className="h-3.5 w-3.5 text-brand-brown shrink-0" />
+                      <span className="truncate max-w-[140px] text-xs">
+                        {messages[0]?.text || "Current Session"}
+                      </span>
+                    </div>
+                    <button
+                      onClick={handleClearChat}
+                      className="opacity-0 group-hover:opacity-100 p-1 text-brand-charcoal/40 hover:text-red-600 transition-all cursor-pointer"
+                      title="Clear chat"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Sidebar Footer: Mode info */}
+            <div className="border-t border-brand-beige/80 p-3 bg-white/60">
+              <div className="flex items-center gap-2 px-2 py-1.5 text-xs text-brand-charcoal/70">
+                <Sparkles className="h-4 w-4 text-brand-brown" />
+                <span className="font-semibold text-brand-charcoal">Gemini 3.1 Flash-Lite</span>
+              </div>
+            </div>
+          </motion.aside>
         )}
       </AnimatePresence>
 
-      {/* Mobile Left Chat Sidebar Drawer */}
-      <motion.div
-        initial={{ x: "-100%" }}
-        animate={{ x: isSidebarOpen ? 0 : "-100%" }}
-        transition={{ type: "spring", stiffness: 320, damping: 32 }}
-        className="md:hidden fixed inset-y-0 left-0 z-50 w-72 flex flex-col bg-white p-5 border-r border-brand-beige shadow-2xl h-full"
-      >
-        <div className="flex items-center justify-between pb-3.5 border-b border-brand-beige/50 mb-4">
-          <div className="flex items-center gap-2">
-            <MessageSquare className="h-4 w-4 text-brand-brown" />
-            <h3 className="font-display text-xs font-bold uppercase tracking-wider text-brand-charcoal">
-              Study Sessions
-            </h3>
-          </div>
-          <button
-            onClick={() => setIsSidebarOpen(false)}
-            className="p-1 rounded-lg hover:bg-brand-cream/80 text-brand-charcoal/60 hover:text-brand-charcoal transition-colors cursor-pointer"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-
-        <div className="flex-1 flex flex-col justify-center items-center">
-          {messages.length === 0 ? (
-            <div className="text-center p-4 select-none">
-              <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-brand-cream border border-brand-beige text-brand-brown">
-                <MessageSquare className="h-5 w-5" />
-              </div>
-              <p className="text-xs font-semibold text-brand-charcoal">
-                No active conversations
-              </p>
-              <p className="text-[11px] text-brand-charcoal/50 mt-1 leading-relaxed">
-                Your study dialog history starts fresh here.
-              </p>
-            </div>
-          ) : (
-            <div className="w-full space-y-1.5 overflow-y-auto max-h-[400px] text-left">
-              <button 
-                onClick={() => setIsSidebarOpen(false)}
-                className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl bg-brand-cream/70 border border-brand-brown/20 text-xs text-brand-charcoal font-semibold hover:bg-brand-cream transition-colors"
-              >
-                <div className="h-2 w-2 rounded-full bg-brand-brown shrink-0" />
-                <span className="truncate max-w-[150px]">{messages[0].text}</span>
-              </button>
-            </div>
-          )}
-        </div>
-      </motion.div>
-
-      {/* Desktop Left Chat Sidebar: History Panel */}
-      <motion.div
-        initial={false}
-        animate={{
-          width: isSidebarOpen ? 260 : 0,
-          opacity: isSidebarOpen ? 1 : 0,
-          marginRight: isSidebarOpen ? 0 : -20,
-        }}
-        transition={{ type: "spring", stiffness: 320, damping: 32 }}
-        className="hidden md:flex flex-col shrink-0 rounded-2xl border border-brand-beige/80 bg-white/90 p-4.5 shadow-2xs overflow-hidden backdrop-blur-sm"
-      >
-        <div className="flex items-center justify-between pb-3 border-b border-brand-beige/50 mb-4 whitespace-nowrap">
-          <div className="flex items-center gap-2">
-            <MessageSquare className="h-3.5 w-3.5 text-brand-brown" />
-            <h3 className="font-display text-xs font-bold uppercase tracking-wider text-brand-charcoal/80">
-              Sessions
-            </h3>
-          </div>
-          {messages.length > 0 && (
-            <button 
-              onClick={() => setMessages([])} 
-              className="text-[10px] font-semibold text-brand-brown hover:text-brand-brown/80 transition-colors cursor-pointer"
-            >
-              Clear All
-            </button>
-          )}
-        </div>
-
-        <div className="flex-1 flex flex-col justify-center items-center">
-          {messages.length === 0 ? (
-            <div className="text-center p-3 select-none whitespace-normal">
-              <div className="mx-auto mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-brand-cream/80 border border-brand-beige/60 text-brand-brown/70">
-                <MessageSquare className="h-4.5 w-4.5" />
-              </div>
-              <p className="text-xs font-semibold text-brand-charcoal/80">
-                No active session
-              </p>
-              <p className="text-[10px] text-brand-charcoal/50 mt-1 leading-normal max-w-[170px]">
-                Ask any question on the right to start your study dialogue.
-              </p>
-            </div>
-          ) : (
-            <div className="w-full space-y-1.5 overflow-y-auto max-h-[400px] text-left">
-              <button className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-brand-cream/70 border border-brand-brown/25 text-xs text-brand-charcoal font-semibold shadow-2xs hover:bg-brand-cream transition-colors cursor-pointer">
-                <div className="h-2 w-2 rounded-full bg-brand-brown shrink-0" />
-                <span className="truncate max-w-[150px]">{messages[0].text}</span>
-              </button>
-            </div>
-          )}
-        </div>
-      </motion.div>
-
-      {/* Main Chat Frame */}
-      <div className="flex flex-1 flex-col rounded-2xl border border-brand-beige/80 bg-white shadow-xs overflow-hidden relative">
+      {/* ========================================================
+          MAIN CHAT CANVAS (CHATGPT FULL LAYOUT)
+          ======================================================== */}
+      <div className="flex flex-1 flex-col h-full bg-white relative overflow-hidden">
         
-        {/* Main Chat Frame Header */}
-        <div className="flex items-center justify-between border-b border-brand-beige/60 bg-white/80 backdrop-blur-md px-5 py-3 select-none relative z-40">
-          <div className="flex items-center gap-3">
+        {/* Top Floating Header */}
+        <header className="flex h-13 items-center justify-between border-b border-brand-beige/60 px-4 select-none shrink-0 bg-white/80 backdrop-blur-md z-30">
+          <div className="flex items-center gap-2.5">
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="p-1.5 rounded-lg border border-brand-beige/70 hover:border-brand-brown/40 hover:bg-brand-cream/40 text-brand-charcoal/65 hover:text-brand-brown transition-all cursor-pointer"
-              title={isSidebarOpen ? "Collapse Sidebar" : "Expand Sidebar"}
+              className="p-1.5 rounded-lg border border-brand-beige/70 text-brand-charcoal/65 hover:text-brand-brown hover:bg-brand-cream/50 transition-colors cursor-pointer"
+              title={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
             >
-              <Menu className="h-4 w-4" />
+              {isSidebarOpen ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeft className="h-4 w-4" />}
             </button>
-            <div className="flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-brown/10 text-brand-brown">
-                <GraduationCap className="h-4 w-4" />
-              </div>
-              <div>
-                <span className="font-display text-xs font-bold tracking-tight text-brand-charcoal block leading-none">
-                  AI Study Buddy
-                </span>
-                <span className="text-[10px] text-brand-charcoal/45 font-medium">
-                  Socratic Mode
-                </span>
-              </div>
-            </div>
-          </div>
 
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 text-[10px] font-semibold text-emerald-800">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Ready to Tutor</span>
-            </div>
-          </div>
-        </div>
-        
-        {/* Floating Real-Time Voice Waveform Assistant Card */}
-        <AnimatePresence>
-          {isRecording && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 15 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="absolute inset-x-6 bottom-20 z-50 flex items-center justify-center pointer-events-none"
-            >
-              <div className="w-full max-w-sm rounded-2xl border border-brand-brown/30 bg-white/95 p-5 shadow-xl shadow-brand-brown/10 backdrop-blur-md pointer-events-auto text-center flex flex-col items-center gap-3.5">
-                <div className="flex items-center gap-2">
-                  <span className="relative flex h-2.5 w-2.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-brown/40 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand-brown"></span>
-                  </span>
-                  <span className="font-display text-xs font-bold uppercase tracking-wider text-brand-brown">
-                    Listening to your voice...
-                  </span>
-                </div>
-
-                <p className="text-xs text-brand-charcoal/70 leading-normal max-w-xs">
-                  Speak clearly. Your speech is converted into your question:
-                </p>
-
-                {/* Real-time Voice Waveform Visualizer */}
-                <div className="flex items-end justify-center gap-1.5 h-12 w-full py-1">
-                  {[...Array(8)].map((_, idx) => (
-                    <span
-                      key={idx}
-                      ref={el => {
-                        if (visualizerBarsRef.current) {
-                          visualizerBarsRef.current[idx] = el;
-                        }
-                      }}
-                      style={{ transform: 'scaleY(0.15)', transition: 'transform 0.05s ease-out' }}
-                      className="w-1.5 bg-brand-brown rounded-full origin-bottom h-full"
-                    />
-                  ))}
-                </div>
-
-                <button
-                  type="button"
-                  onClick={handleVoiceInput}
-                  className="flex items-center gap-2 rounded-xl bg-brand-brown hover:bg-brand-brown/95 px-5 py-2 text-xs font-bold text-white shadow-sm transition-all active:scale-95 cursor-pointer"
-                >
-                  <Mic className="h-3.5 w-3.5 animate-pulse" />
-                  <span>Done Speaking</span>
-                </button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-        
-        {/* Chat Playground Area */}
-        <div className="flex-1 overflow-y-auto p-5 md:p-6 space-y-6">
-          <AnimatePresence mode="wait">
-            {messages.length === 0 ? (
-              <motion.div 
-                key="welcome"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="flex flex-col items-center justify-center text-center h-full max-w-lg mx-auto py-8"
+            {/* Tutor Style Selector Pill */}
+            <div className="relative">
+              <button
+                onClick={() => setIsStyleDropdownOpen(!isStyleDropdownOpen)}
+                className="flex items-center gap-1.5 rounded-xl border border-brand-beige bg-brand-cream/40 px-3 py-1.5 text-xs font-semibold text-brand-charcoal hover:bg-brand-cream transition-colors cursor-pointer"
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-brown/10 text-brand-brown mb-4 border border-brand-brown/20 shadow-xs">
-                  <GraduationCap className="h-6 w-6" />
-                </div>
-                <h3 className="font-display text-xl font-bold tracking-tight text-brand-charcoal">
-                  What would you like to study?
-                </h3>
-                <p className="text-xs text-brand-charcoal/65 mt-2 leading-relaxed max-w-sm">
-                  Ask any concept question, request step-by-step problem breakdowns, or explore your study materials.
-                </p>
+                <GraduationCap className="h-3.5 w-3.5 text-brand-brown" />
+                <span>{tutorStyles.find(s => s.id === tutorStyle)?.label}</span>
+                <ChevronDown className="h-3 w-3 text-brand-charcoal/50" />
+              </button>
 
-                {/* Conceptual Socratic suggestions */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-7 w-full text-left">
-                  <button 
-                    onClick={() => handleSuggestionClick("How does Pathshala AI help me study?")}
-                    className="group flex flex-col items-start rounded-xl border border-brand-beige bg-brand-cream/30 hover:bg-white hover:border-brand-brown/50 p-4 transition-all hover:shadow-2xs cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <Sparkles className="h-3.5 w-3.5 text-brand-brown" />
-                      <span className="text-xs font-bold text-brand-charcoal group-hover:text-brand-brown transition-colors">Study Tips</span>
-                    </div>
-                    <span className="text-[11px] text-brand-charcoal/60 leading-normal">How does Pathshala AI help me learn concepts faster?</span>
-                  </button>
-
-                  <button 
-                    onClick={() => handleSuggestionClick("How to think step-by-step?")}
-                    className="group flex flex-col items-start rounded-xl border border-brand-beige bg-brand-cream/30 hover:bg-white hover:border-brand-brown/50 p-4 transition-all hover:shadow-2xs cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <Volume2 className="h-3.5 w-3.5 text-brand-brown" />
-                      <span className="text-xs font-bold text-brand-charcoal group-hover:text-brand-brown transition-colors">Step-by-Step</span>
-                    </div>
-                    <span className="text-[11px] text-brand-charcoal/60 leading-normal">Explain how to break down and solve difficult questions.</span>
-                  </button>
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div key="messages-log" className="space-y-4 text-left">
-                {messages.map((msg) => (
-                  <div 
-                    key={msg.id} 
-                    className={`flex items-start gap-3 max-w-2xl ${msg.sender === 'user' ? 'ml-auto flex-row-reverse' : 'mr-auto'}`}
-                  >
-                    {/* Avatar Indicator */}
-                    <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border ${
-                      msg.sender === 'user' 
-                        ? 'bg-brand-cream border-brand-beige text-brand-charcoal' 
-                        : 'bg-brand-brown border-brand-brown/30 text-white shadow-2xs'
-                    }`}>
-                      {msg.sender === 'user' ? <User className="h-4 w-4" /> : <GraduationCap className="h-4.5 w-4.5" />}
-                    </div>
-
-                    {/* Chat Bubble content */}
-                    <div className={`rounded-2xl px-4.5 py-3.5 text-xs shadow-2xs border ${
-                      msg.sender === 'user' 
-                        ? 'bg-brand-brown text-white border-brand-brown/30 rounded-tr-xs' 
-                        : 'bg-white border-brand-beige/80 text-brand-charcoal rounded-tl-xs leading-relaxed'
-                    }`}>
-                      <p className={`whitespace-pre-wrap ${msg.sender === 'user' ? 'font-normal' : 'font-medium'}`}>{msg.text}</p>
-                      <span className={`block text-[9px] mt-1.5 text-right font-medium ${
-                        msg.sender === 'user' ? 'text-white/70' : 'text-brand-charcoal/40'
-                      }`}>
-                        {msg.timestamp}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* AI Typing Loader Component */}
-          {isTyping && (
-            <div className="flex items-start gap-3 max-w-md text-left">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border bg-brand-brown border-brand-brown/30 text-white shadow-2xs">
-                <GraduationCap className="h-4.5 w-4.5" />
-              </div>
-              <div className="rounded-2xl rounded-tl-xs border border-brand-beige/80 bg-white px-4 py-3 shadow-2xs">
-                <div className="flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-brown/40"></span>
-                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-brown/70 [animation-delay:0.2s]"></span>
-                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-brand-brown [animation-delay:0.4s]"></span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* Input Bar Section */}
-        <div className="border-t border-brand-beige/60 bg-brand-cream/20 px-4 py-3.5">
-          <form onSubmit={handleSend} className="relative flex items-center">
-            {/* Attachment Button */}
-            <button
-              type="button"
-              onClick={() => alert("To attach a PDF study material, please navigate to the 'Study Materials' upload dashboard to parse your file.")}
-              className="absolute left-3 p-1.5 rounded-lg text-brand-charcoal/45 hover:text-brand-brown hover:bg-brand-cream/80 transition-colors cursor-pointer"
-              title="Attach study file"
-            >
-              <Paperclip className="h-4 w-4" />
-            </button>
-
-            {/* Input area */}
-            <input
-              id="chat-query-input"
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              placeholder={isRecording ? "Listening... Speak clearly into your mic" : "Ask anything or type a concept..."}
-              className={`w-full h-11 rounded-xl border bg-white pl-10 pr-24 text-xs text-brand-charcoal placeholder-brand-charcoal/40 transition-all focus:outline-none ${
-                isRecording 
-                  ? 'border-brand-brown ring-2 ring-brand-brown/20 placeholder-brand-brown/60 font-semibold' 
-                  : 'border-brand-beige/80 focus:border-brand-brown/70 focus:ring-2 focus:ring-brand-brown/10'
-              }`}
-            />
-
-            {/* Controls panel: Voice Input + Send buttons */}
-            <div className="absolute right-2 flex items-center gap-1.5">
-              {isRecording && (
-                <div className="flex items-end gap-[2px] h-3.5 px-1 select-none pointer-events-none">
-                  {[0.5, 0.9, 0.6, 0.4].map((speed, idx) => (
-                    <motion.span
-                      key={idx}
-                      animate={{
-                        height: ["4px", "14px", "4px"]
-                      }}
-                      transition={{
-                        duration: speed,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                      className="w-[2px] bg-brand-brown rounded-full origin-bottom"
-                    />
+              {isStyleDropdownOpen && (
+                <div className="absolute left-0 top-full mt-1.5 w-60 rounded-xl border border-brand-beige bg-white p-1.5 shadow-lg z-50">
+                  {tutorStyles.map(st => (
+                    <button
+                      key={st.id}
+                      onClick={() => handleStyleChange(st.id)}
+                      className={`w-full text-left rounded-lg px-3 py-2 text-xs transition-colors cursor-pointer ${
+                        tutorStyle === st.id ? 'bg-brand-brown/10 text-brand-brown font-bold' : 'hover:bg-brand-cream/60 text-brand-charcoal'
+                      }`}
+                    >
+                      <div className="font-semibold">{st.label}</div>
+                      <div className="text-[10px] text-brand-charcoal/60 mt-0.5">{st.desc}</div>
+                    </button>
                   ))}
                 </div>
               )}
-
-              <button
-                type="button"
-                onClick={handleVoiceInput}
-                className={`p-1.5 rounded-lg transition-all relative cursor-pointer ${
-                  isRecording 
-                    ? 'bg-brand-brown text-white shadow-xs' 
-                    : 'text-brand-charcoal/50 hover:text-brand-brown hover:bg-brand-cream/80'
-                }`}
-                title={isRecording ? "Listening..." : "Voice Input"}
-              >
-                {isRecording && (
-                  <span className="absolute inset-0 rounded-lg bg-brand-brown animate-ping opacity-75 pointer-events-none" />
-                )}
-                <Mic className="h-4 w-4 relative z-10" />
-              </button>
-              
-              <button
-                type="submit"
-                disabled={!inputValue.trim()}
-                className="flex h-7.5 w-7.5 items-center justify-center rounded-lg bg-brand-brown text-white transition-all hover:bg-brand-brown/90 active:scale-95 disabled:opacity-35 disabled:pointer-events-none cursor-pointer shadow-2xs"
-                title="Send message"
-              >
-                <Send className="h-3.5 w-3.5" />
-              </button>
             </div>
-          </form>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="flex items-center gap-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 text-[11px] font-medium text-emerald-800">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Ready</span>
+            </span>
+
+            {messages.length > 0 && (
+              <button
+                onClick={handleClearChat}
+                className="flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs text-brand-charcoal/60 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Clear</span>
+              </button>
+            )}
+          </div>
+        </header>
+
+        {/* Message Feed Area */}
+        <div className="flex-1 overflow-y-auto px-4 py-6 md:px-8 space-y-6">
+          {messages.length === 0 ? (
+            /* ========================================================
+               CHATGPT WELCOME / EMPTY STATE
+               ======================================================== */
+            <div className="max-w-2xl mx-auto flex flex-col items-center justify-center min-h-[75%] text-center px-4">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-brown/10 border border-brand-brown/20 text-brand-brown mb-5 shadow-xs">
+                <GraduationCap className="h-8 w-8" />
+              </div>
+              
+              <h2 className="font-display text-2xl md:text-3xl font-bold tracking-tight text-brand-charcoal">
+                What can I help you learn today?
+              </h2>
+              <p className="text-xs md:text-sm text-brand-charcoal/65 mt-2 max-w-md leading-relaxed">
+                Ask any question, explore uploaded study materials, or practice step-by-step problem solving.
+              </p>
+
+              {/* 4 Quick Suggestion Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full mt-8 text-left">
+                {quickPrompts.map((p, idx) => {
+                  const Icon = p.icon;
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => handleSend(p.desc)}
+                      className="group flex flex-col justify-between p-4 rounded-xl border border-brand-beige/80 bg-white hover:border-brand-brown/40 hover:bg-brand-cream/30 hover:shadow-xs transition-all cursor-pointer text-left"
+                    >
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <Icon className="h-4 w-4 text-brand-brown group-hover:scale-110 transition-transform" />
+                        <span className="text-xs font-bold text-brand-charcoal">{p.title}</span>
+                      </div>
+                      <p className="text-[11px] text-brand-charcoal/60 leading-normal line-clamp-2">
+                        {p.desc}
+                      </p>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            /* ========================================================
+               ACTIVE CONVERSATION FEED
+               ======================================================== */
+            <div className="max-w-3xl mx-auto space-y-7">
+              {messages.map((msg) => (
+                <div key={msg.id} className="space-y-3">
+                  {msg.sender === 'user' ? (
+                    /* User Message (Right Aligned Bubble) */
+                    <div className="flex justify-end">
+                      <div className="max-w-xl rounded-2xl rounded-tr-xs bg-brand-brown text-white px-4.5 py-3 text-xs md:text-sm leading-relaxed shadow-sm">
+                        <p className="whitespace-pre-wrap">{msg.text}</p>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Assistant Message (ChatGPT Full-Width Style) */
+                    <div className="flex items-start gap-3.5 group">
+                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-brand-brown text-white shadow-2xs mt-1">
+                        <GraduationCap className="h-4 w-4" />
+                      </div>
+
+                      <div className="flex-1 space-y-2 overflow-hidden">
+                        {/* Formatted Markdown Content */}
+                        <div className="rounded-2xl border border-brand-beige/60 bg-[#faf8f5]/60 p-4.5 shadow-2xs">
+                          <FormattedMessage content={msg.text} />
+
+                          {/* Grounded Study Citations */}
+                          {msg.sources && msg.sources.length > 0 && (
+                            <div className="mt-4 pt-3 border-t border-brand-beige/60 flex flex-wrap gap-1.5 items-center">
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-brand-charcoal/50 mr-1">
+                                Sources:
+                              </span>
+                              {msg.sources.map((src, sIdx) => (
+                                <span
+                                  key={sIdx}
+                                  className="inline-flex items-center gap-1 rounded-md bg-white border border-brand-beige px-2 py-0.5 text-[10px] font-medium text-brand-brown shadow-2xs"
+                                >
+                                  <FileText className="h-3 w-3" />
+                                  <span>{src.source} (p. {src.page})</span>
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Action Toolbar below AI answer */}
+                        <div className="flex items-center gap-1 pt-1 text-brand-charcoal/45">
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(msg.text);
+                            }}
+                            className="p-1.5 rounded-lg hover:text-brand-charcoal hover:bg-brand-cream transition-colors cursor-pointer"
+                            title="Copy response"
+                          >
+                            <Copy className="h-3.5 w-3.5" />
+                          </button>
+
+                          <button
+                            onClick={() => handleSpeak(msg.id, msg.text)}
+                            className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                              speakingMessageId === msg.id 
+                                ? 'text-brand-brown bg-brand-brown/10' 
+                                : 'hover:text-brand-charcoal hover:bg-brand-cream'
+                            }`}
+                            title={speakingMessageId === msg.id ? "Stop speaking" : "Read aloud"}
+                          >
+                            {speakingMessageId === msg.id ? (
+                              <StopCircle className="h-3.5 w-3.5 text-brand-brown animate-pulse" />
+                            ) : (
+                              <Volume2 className="h-3.5 w-3.5" />
+                            )}
+                          </button>
+
+                          <span className="text-[10px] text-brand-charcoal/40 ml-2">
+                            {msg.timestamp}
+                          </span>
+                        </div>
+
+                        {/* Follow-up Suggestion Chips */}
+                        {msg.suggested_questions && msg.suggested_questions.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 pt-2">
+                            {msg.suggested_questions.map((q, qIdx) => (
+                              <button
+                                key={qIdx}
+                                onClick={() => handleSend(q)}
+                                className="inline-flex items-center gap-1 text-[11px] bg-white hover:bg-brand-cream text-brand-charcoal/85 border border-brand-beige hover:border-brand-brown/40 rounded-full px-3 py-1 font-medium transition-all hover:scale-[1.01] active:scale-95 text-left cursor-pointer shadow-2xs"
+                              >
+                                <span>💡</span>
+                                <span>{q}</span>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              {/* Typing Animation */}
+              {isTyping && (
+                <div className="flex items-start gap-3.5 max-w-3xl mx-auto">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-brand-brown text-white shadow-2xs mt-1">
+                    <GraduationCap className="h-4 w-4" />
+                  </div>
+                  <div className="rounded-2xl border border-brand-beige/80 bg-[#faf8f5] px-4 py-3 shadow-2xs">
+                    <div className="flex items-center gap-1.5">
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-brand-brown/40"></span>
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-brand-brown/70 [animation-delay:0.2s]"></span>
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-brand-brown [animation-delay:0.4s]"></span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div ref={messagesEndRef} />
+            </div>
+          )}
         </div>
+
+        {/* ========================================================
+            BOTTOM FLOATING INPUT BAR (SIGNATURE CHATGPT DESIGN)
+            ======================================================== */}
+        <div className="border-t border-brand-beige/60 bg-white/80 backdrop-blur-md px-4 pt-3 pb-4">
+          <div className="max-w-3xl mx-auto w-full">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSend();
+              }}
+              className="relative flex flex-col rounded-3xl border border-brand-beige/90 bg-white shadow-md shadow-black/5 focus-within:border-brand-brown focus-within:ring-2 focus-within:ring-brand-brown/10 transition-all p-2"
+            >
+              <textarea
+                ref={textareaRef}
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder={isRecording ? "Listening to your voice..." : "Ask Pathshala AI anything (Shift + Enter for new line)..."}
+                rows={1}
+                className="w-full resize-none border-0 bg-transparent px-3 pt-1.5 pb-2 text-xs md:text-sm text-brand-charcoal placeholder-brand-charcoal/40 focus:outline-none max-h-44 leading-relaxed"
+              />
+
+              <div className="flex items-center justify-between pt-1 px-1">
+                {/* Left icons: Attachment */}
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      window.location.href = '/upload';
+                    }}
+                    className="p-1.5 rounded-full text-brand-charcoal/50 hover:text-brand-brown hover:bg-brand-cream/70 transition-colors cursor-pointer"
+                    title="Upload study document (PDF)"
+                  >
+                    <Paperclip className="h-4 w-4" />
+                  </button>
+                </div>
+
+                {/* Right icons: Mic + Circular Send Button */}
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={handleVoiceToggle}
+                    className={`p-1.5 rounded-full transition-all cursor-pointer ${
+                      isRecording 
+                        ? 'bg-red-500 text-white animate-pulse shadow-sm' 
+                        : 'text-brand-charcoal/50 hover:text-brand-brown hover:bg-brand-cream/70'
+                    }`}
+                    title={isRecording ? "Stop listening" : "Voice dictation"}
+                  >
+                    <Mic className="h-4 w-4" />
+                  </button>
+
+                  <button
+                    type="submit"
+                    disabled={!inputValue.trim() || isTyping}
+                    className={`flex h-8 w-8 items-center justify-center rounded-full transition-all cursor-pointer ${
+                      inputValue.trim() && !isTyping
+                        ? 'bg-brand-brown text-white shadow-xs hover:scale-105 active:scale-95'
+                        : 'bg-brand-cream text-brand-charcoal/30 pointer-events-none'
+                    }`}
+                    title="Send message"
+                  >
+                    <ArrowUp className="h-4 w-4 stroke-[2.5]" />
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            <p className="text-[10px] text-center text-brand-charcoal/40 mt-2 select-none">
+              Pathshala AI may produce mistakes. Verify critical academic definitions with your textbooks.
+            </p>
+          </div>
+        </div>
+
       </div>
     </div>
   );

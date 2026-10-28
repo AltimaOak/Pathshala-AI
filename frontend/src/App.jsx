@@ -36,6 +36,12 @@ function WorkspaceLayout() {
           localStorage.setItem('profileName', user.name);
           localStorage.setItem('profileEmail', user.email);
           window.dispatchEvent(new Event('storage'));
+        } else if (response.status === 401) {
+          // Token is expired or invalid — clear stale auth data
+          localStorage.removeItem('token');
+          localStorage.removeItem('profileName');
+          localStorage.removeItem('profileEmail');
+          window.dispatchEvent(new Event('storage'));
         }
       } catch (err) {
         console.error("Failed to fetch user profile", err);

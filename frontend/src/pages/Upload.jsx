@@ -5,7 +5,68 @@ import { EmptyState } from '../components';
 
 export default function Upload() {
   const [dragActive, setDragActive] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState([]); // Strictly starts empty - zero fake data
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
+
+  const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+
+  // Fetch indexed materials from backend on mount
+  const fetchIndexedFiles = async () => {
+    try {
+      const res = await fetch(`${API_URL}/upload/files`);
+      if (res.ok) {
+        const data = await res.json();
+        const formatted = (data.files || []).map(f => ({
+          name: f.source,
+          size: `${f.chunks_count} chunks • ${f.total_pages} pg`,
+          type: 'Indexed PDF'
+        }));
+        setUploadedFiles(formatted);
+      }
+    } catch (err) {
+      console.warn("Could not load indexed materials:", err);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchIndexedFiles();
+  }, []);
+
+  const uploadFileToBackend = async (file) => {
+    setIsUploading(true);
+    setUploadError(null);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fetch(`${API_URL}/upload/pdf`, {
+        method: 'POST',
+        body: formData
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.detail || 'Upload failed');
+      }
+      await fetchIndexedFiles();
+    } catch (err) {
+      console.error("Upload error:", err);
+      setUploadError(err.message || 'Failed to upload document');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const deleteFileFromBackend = async (filename) => {
+    try {
+      await fetch(`${API_URL}/upload/files/${encodeURIComponent(filename)}`, {
+        method: 'DELETE'
+      });
+      setUploadedFiles(prev => prev.filter(f => f.name !== filename));
+    } catch (err) {
+      console.error("Error deleting file:", err);
+    }
+  };
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -23,23 +84,17 @@ export default function Upload() {
     setDragActive(false);
 
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      const filesArray = Array.from(e.dataTransfer.files).map(file => ({
-        name: file.name,
-        size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
-        type: file.type || 'Document'
-      }));
-      setUploadedFiles(prev => [...prev, ...filesArray]);
+      Array.from(e.dataTransfer.files).forEach(file => {
+        uploadFileToBackend(file);
+      });
     }
   };
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
-      const filesArray = Array.from(e.target.files).map(file => ({
-        name: file.name,
-        size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
-        type: file.type || 'Document'
-      }));
-      setUploadedFiles(prev => [...prev, ...filesArray]);
+      Array.from(e.target.files).forEach(file => {
+        uploadFileToBackend(file);
+      });
     }
   };
 
@@ -159,7 +214,7 @@ export default function Upload() {
                       </div>
                     </div>
                     <button 
-                      onClick={() => setUploadedFiles(prev => prev.filter((_, i) => i !== idx))}
+                      onClick={() => deleteFileFromBackend(file.name)}
                       className="p-2 text-brand-charcoal/40 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
                       title="Delete document"
                     >
@@ -167,6 +222,20 @@ export default function Upload() {
                     </button>
                   </motion.div>
                 ))}
+              </div>
+            )}
+
+            {isUploading && (
+              <div className="flex items-center gap-3 p-3.5 rounded-xl border border-brand-brown/30 bg-brand-brown/5 text-brand-brown text-xs font-semibold animate-pulse">
+                <FileUp className="h-4 w-4 animate-bounce" />
+                <span>Processing & embedding PDF into knowledge base...</span>
+              </div>
+            )}
+
+            {uploadError && (
+              <div className="flex items-center gap-2 p-3 rounded-xl border border-red-200 bg-red-50 text-red-700 text-xs">
+                <AlertCircle className="h-4 w-4 shrink-0" />
+                <span>{uploadError}</span>
               </div>
             )}
           </div>
