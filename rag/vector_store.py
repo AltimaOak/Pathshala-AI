@@ -12,11 +12,16 @@ from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 
 # Determine default ChromaDB persistence directory
-_DEFAULT_DB_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    "backend",
-    "chroma_db"
-)
+# On Vercel / serverless, filesystem is read-only except /tmp
+if os.getenv("VERCEL"):
+    _DEFAULT_DB_PATH = "/tmp/chroma_db"
+else:
+    _DEFAULT_DB_PATH = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "backend",
+        "chroma_db"
+    )
+
 CHROMA_PERSIST_DIR = os.getenv("CHROMA_PERSIST_DIR", _DEFAULT_DB_PATH)
 COLLECTION_NAME = "pathshala_knowledge_base"
 

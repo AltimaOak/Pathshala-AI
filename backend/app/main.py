@@ -3,7 +3,6 @@ import os
 # Load unified environment variables from workspace root
 load_dotenv(find_dotenv())
 
-import threading
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,16 +11,7 @@ from app.routes import auth, user, chat, upload, quiz
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Pre-warm embedding model in background thread on startup
-    def warm_up():
-        try:
-            from rag.embeddings import get_embedding_model
-            get_embedding_model()
-            print("[Pathshala AI] Embedding model pre-warmed & ready.")
-        except Exception as e:
-            print(f"[Pathshala AI] Warning: Could not pre-warm embedding model: {e}")
-
-    threading.Thread(target=warm_up, daemon=True).start()
+    # No local model to warm up — using Gemini API for embeddings
     yield
 
 app = FastAPI(
@@ -42,21 +32,21 @@ if _frontend_url:
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    # Also dynamically allow any *.vercel.app subdomain for preview deployments
     allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Register API routes
-app.include_router(auth.router)
-app.include_router(user.router)
-app.include_router(chat.router)
-app.include_router(upload.router)
-app.include_router(quiz.router)
+# Register API routes (supports both /route and /api/route for Vercel rewrites)
+for prefix in ["", "/api"]:
+    app.include_router(auth.router, prefix=prefix)
+    app.include_router(user.router, prefix=prefix)
+    app.include_router(chat.router, prefix=prefix)
+    app.include_router(upload.router, prefix=prefix)
+    app.include_router(quiz.router, prefix=prefix)
 
-
+@app.get("/api")
 @app.get("/")
 def root():
     return {

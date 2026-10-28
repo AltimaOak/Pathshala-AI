@@ -4,7 +4,7 @@ Finds the most contextually relevant document snippets for student inquiries.
 """
 
 from typing import List, Dict, Any, Optional
-from rag.embeddings import embed_text
+from rag.embeddings import embed_query
 from rag.vector_store import get_knowledge_collection
 
 
@@ -23,8 +23,8 @@ def retrieve_relevant_chunks(
     if collection.count() == 0:
         return []
 
-    # Generate query embedding
-    query_vector = embed_text(query)
+    # Generate query embedding (optimized for retrieval search)
+    query_vector = embed_query(query)
 
     query_kwargs = {
         "query_embeddings": [query_vector],
