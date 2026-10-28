@@ -17,6 +17,8 @@ import Settings from "./pages/Settings"
 import Login from "./pages/Login"
 import Signup from "./pages/Signup"
 
+import { API_BASE_URL } from "./config/api";
+
 // Shared Workspace layout for internal application pages
 function WorkspaceLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 1024);
@@ -26,7 +28,7 @@ function WorkspaceLayout() {
       const token = localStorage.getItem('token');
       if (!token) return;
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/user/me`, {
+        const response = await fetch(`${API_BASE_URL}/user/me`, {
           headers: {
             "Authorization": `Bearer ${token}`
           }

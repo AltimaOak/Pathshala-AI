@@ -3,13 +3,15 @@ import { motion } from 'framer-motion';
 import { FileUp, FileText, AlertCircle, Info, Trash2, CheckCircle2, HardDrive } from 'lucide-react';
 import { EmptyState } from '../components';
 
+import { API_BASE_URL } from '../config/api';
+
 export default function Upload() {
   const [dragActive, setDragActive] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState(null);
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+  const API_URL = API_BASE_URL;
 
   // Fetch indexed materials from backend on mount
   const fetchIndexedFiles = async () => {

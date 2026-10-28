@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { API_BASE_URL } from '../config/api';
 import { 
   MessageSquare, 
   ArrowUp, 
@@ -173,7 +174,7 @@ export default function Chat() {
   const textareaRef = useRef(null);
   const recognitionRef = useRef(null);
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+  const API_URL = API_BASE_URL;
 
   // Auto-scroll
   const scrollToBottom = () => {
