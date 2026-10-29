@@ -5,8 +5,8 @@ import os
 
 load_dotenv()
 
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = os.getenv("ALGORITHM")
+SECRET_KEY = os.getenv("SECRET_KEY", "8835144984887a059d8c299a982ffa2a8362f62158d18922c5aaeb6b6af14630")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(
     os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30)
 )

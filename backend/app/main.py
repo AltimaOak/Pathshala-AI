@@ -7,11 +7,14 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routes import auth, user, chat, upload, quiz
+from app.routes import auth, user, chat, upload, quiz, health
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # No local model to warm up — using Gemini API for embeddings
+    # Auto-create database tables on startup (safe for fresh deployments)
+    from app.database.connection import engine, Base
+    from app.database import models  # noqa: F401 — ensure models are registered
+    Base.metadata.create_all(bind=engine)
     yield
 
 app = FastAPI(
@@ -45,6 +48,7 @@ for prefix in ["", "/api"]:
     app.include_router(chat.router, prefix=prefix)
     app.include_router(upload.router, prefix=prefix)
     app.include_router(quiz.router, prefix=prefix)
+    app.include_router(health.router, prefix=prefix)
 
 @app.get("/api")
 @app.get("/")
