@@ -1,10 +1,12 @@
 """
 Pathshala AI - LLM Tutor Service
-Interfaces with Google Gemini LLM to provide adaptive, Socratic, and grounded tutoring.
+Interfaces with Google Gemini LLM via REST API to provide adaptive, Socratic, and grounded tutoring.
+Lightweight — no google-generativeai SDK required.
 """
 
 import os
 import re
+import httpx
 from typing import List, Dict, Any, Optional
 from dotenv import load_dotenv, find_dotenv
 
@@ -14,27 +16,28 @@ load_dotenv(find_dotenv())
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 MODEL_NAME = os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite")
 
-_GENAI_CONFIGURED = False
+_API_BASE = "https://generativelanguage.googleapis.com/v1beta"
 
 
-def _configure_genai() -> bool:
+def _call_gemini(prompt: str, model_name: str, api_key: str) -> str:
     """
-    Configures google-generativeai client if API key is present.
+    Calls Gemini REST API directly and returns the generated text.
     """
-    global _GENAI_CONFIGURED
-    load_dotenv(find_dotenv(), override=True)
-    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
-    if not api_key:
-        return False
-
-    try:
-        import google.generativeai as genai
-        genai.configure(api_key=api_key)
-        _GENAI_CONFIGURED = True
-        return True
-    except Exception as e:
-        print(f"[LLM Service] Error configuring Gemini: {e}")
-        return False
+    url = f"{_API_BASE}/models/{model_name}:generateContent?key={api_key}"
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}]
+    }
+    with httpx.Client(timeout=60.0) as client:
+        resp = client.post(url, json=payload)
+        resp.raise_for_status()
+    data = resp.json()
+    # Extract text from the response
+    candidates = data.get("candidates", [])
+    if candidates:
+        parts = candidates[0].get("content", {}).get("parts", [])
+        if parts:
+            return parts[0].get("text", "")
+    return ""
 
 
 def get_tutor_system_prompt(tutor_style: str = "balanced") -> str:
@@ -105,10 +108,11 @@ def generate_tutor_response(
     prompt_parts.append(f"Student's Current Inquiry: {message}\n\nTutor Answer:")
     full_prompt = "\n\n".join(prompt_parts)
 
-    # Check if Gemini is configured
-    configured = _configure_genai()
+    # Check for API key
+    load_dotenv(find_dotenv(), override=True)
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 
-    if not configured:
+    if not api_key:
         # Fallback response when GEMINI_API_KEY is not yet added
         fallback_text = (
             "### 🎓 Pathshala AI Tutor\n\n"
@@ -141,7 +145,6 @@ def generate_tutor_response(
         }
 
     try:
-        import google.generativeai as genai
         configured_model = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
         candidate_models = list(dict.fromkeys([
             configured_model,
@@ -151,14 +154,19 @@ def generate_tutor_response(
             "gemini-1.5-flash"
         ]))
 
-        response = None
+        raw_text = None
         last_error = None
         for m_name in candidate_models:
             try:
-                model = genai.GenerativeModel(m_name)
-                response = model.generate_content(full_prompt)
-                if response:
+                raw_text = _call_gemini(full_prompt, m_name, api_key)
+                if raw_text:
                     break
+            except httpx.HTTPStatusError as err:
+                last_error = err
+                status = err.response.status_code
+                if status == 404:
+                    continue  # Model not found, try next
+                raise err
             except Exception as err:
                 last_error = err
                 err_str = str(err).lower()
@@ -166,10 +174,10 @@ def generate_tutor_response(
                     continue
                 raise err
 
-        if not response and last_error:
+        if not raw_text and last_error:
             raise last_error
 
-        raw_text = response.text or ""
+        raw_text = raw_text or ""
 
         # Extract suggested follow-up questions if present
         suggested_questions = []

@@ -3,10 +3,14 @@ Pathshala AI - Summary & Study Notes Service
 Generates concise executive summaries, key flashcards, and revision notes from study materials.
 """
 
+import os
 from typing import List, Dict, Any, Optional
-from app.services.llm_service import _configure_genai, MODEL_NAME
+from dotenv import load_dotenv, find_dotenv
+from app.services.llm_service import _call_gemini, MODEL_NAME
 from rag.retriever import retrieve_relevant_chunks
 from rag.vector_store import get_knowledge_collection
+
+load_dotenv(find_dotenv())
 
 
 def generate_document_summary(
@@ -34,9 +38,9 @@ def generate_document_summary(
 
     combined_text = "\n\n".join(documents[:6])  # Combine first several chunks
 
-    configured = _configure_genai()
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 
-    if not configured:
+    if not api_key:
         return {
             "title": f"Summary: {source_name or topic or 'Study Material'}",
             "summary": combined_text[:400] + "...",
@@ -49,10 +53,7 @@ def generate_document_summary(
         }
 
     try:
-        import os
-        import google.generativeai as genai
-        active_model = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
-        model = genai.GenerativeModel(active_model)
+        active_model = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
 
         prompt = f"""You are a master academic summarizer for Pathshala AI.
 Analyze the following study material excerpts and generate a clear, structured revision brief.
@@ -65,10 +66,10 @@ Provide:
 2. 5 Key Takeaways & Core Concepts (bullet points)
 3. Essential Definitions or Formulas
 """
-        response = model.generate_content(prompt)
+        response_text = _call_gemini(prompt, active_model, api_key)
         return {
             "title": f"Revision Brief: {source_name or topic or 'Study Notes'}",
-            "content": response.text.strip(),
+            "content": response_text.strip(),
             "source": source_name,
             "total_chunks_analyzed": len(documents[:6])
         }

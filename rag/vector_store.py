@@ -1,15 +1,15 @@
 """
 Pathshala AI - Ultra-Lightweight Vector Store
-Stores document chunks and normalized embeddings using SQLite + NumPy.
-100% serverless compatible (zero heavy C++ dependencies like onnxruntime/grpcio).
-Runs anywhere in <50MB bundle size.
+Stores document chunks and normalized embeddings using SQLite + pure Python math.
+100% serverless compatible — zero heavy dependencies.
 """
 
 import os
 import json
+import math
+import struct
 import sqlite3
 from typing import List, Dict, Any, Optional
-import numpy as np
 from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())
@@ -29,6 +29,40 @@ DB_PATH = os.path.join(
     "vectors.sqlite"
 )
 
+
+# ---------- Pure-Python vector math helpers ----------
+
+def _vec_to_bytes(vec: List[float]) -> bytes:
+    """Pack a float list into a compact binary blob (float32)."""
+    return struct.pack(f"{len(vec)}f", *vec)
+
+
+def _bytes_to_vec(blob: bytes) -> List[float]:
+    """Unpack a binary blob back to a float list."""
+    n = len(blob) // 4
+    return list(struct.unpack(f"{n}f", blob))
+
+
+def _dot(a: List[float], b: List[float]) -> float:
+    return sum(x * y for x, y in zip(a, b))
+
+
+def _norm(v: List[float]) -> float:
+    return math.sqrt(sum(x * x for x in v))
+
+
+def _normalize(v: List[float]) -> List[float]:
+    n = _norm(v)
+    if n == 0:
+        return v
+    return [x / n for x in v]
+
+
+def _cosine_similarity(a: List[float], b: List[float]) -> float:
+    return _dot(a, b)
+
+
+# ---------- Database ----------
 
 def _get_connection() -> sqlite3.Connection:
     os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
@@ -66,7 +100,7 @@ def add_chunks_to_vector_store(
     conn = _get_connection()
     with conn:
         for chunk, emb in zip(chunks, embeddings):
-            emb_blob = np.array(emb, dtype=np.float32).tobytes()
+            emb_blob = _vec_to_bytes(emb)
             metadata_json = json.dumps(chunk.get("metadata", {}))
             source = chunk.get("metadata", {}).get("source", "Unknown")
             page = chunk.get("metadata", {}).get("page", 1)
@@ -137,7 +171,7 @@ def search_vectors(
     source_filter: Optional[str] = None
 ) -> List[Dict[str, Any]]:
     """
-    Performs fast cosine similarity search across all stored vectors.
+    Performs cosine similarity search across all stored vectors.
     """
     conn = _get_connection()
     cursor = conn.cursor()
@@ -154,41 +188,23 @@ def search_vectors(
     if not rows:
         return []
 
-    q_vec = np.array(query_vector, dtype=np.float32)
-    q_norm = np.linalg.norm(q_vec)
-    if q_norm > 0:
-        q_vec = q_vec / q_norm
+    q_vec = _normalize(query_vector)
 
-    ids = []
-    texts = []
-    metadatas = []
-    vectors = []
-
+    scored = []
     for r_id, r_text, r_meta, r_blob in rows:
-        ids.append(r_id)
-        texts.append(r_text)
-        metadatas.append(json.loads(r_meta) if r_meta else {})
-        vectors.append(np.frombuffer(r_blob, dtype=np.float32))
+        doc_vec = _normalize(_bytes_to_vec(r_blob))
+        sim = _cosine_similarity(q_vec, doc_vec)
+        scored.append((sim, r_id, r_text, r_meta))
 
-    matrix = np.vstack(vectors)
-    norms = np.linalg.norm(matrix, axis=1, keepdims=True)
-    norms[norms == 0] = 1.0
-    norm_matrix = matrix / norms
-
-    # Cosine similarities
-    similarities = np.dot(norm_matrix, q_vec)
-
-    # Top-K indices
-    k = min(top_k, len(similarities))
-    top_indices = np.argsort(similarities)[-k:][::-1]
+    # Sort by similarity descending, take top_k
+    scored.sort(key=lambda x: x[0], reverse=True)
 
     results = []
-    for idx in top_indices:
-        sim = float(similarities[idx])
+    for sim, r_id, r_text, r_meta in scored[:top_k]:
         results.append({
-            "id": ids[idx],
-            "text": texts[idx],
-            "metadata": metadatas[idx],
+            "id": r_id,
+            "text": r_text,
+            "metadata": json.loads(r_meta) if r_meta else {},
             "similarity": round(max(0.0, sim), 4)
         })
 

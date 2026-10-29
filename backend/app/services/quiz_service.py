@@ -3,12 +3,16 @@ Pathshala AI - Quiz Generation Service
 Generates targeted practice quizzes and assessments from study materials and RAG snippets.
 """
 
+import os
 import json
 import re
 from typing import List, Dict, Any, Optional
-from app.services.llm_service import _configure_genai, MODEL_NAME
+from dotenv import load_dotenv, find_dotenv
+from app.services.llm_service import _call_gemini, MODEL_NAME
 from rag.retriever import retrieve_relevant_chunks
 from rag.vector_store import get_knowledge_collection
+
+load_dotenv(find_dotenv())
 
 
 def generate_quiz_from_topic(
@@ -23,9 +27,9 @@ def generate_quiz_from_topic(
     chunks = retrieve_relevant_chunks(query=topic, top_k=4)
     context_text = "\n\n".join([f"[{c['metadata'].get('source', 'Doc')}] {c['text']}" for c in chunks])
 
-    configured = _configure_genai()
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 
-    if not configured:
+    if not api_key:
         # Fallback realistic sample quiz for testing when API key is pending
         return {
             "topic": topic,
@@ -63,10 +67,7 @@ def generate_quiz_from_topic(
         }
 
     try:
-        import os
-        import google.generativeai as genai
-        active_model = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
-        model = genai.GenerativeModel(active_model)
+        active_model = os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite")
 
         prompt = f"""You are an educational assessment expert for Pathshala AI.
 Create a {difficulty} level multiple-choice quiz with {num_questions} questions about: "{topic}".
@@ -90,10 +91,9 @@ Output ONLY valid JSON matching this schema:
 }}
 Do NOT output markdown code fences or extra text, output raw JSON only."""
 
-        response = model.generate_content(prompt)
-        text = response.text.strip()
+        text = _call_gemini(prompt, active_model, api_key)
         # Clean potential markdown wrapping
-        text = re.sub(r"^```json\s*", "", text, flags=re.MULTILINE)
+        text = re.sub(r"^```json\s*", "", text.strip(), flags=re.MULTILINE)
         text = re.sub(r"^```\s*", "", text, flags=re.MULTILINE)
         data = json.loads(text.strip())
         data["source_grounded"] = bool(chunks)

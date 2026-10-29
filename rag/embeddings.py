@@ -1,68 +1,67 @@
 """
 Pathshala AI - Embedding Generation Module
-Generates dense vector embeddings using Google Gemini's text-embedding API.
-Lightweight, serverless-compatible — no torch or sentence-transformers required.
+Generates dense vector embeddings using Google Gemini's REST API.
+Lightweight, serverless-compatible — no google-generativeai SDK required.
 """
 
 import os
+import httpx
 from typing import List
-import google.generativeai as genai
 
-# Gemini embedding model — 768-dimensional, fast, free tier available
-_EMBEDDING_MODEL = "models/text-embedding-004"
+_EMBEDDING_MODEL = "text-embedding-004"
+_API_BASE = "https://generativelanguage.googleapis.com/v1beta"
 
-def _get_client():
-    api_key = os.getenv("GEMINI_API_KEY")
+
+def _get_api_key() -> str:
+    api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
     if not api_key:
         raise ValueError("GEMINI_API_KEY not set in environment.")
-    genai.configure(api_key=api_key)
+    return api_key
 
 
 def embed_text(text: str) -> List[float]:
     """
-    Generates an embedding vector for a single string using Gemini API.
+    Generates an embedding vector for a single string using Gemini REST API.
     """
-    _get_client()
-    result = genai.embed_content(
-        model=_EMBEDDING_MODEL,
-        content=text,
-        task_type="retrieval_document"
-    )
-    return result["embedding"]
+    api_key = _get_api_key()
+    url = f"{_API_BASE}/models/{_EMBEDDING_MODEL}:embedContent?key={api_key}"
+    payload = {
+        "model": f"models/{_EMBEDDING_MODEL}",
+        "content": {"parts": [{"text": text}]},
+        "taskType": "RETRIEVAL_DOCUMENT"
+    }
+    with httpx.Client(timeout=30.0) as client:
+        resp = client.post(url, json=payload)
+        resp.raise_for_status()
+    return resp.json()["embedding"]["values"]
 
 
 def embed_batch(texts: List[str], batch_size: int = 32) -> List[List[float]]:
     """
-    Generates embeddings for a batch of strings using Gemini API.
-    Processes in batches to respect API rate limits.
+    Generates embeddings for a batch of strings using Gemini REST API.
     """
     if not texts:
         return []
-    _get_client()
     all_embeddings = []
     for i in range(0, len(texts), batch_size):
         chunk = texts[i : i + batch_size]
-        embeddings = [
-            genai.embed_content(
-                model=_EMBEDDING_MODEL,
-                content=t,
-                task_type="retrieval_document"
-            )["embedding"]
-            for t in chunk
-        ]
-        all_embeddings.extend(embeddings)
+        for t in chunk:
+            all_embeddings.append(embed_text(t))
     return all_embeddings
 
 
 def embed_query(query: str) -> List[float]:
     """
-    Generates an embedding for a search query (uses retrieval_query task type
-    for better semantic search results).
+    Generates an embedding for a search query (uses RETRIEVAL_QUERY task type).
     """
-    _get_client()
-    result = genai.embed_content(
-        model=_EMBEDDING_MODEL,
-        content=query,
-        task_type="retrieval_query"
-    )
-    return result["embedding"]
+    api_key = _get_api_key()
+    url = f"{_API_BASE}/models/{_EMBEDDING_MODEL}:embedContent?key={api_key}"
+    payload = {
+        "model": f"models/{_EMBEDDING_MODEL}",
+        "content": {"parts": [{"text": query}]},
+        "taskType": "RETRIEVAL_QUERY"
+    }
+    with httpx.Client(timeout=30.0) as client:
+        resp = client.post(url, json=payload)
+        resp.raise_for_status()
+    return resp.json()["embedding"]["values"]
